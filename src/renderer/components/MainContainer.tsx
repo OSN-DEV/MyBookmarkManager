@@ -5,8 +5,8 @@ import CategoryList from './CategoryList'
 const MainContainer = () => {
   return (
     <SplitPane split="vertical" minSize={200} defaultSize={200} maxSize={400}>
-    <CategoryList />
-    <ItemList />
+      <CategoryList />
+      <ItemList />
     </SplitPane >
     )
 }
