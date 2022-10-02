@@ -1,7 +1,20 @@
+import React from "react";
 
-const Category = () => {
+export type ICategory = {
+  id: string;
+  name: string;
+  order: number;
+  // children: React.ReactNode;
+}
+
+
+const Category = ({category} : {category: ICategory}) => {
+  let x = category.name;
   return (
+    <>
     <p>Category</p>
+    <p>{category.name}</p>
+    </>
   )
 }
 

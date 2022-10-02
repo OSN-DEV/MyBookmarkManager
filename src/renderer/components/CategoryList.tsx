@@ -1,7 +1,11 @@
+import Category, { ICategory } from "./Category"
 
-const CategoryList = () => {
-  return (<p>CategoryList</p>)
+const CategoryList = ({categoryList} : {categoryList: ICategory[]}) => {
+  return (
+  <ul>
+    
+  <li>test</li>
+  </ul>)
 }
 
 export default CategoryList
-

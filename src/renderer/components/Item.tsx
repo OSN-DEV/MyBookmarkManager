@@ -1,9 +1,9 @@
 
 const Item = () => {
   return (
-    return <p>Item</p>
+    return (<p>Item</p>)
   )
 }
 
-export defualt Item
+export default Item
 
