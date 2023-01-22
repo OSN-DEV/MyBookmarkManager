@@ -1,0 +1,72 @@
+{
+  "name": "my-electron-boilerplate",
+  "version": "1.0.0",
+  "main": "dist/main.js",
+  "author": "OSN-DEV <osndev1973@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "rimraf dist && run-p dev:*",
+    "build": "cross-env NODE_ENV=\"production\" webpack --progress",
+    "dev:webpack": "cross-env NODE_ENV=\"development\" webpack --progress",
+    "dev:electron": "wait-on ./dist/index.html ./dist/main.js && electronmon ."
+  },
+  "electronmon": {
+    "patterns": [
+      "dist/**/*"
+    ]
+  },
+  "build": {
+    "appId": "com.osndev.myelectronboilerplate",
+    "directories": {
+      "output": "binary"
+    },
+    "productName": "my-electron-boilerplate",
+    "files": [
+      "assets",
+      "src",
+      "dist",
+      "package.json",
+      "yarn.lock"
+    ],
+    "mac": {
+      "icon": "assets/app.ico",
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      "icon": "assets/app.ico",
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "dependencies": {
+    "@types/node": "^18.11.9",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.9",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.7.2",
+    "electronmon": "^2.0.2",
+    "html-webpack-plugin": "^5.5.0",
+    "mini-css-extract-plugin": "^2.7.0",
+    "npm-run-all": "^4.1.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rimraf": "^3.0.2",
+    "ts-loader": "^9.4.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.3",
+    "wait-on": "^6.0.1",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^11.0.0",
+    "electron": "^22.0.0",
+    "electron-builder": "^22.10.3",
+    "tailwindcss": "^3.2.4"
+  }
+}
