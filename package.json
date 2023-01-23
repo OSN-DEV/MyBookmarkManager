@@ -8,7 +8,8 @@
     "dev": "rimraf dist && run-p dev:*",
     "build": "cross-env NODE_ENV=\"production\" webpack --progress",
     "dev:webpack": "cross-env NODE_ENV=\"development\" webpack --progress",
-    "dev:electron": "wait-on ./dist/index.html ./dist/main.js && electronmon ."
+    "dev:electron": "wait-on ./dist/index.html ./dist/main.js && electronmon .",
+    "dev:tailwind": "npx tailwindcss -i ./src/web/styles/input.css -o ./src/web/styles/output.css --watch"
   },
   "electronmon": {
     "patterns": [
