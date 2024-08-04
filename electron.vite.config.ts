@@ -6,9 +6,6 @@ export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()]
   },
-  build: {
-    outDir: 'dist'
-  }
   renderer: {
     resolve: {
       alias: {
