@@ -1,10 +1,10 @@
 import React from "react"
 
 const ItemList = () => {
-    return(
-        <>
+    return (
+        <div className="item-list">
         Item List
-        </>
+        </div>
     )
 }
 

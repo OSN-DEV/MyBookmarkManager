@@ -2,3 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  font-size: 14pt;
+}
+
+
+/** カテゴリリスト */
+.category-list {
+  background-color: #D7C8CA;
+  color: #9b767a;
+  height: 100%;
+  padding: 1em;
+}
+
+.category-list-category {
+  margin-top: 0.5em;
+  cursor: pointer;
+}
+
+.category-list-category .icon {
+  display: inline-block;
+  margin-right: 0.4em;
+}
+
+.item-list {
+  padding: 0.5em;
+
+}
+
+.item-list-item {
+
+}
