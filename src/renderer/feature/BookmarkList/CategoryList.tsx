@@ -8,7 +8,7 @@ type CategoryListProps = {
     setCurrentId: (id: number) => void
 }
 const CategoryList = (props: CategoryListProps) => {
-    const {currentId, categoryList, setCurrentId} = props
+    const { currentId, categoryList, setCurrentId } = props
 
     ///
     /// カテゴリ選択イベント
@@ -20,20 +20,25 @@ const CategoryList = (props: CategoryListProps) => {
         setCurrentId(categoryId)
     }
 
+    const handleContextMenu = (categoryId: number | null) => {
+        console.log(`context menu: ${categoryId}`)
+    }
+
     return (
-    <div className="category-list">
-        {
-            categoryList.map((category:TCategory) => {
-                return <Category
-                    key={`category-${category.categoryId}`}
-                    icon={category.icon}
-                    id={category.categoryId}
-                    isSelected= {category.categoryId === currentId}
-                    name={category.categoryName}
-                    handleClick={handleClick}
-                />
-            })
-        }
-    </div>)
+        <div className="category-list" onContextMenu={() =>handleContextMenu(null)}>
+            {
+                categoryList.map((category: TCategory) => {
+                    return <Category
+                        key={`category-${category.categoryId}`}
+                        icon={category.icon}
+                        id={category.categoryId}
+                        isSelected={category.categoryId === currentId}
+                        name={category.categoryName}
+                        handleClick={handleClick}
+                        onContextMenu= {() =>handleContextMenu(category.categoryId)}
+                    />
+                })
+            }
+        </div>)
 }
-export default  CategoryList
+export default CategoryList

@@ -7,13 +7,19 @@ type CategoryProps = {
     isSelected: boolean
     name: string
     handleClick: (id: number) => void
+    onContextMenu: () => void
 }
 
 const Category = (props: CategoryProps) => {
-    const {icon, id, isSelected, name, handleClick} = props
+    const {icon, id, isSelected, name, handleClick, onContextMenu} = props
     const RenderIcon = icon
+
+    const handleContextmenu = (e: React.MouseEvent) => {
+        e.stopPropagation()
+        onContextMenu()
+    }
     return (
-        <div className="category-list-category" onClick={()=>handleClick(id)}>
+        <div className="category-list-category" onClick={()=>handleClick(id)} onContextMenu={handleContextmenu}>
             <RenderIcon className="icon"/>
             { name }
         </div>

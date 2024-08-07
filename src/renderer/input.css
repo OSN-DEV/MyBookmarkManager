@@ -8,11 +8,15 @@ body {
 
 
 /** カテゴリリスト */
-.category-list {
+/* .left-side {
   background-color: #D7C8CA;
+} */
+
+.category-list {
   color: #9b767a;
-  height: 100%;
+  background-color: #D7C8CA;
   padding: 1em;
+  height: 100%;
 }
 
 .category-list-category {
@@ -27,9 +31,12 @@ body {
 
 .item-list {
   padding: 0.5em;
-
+  color: #9b767a;
+  overflow-y: auto;
 }
 
 .item-list-item {
-
+  margin-left: 1em;
+  margin-top: 1em;
 }
+
