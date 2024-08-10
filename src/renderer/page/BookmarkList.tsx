@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { Resize, ResizeHorizon } from 'react-resize-layout'
 import CategoryList from '../feature/BookmarkList/CategoryList'
 import ItemList from '../feature/BookmarkList/ItemList'
-import { TCategory } from '../../type/TCategory'
+import { TCategory } from '../../@types/TCategory'
 import { FaGithub } from 'react-icons/fa'
-import { TItem } from '../../type/Titem'
+import { TItem } from '../../@types/TItem'
 
 export const BookmarkList = () => {
   const [currentCategoryId, setCurrentCategoryId] = useState(0)

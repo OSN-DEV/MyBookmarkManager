@@ -3,6 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
+
 let showDevTool: boolean = false;
 let mainWindow: BrowserWindow | null = null
 
@@ -86,6 +87,26 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
+  registerEvent()
+
+})
+
+const openFile = async(): Promise<string> => {
+  const {canceled, filePaths} = await dialog.showOpenDialog({})
+  if (!canceled) {
+    return filePaths[0]
+  }
+  return ""
+}
+
+
+/**
+ * register event
+ */
+const registerEvent = () => {
+  // Category list
+  // ipcMain.on(ED.CategoryList.ContextMenu.Show, () = )
+
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
@@ -100,7 +121,7 @@ app.whenReady().then(() => {
   ipcMain.handle('dialog:openFile', openFile)
 
   // Pattern3
-  ipcMain.on('counter-value', (ev: IpcMainEvent, value: number) => {
+  ipcMain.on('counter-value', (_: IpcMainEvent, value: number) => {
     console.log(value)
   })
 
@@ -111,24 +132,16 @@ app.whenReady().then(() => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
-})
 
-const openFile = async(): Promise<string> => {
-  const {canceled, filePaths} = await dialog.showOpenDialog({})
-  if (!canceled) {
-    return filePaths[0]
-  }
-  return ""
+  // Quit when all windows are closed, except on macOS. There, it's common
+  // for applications and their menu bar to stay active until the user quits
+  // explicitly with Cmd + Q.
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
+  })
 }
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
 
 /**
  * Devツールの表示切替

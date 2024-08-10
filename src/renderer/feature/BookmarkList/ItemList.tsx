@@ -1,6 +1,6 @@
 import React from "react"
-import { TItem } from "../../../type/Titem"
 import Item from "./Item"
+import { TItem } from "../../../@types/TItem"
 
 type ItemListProps = {
     itemList: TItem[]

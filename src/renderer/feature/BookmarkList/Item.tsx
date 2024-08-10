@@ -1,5 +1,5 @@
 import React from 'react'
-import { TItem } from '../../../type/Titem'
+import { TItem } from '../../../@types/TItem'
 
 type ItemProps = {
     item: TItem
