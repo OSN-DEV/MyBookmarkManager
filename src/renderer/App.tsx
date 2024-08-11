@@ -1,7 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 
 const App  = () => {
+     /**
+     * create category list item request
+     */
+    window.mainApi?.onCategoryItemCreateReqeust((_: any) => { 
+      alert('hoge')
+        console.log('hogehoge')
+    })
+
+
   const pattern1Click = () => {
     (window as any).mainApi.setTitle("title!!")
   }
@@ -13,11 +22,8 @@ const App  = () => {
   }
   
   window.mainApi.onUpdateCounter((_: any, value: number) => {
-    const counter = document.getElementById("counter")
-    const oldValue = Number(counter?.innerText)
-    const newValue = oldValue + value
-    counter!.innerText  = newValue.toString()
-    window.mainApi.counterValue(newValue)
+    console.log('xxxxxxxxxxxxxxxxxxxx')
+    alert('hogehoge');
   })
   
 

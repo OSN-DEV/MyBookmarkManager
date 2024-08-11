@@ -2,7 +2,8 @@ import { app, shell, BrowserWindow, ipcMain, IpcMainEvent, dialog, Menu } from '
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-
+import * as CL from './categoryList'
+import { ED } from '../preload/EventDef'
 
 let showDevTool: boolean = false;
 let mainWindow: BrowserWindow | null = null
@@ -38,7 +39,7 @@ function createWindow(): void {
       { label: showDevTool ? 'hide dev tool' : 'show dev tool', click: () => toggleDevTool() },
       {
         click: () => {
-          mainWindow?.webContents.send('update-counter', 1)
+          mainWindow?.webContents.send('update-counterXXX', 1)
         },
         label: 'increment'
       },
@@ -48,6 +49,13 @@ function createWindow(): void {
         },
         label: 'decrement'
       },
+      {
+        click: () => {
+          console.log('send request')
+          mainWindow?.webContents.send(ED.CategoryList.ContextMenu.CreateRequest)
+        },
+        label: 'test'
+      }
     ]
   }
   ])
@@ -89,6 +97,7 @@ app.whenReady().then(() => {
 
   registerEvent()
 
+  toggleDevTool()
 })
 
 const openFile = async(): Promise<string> => {
@@ -105,7 +114,10 @@ const openFile = async(): Promise<string> => {
  */
 const registerEvent = () => {
   // Category list
-  // ipcMain.on(ED.CategoryList.ContextMenu.Show, () = )
+  ipcMain.on(ED.CategoryList.ContextMenu.Show, (ev: IpcMainEvent, categoryId: number) => {
+    CL.showContextMenu(mainWindow, categoryId)
+  })
+
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))

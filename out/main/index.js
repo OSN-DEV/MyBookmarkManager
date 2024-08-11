@@ -3,6 +3,75 @@ const electron = require("electron");
 const path = require("path");
 const utils = require("@electron-toolkit/utils");
 const icon = path.join(__dirname, "../../resources/icon.png");
+const devLog = (message) => {
+  console.log(`##### ${message}`);
+};
+const ED = {
+  CategoryList: {
+    ContextMenu: {
+      Show: "ed.category-list.context-menu.show",
+      CreateRequest: "ed.category-list.context-menu.create-request",
+      EditRequest: "ed.category-list.context-menu.edit-request",
+      DeleteRequest: "ed.category-list.context-menu.edit-request",
+      CreateResponse: "ed.category-list.context-menu.create-response",
+      EditResponset: "ed.category-list.context-menu.edit-response",
+      DeleteResponse: "ed.category-list.context-menu.edit-response"
+    }
+  }
+};
+let contextMenu = null;
+const showContextMenu = (window, categoryId) => {
+  devLog(`showContextMenu: ${categoryId}`);
+  if (!contextMenu) {
+    contextMenu = electron.Menu.buildFromTemplate([
+      {
+        label: "Create",
+        enabled: categoryId === null,
+        click: () => {
+          handleCreateClick(window);
+        }
+      },
+      {
+        label: "Edit",
+        enabled: categoryId !== null,
+        click: () => {
+          handleEditClick(window, categoryId);
+        }
+      },
+      {
+        label: "Delete",
+        enabled: categoryId !== null,
+        click: () => {
+          handleDeleteClick(window, categoryId);
+        }
+      }
+    ]);
+  } else {
+    contextMenu.items.map((m) => {
+      if (m.label === "Create") {
+        m.enabled = categoryId === null;
+      } else {
+        m.enabled = categoryId !== null;
+      }
+    });
+  }
+  contextMenu.popup();
+};
+const handleCreateClick = (window) => {
+  devLog(`handleCreateClick`);
+  contextMenu?.closePopup();
+  window.webContents.send(ED.CategoryList.ContextMenu.CreateRequest);
+  window.webContents.send("update-counter", 1);
+  devLog(`send create category item request: ${ED.CategoryList.ContextMenu.CreateRequest}`);
+};
+const handleEditClick = (window, categoryId) => {
+  devLog(`handleEditClick: ${categoryId}`);
+  contextMenu?.closePopup();
+};
+const handleDeleteClick = (window, categoryId) => {
+  devLog(`handleDeleteClick: ${categoryId}`);
+  contextMenu?.closePopup();
+};
 let showDevTool = false;
 let mainWindow = null;
 function createWindow() {
@@ -33,7 +102,7 @@ function createWindow() {
         { label: showDevTool ? "hide dev tool" : "show dev tool", click: () => toggleDevTool() },
         {
           click: () => {
-            mainWindow?.webContents.send("update-counter", 1);
+            mainWindow?.webContents.send("update-counterXXX", 1);
           },
           label: "increment"
         },
@@ -42,6 +111,13 @@ function createWindow() {
             mainWindow?.webContents.send("update-counter", -1);
           },
           label: "decrement"
+        },
+        {
+          click: () => {
+            console.log("send request");
+            mainWindow?.webContents.send(ED.CategoryList.ContextMenu.CreateRequest);
+          },
+          label: "test"
         }
       ]
     }
@@ -66,6 +142,7 @@ electron.app.whenReady().then(() => {
     utils.optimizer.watchWindowShortcuts(window);
   });
   registerEvent();
+  toggleDevTool();
 });
 const openFile = async () => {
   const { canceled, filePaths } = await electron.dialog.showOpenDialog({});
@@ -75,6 +152,9 @@ const openFile = async () => {
   return "";
 };
 const registerEvent = () => {
+  electron.ipcMain.on(ED.CategoryList.ContextMenu.Show, (ev, categoryId) => {
+    showContextMenu(mainWindow, categoryId);
+  });
   electron.ipcMain.on("ping", () => console.log("pong"));
   electron.ipcMain.on("set-title", (ev, title) => {
     const webContents = ev.sender;

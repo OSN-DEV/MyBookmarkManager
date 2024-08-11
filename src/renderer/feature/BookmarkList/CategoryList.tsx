@@ -1,3 +1,4 @@
+import React from "react"
 import { TCategory } from "../../../@types/TCategory"
 import Category from "./Category"
 
@@ -9,6 +10,8 @@ type CategoryListProps = {
 const CategoryList = (props: CategoryListProps) => {
     const { currentId, categoryList, setCurrentId } = props
     // const [isOpenContextMenu, setIsContextMenu] = useState<boolean>(false)
+
+
 
     ///
     /// カテゴリ選択イベント
@@ -26,7 +29,7 @@ const CategoryList = (props: CategoryListProps) => {
         // window.mainApi.showCategoryListContextMenu(1)
         
         // (window as any).mainApi.showCategoryListContextMenu(categoryId)
-        window.mainApi.setTitle("aa")
+        window.mainApi.showCategoryListContextMenu(categoryId)
     }
 
     return (

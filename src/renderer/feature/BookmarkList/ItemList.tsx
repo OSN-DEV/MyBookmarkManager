@@ -14,7 +14,7 @@ const ItemList = (props: ItemListProps) => {
             {
                 itemList.map((item:TItem) => {
                     return(
-                        <Item key={item.categoryId} item={item} />
+                        <Item key={item.itemId} item={item} />
                     )
                 })
             }
