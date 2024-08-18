@@ -26,6 +26,24 @@ contextBridge.exposeInMainWorld('mainApi', {
    */
   onCategoryItemCreateReqeust: (callback: (event: any) => void) => {
     ipcRenderer.on(ED.CategoryList.ContextMenu.CreateRequest, (ev: IpcRendererEvent) => callback(ev))
-  }
+  },
+
+  /**
+   * Edit category item request
+   * @param callback - callback
+   * @return void
+   */
+  onCategoryItemEditReqeust: (callback: (event: any, categoryId: number) => void) => {
+    ipcRenderer.on(ED.CategoryList.ContextMenu.EditRequest, (ev: IpcRendererEvent, categoryId: number) => callback(ev, categoryId))
+  },
+
+  /**
+   * Delete category item request
+   * @param callback - callback
+   * @return void
+   */
+  onCategoryItemDeleteReqeust: (callback: (event: any, categoryId: number) => void) => {
+    ipcRenderer.on(ED.CategoryList.ContextMenu.EditRequest, (ev: IpcRendererEvent, categoryId: number) => callback(ev, categoryId))
+  },
 })
 

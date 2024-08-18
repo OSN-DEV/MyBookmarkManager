@@ -1,9 +1,21 @@
 "use strict";
 const electron = require("electron");
 const ED = {
+  /** カテゴリリスト */
   CategoryList: {
+    /** コンテキストメニュー */
     ContextMenu: {
+      /**
+       * メニュー表示
+       */
       Show: "ed.category-list.context-menu.show",
+      /**
+       * メニュー選択
+       */
+      MenuSelected: "ed.category-list.context-menu.menu-selected",
+      /**
+       * カテゴリコンテキストメニュー選択
+       */
       CreateRequest: "ed.category-list.context-menu.create-request",
       EditRequest: "ed.category-list.context-menu.edit-request",
       DeleteRequest: "ed.category-list.context-menu.edit-request",
@@ -35,5 +47,21 @@ electron.contextBridge.exposeInMainWorld("mainApi", {
    */
   onCategoryItemCreateReqeust: (callback) => {
     electron.ipcRenderer.on(ED.CategoryList.ContextMenu.CreateRequest, (ev) => callback(ev));
+  },
+  /**
+   * Edit category item request
+   * @param callback - callback
+   * @return void
+   */
+  onCategoryItemEditReqeust: (callback) => {
+    electron.ipcRenderer.on(ED.CategoryList.ContextMenu.EditRequest, (ev, categoryId) => callback(ev, categoryId));
+  },
+  /**
+   * Delete category item request
+   * @param callback - callback
+   * @return void
+   */
+  onCategoryItemDeleteReqeust: (callback) => {
+    electron.ipcRenderer.on(ED.CategoryList.ContextMenu.EditRequest, (ev, categoryId) => callback(ev, categoryId));
   }
 });

@@ -4,9 +4,12 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import * as CL from './categoryList'
 import { ED } from '../preload/EventDef'
+import { devLog } from '../util/common'
+import { RequestMode } from '../util/Constant'
 
 let showDevTool: boolean = false;
 let mainWindow: BrowserWindow | null = null
+let categoryEditWindow : BrowserWindow | null = null
 
 function createWindow(): void {
   // Create the browser window.
@@ -77,7 +80,6 @@ function createWindow(): void {
   } else {
     mainWindow?.loadFile(join(__dirname, '../renderer/index.html'))
   }
-  
 }
 
 // This method will be called when Electron has finished
@@ -96,9 +98,23 @@ app.whenReady().then(() => {
   })
 
   registerEvent()
-
   toggleDevTool()
 })
+
+// /**
+//  * カテゴリ編集ウィンドウの作成
+//  */
+// function createCategoryEditWindow(): void {
+//   categoryEditWindow = new BrowserWindow({
+//     webPreferences: {
+//       preload: join(__dirname, '../preload/index.js'),
+//       sandbox: false
+//     }
+//   })
+//   categoryEditWindow.loadFile(join(__dirname, '../renderer/category.html'))
+// }
+
+
 
 const openFile = async(): Promise<string> => {
   const {canceled, filePaths} = await dialog.showOpenDialog({})
@@ -114,8 +130,8 @@ const openFile = async(): Promise<string> => {
  */
 const registerEvent = () => {
   // Category list
-  ipcMain.on(ED.CategoryList.ContextMenu.Show, (ev: IpcMainEvent, categoryId: number) => {
-    CL.showContextMenu(mainWindow, categoryId)
+  ipcMain.on(ED.CategoryList.ContextMenu.Show, (_: IpcMainEvent, categoryId: number | null) => {
+    CL.showContextMenu(mainWindow, categoryId, categoryContextMenuCallback)
   })
 
 
@@ -153,6 +169,10 @@ const registerEvent = () => {
       app.quit()
     }
   })
+}
+
+const categoryContextMenuCallback = (categoryId: number | null , mode: RequestMode) => {
+  devLog(`categoryContextMenuCallback: ${categoryId}, ${mode}`)
 }
 
 /**

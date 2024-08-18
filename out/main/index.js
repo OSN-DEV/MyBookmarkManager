@@ -7,9 +7,21 @@ const devLog = (message) => {
   console.log(`##### ${message}`);
 };
 const ED = {
+  /** カテゴリリスト */
   CategoryList: {
+    /** コンテキストメニュー */
     ContextMenu: {
+      /**
+       * メニュー表示
+       */
       Show: "ed.category-list.context-menu.show",
+      /**
+       * メニュー選択
+       */
+      MenuSelected: "ed.category-list.context-menu.menu-selected",
+      /**
+       * カテゴリコンテキストメニュー選択
+       */
       CreateRequest: "ed.category-list.context-menu.create-request",
       EditRequest: "ed.category-list.context-menu.edit-request",
       DeleteRequest: "ed.category-list.context-menu.edit-request",
@@ -19,8 +31,14 @@ const ED = {
     }
   }
 };
+var RequestMode = /* @__PURE__ */ ((RequestMode2) => {
+  RequestMode2["Create"] = "create";
+  RequestMode2["Edit"] = "edit";
+  RequestMode2["Delete"] = "delete";
+  return RequestMode2;
+})(RequestMode || {});
 let contextMenu = null;
-const showContextMenu = (window, categoryId) => {
+const showContextMenu = (window, categoryId, callback) => {
   devLog(`showContextMenu: ${categoryId}`);
   if (!contextMenu) {
     contextMenu = electron.Menu.buildFromTemplate([
@@ -28,14 +46,14 @@ const showContextMenu = (window, categoryId) => {
         label: "Create",
         enabled: categoryId === null,
         click: () => {
-          handleCreateClick(window);
+          callback(categoryId, RequestMode.Create);
         }
       },
       {
         label: "Edit",
         enabled: categoryId !== null,
         click: () => {
-          handleEditClick(window, categoryId);
+          callback(categoryId, RequestMode.Edit);
         }
       },
       {
@@ -56,17 +74,6 @@ const showContextMenu = (window, categoryId) => {
     });
   }
   contextMenu.popup();
-};
-const handleCreateClick = (window) => {
-  devLog(`handleCreateClick`);
-  contextMenu?.closePopup();
-  window.webContents.send(ED.CategoryList.ContextMenu.CreateRequest);
-  window.webContents.send("update-counter", 1);
-  devLog(`send create category item request: ${ED.CategoryList.ContextMenu.CreateRequest}`);
-};
-const handleEditClick = (window, categoryId) => {
-  devLog(`handleEditClick: ${categoryId}`);
-  contextMenu?.closePopup();
 };
 const handleDeleteClick = (window, categoryId) => {
   devLog(`handleDeleteClick: ${categoryId}`);
@@ -152,8 +159,8 @@ const openFile = async () => {
   return "";
 };
 const registerEvent = () => {
-  electron.ipcMain.on(ED.CategoryList.ContextMenu.Show, (ev, categoryId) => {
-    showContextMenu(mainWindow, categoryId);
+  electron.ipcMain.on(ED.CategoryList.ContextMenu.Show, (_, categoryId) => {
+    showContextMenu(mainWindow, categoryId, categoryContextMenuCallback);
   });
   electron.ipcMain.on("ping", () => console.log("pong"));
   electron.ipcMain.on("set-title", (ev, title) => {
@@ -175,6 +182,9 @@ const registerEvent = () => {
       electron.app.quit();
     }
   });
+};
+const categoryContextMenuCallback = (categoryId, mode) => {
+  devLog(`categoryContextMenuCallback: ${categoryId}, ${mode}`);
 };
 const toggleDevTool = () => {
   if (null === mainWindow) {

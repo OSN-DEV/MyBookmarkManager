@@ -1,12 +1,35 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Resize, ResizeHorizon } from 'react-resize-layout'
 import CategoryList from '../feature/BookmarkList/CategoryList'
 import ItemList from '../feature/BookmarkList/ItemList'
 import { TCategory } from '../../@types/TCategory'
 import { FaGithub } from 'react-icons/fa'
 import { TItem } from '../../@types/TItem'
+import { devLog } from '../../util/common'
 
 export const BookmarkList = () => {
+    // register event from main process
+    useEffect(() => {
+      /**
+       * Create category list item request
+       */
+      window.mainApi?.onCategoryItemCreateReqeust((_: any) => { 
+          devLog(`onCategoryItemCreateReqeust`)
+      })
+    //   /**
+    //    * Edit category list item request
+    //    */
+    //   window.mainApi?.onCategoryItemEditReqeust((_: any, categoryId: number) => { 
+    //     devLog(`onCategoryItemEditReqeust: ${categoryId}`)
+    // })
+    //   /**
+    //    * Ddit category list item request
+    //    */
+    //   window.mainApi?.onCategoryItemDeleteReqeust((_: any, categoryId: number) => { 
+    //     devLog(`onCategoryItemDeleteReqeust: ${categoryId}`)
+    // })
+    },[])
+    
   const [currentCategoryId, setCurrentCategoryId] = useState(0)
 
   const categoryList: TCategory[] = [

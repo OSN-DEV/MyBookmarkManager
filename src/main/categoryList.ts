@@ -1,21 +1,22 @@
 import { BrowserWindow, Menu } from 'electron'
 import * as cm from '../util/common'
 import { ED } from '../preload/EventDef'
+import { RequestMode } from '../util/Constant'
 
 let contextMenu: Menu | null = null
-export const showContextMenu = (window: BrowserWindow | null,  categoryId: number | null) => {
+export const showContextMenu = (window: BrowserWindow | null,  categoryId: number | null, callback: (categoryId: number | null, mode: RequestMode)=>void) => {
     cm.devLog(`showContextMenu: ${categoryId}`)
     if (!contextMenu) {
         contextMenu  = Menu.buildFromTemplate([
             {
                 label: 'Create',
                 enabled: (categoryId === null),
-                click: () => {handleCreateClick(window)}
+                click: () => {callback(categoryId, RequestMode.Create)}
             },
             {
                 label: 'Edit',
                 enabled: (categoryId !== null),
-                click: () => {handleEditClick(window, categoryId)}
+                click: () => {callback(categoryId, RequestMode.Edit)}
             },
             {
                 label: 'Delete',
