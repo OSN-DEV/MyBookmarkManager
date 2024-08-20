@@ -81,6 +81,7 @@ const handleDeleteClick = (window, categoryId) => {
 };
 let showDevTool = false;
 let mainWindow = null;
+let categoryEditWindow = null;
 function createWindow() {
   mainWindow = new electron.BrowserWindow({
     width: 900,
@@ -151,6 +152,24 @@ electron.app.whenReady().then(() => {
   registerEvent();
   toggleDevTool();
 });
+function createCategoryEditWindow() {
+  if (null != categoryEditWindow) {
+    categoryEditWindow.close();
+  }
+  categoryEditWindow = new electron.BrowserWindow({
+    webPreferences: {
+      preload: path.join(__dirname, "../preload/index.js"),
+      sandbox: false
+    }
+  });
+  devLog(`createCategoryEditWindow`);
+  devLog(path.join(__dirname, "../renderer/category.html"));
+  if (!electron.app.isPackaged && process.env["ELECTRON_RENDERER_URL"]) {
+    categoryEditWindow.loadURL(`${process.env["ELECTRON_RENDERER_URL"]}/category.html`);
+  } else {
+    categoryEditWindow.loadFile(path.join(__dirname, "../renderer/category.html"));
+  }
+}
 const openFile = async () => {
   const { canceled, filePaths } = await electron.dialog.showOpenDialog({});
   if (!canceled) {
@@ -185,6 +204,7 @@ const registerEvent = () => {
 };
 const categoryContextMenuCallback = (categoryId, mode) => {
   devLog(`categoryContextMenuCallback: ${categoryId}, ${mode}`);
+  createCategoryEditWindow();
 };
 const toggleDevTool = () => {
   if (null === mainWindow) {

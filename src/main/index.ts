@@ -77,6 +77,7 @@ function createWindow(): void {
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow?.loadURL(process.env['ELECTRON_RENDERER_URL'])
+
   } else {
     mainWindow?.loadFile(join(__dirname, '../renderer/index.html'))
   }
@@ -101,18 +102,30 @@ app.whenReady().then(() => {
   toggleDevTool()
 })
 
-// /**
-//  * カテゴリ編集ウィンドウの作成
-//  */
-// function createCategoryEditWindow(): void {
-//   categoryEditWindow = new BrowserWindow({
-//     webPreferences: {
-//       preload: join(__dirname, '../preload/index.js'),
-//       sandbox: false
-//     }
-//   })
-//   categoryEditWindow.loadFile(join(__dirname, '../renderer/category.html'))
-// }
+/**
+ * カテゴリ編集ウィンドウの作成
+ */
+function createCategoryEditWindow(): void {
+  if (null != categoryEditWindow) {
+    categoryEditWindow.close()
+  }
+
+  categoryEditWindow = new BrowserWindow({
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false
+    }
+  })
+devLog(`createCategoryEditWindow`)
+devLog(join(__dirname, '../renderer/category.html'))
+  // categoryEditWindow.loadFile(join(__dirname, '../renderer/category.html'))
+  // categoryEditWindow.loadURL(new URL('category.html', process.env['ELECTRON_RENDERER_URL']).href);
+  if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
+    categoryEditWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/category.html`)
+  } else {
+    categoryEditWindow.loadFile(join(__dirname, '../renderer/category.html'))
+  }
+}
 
 
 
@@ -173,6 +186,7 @@ const registerEvent = () => {
 
 const categoryContextMenuCallback = (categoryId: number | null , mode: RequestMode) => {
   devLog(`categoryContextMenuCallback: ${categoryId}, ${mode}`)
+  createCategoryEditWindow()
 }
 
 /**
