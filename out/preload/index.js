@@ -65,3 +65,6 @@ electron.contextBridge.exposeInMainWorld("mainApi", {
     electron.ipcRenderer.on(ED.CategoryList.ContextMenu.EditRequest, (ev, categoryId) => callback(ev, categoryId));
   }
 });
+electron.contextBridge.exposeInMainWorld("categoryApi", {
+  ping2: () => electron.ipcRenderer.send("ping2")
+});

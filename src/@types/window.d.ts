@@ -2,6 +2,7 @@ import { ElectronAPI } from '@electron-toolkit/preload'
 declare global {
   interface Window {
     mainApi: IMainApi;
+    categoryApi: ICategoryApi;
   }
 }
 
@@ -14,4 +15,8 @@ export interface IMainApi {
 
   showCategoryListContextMenu:(categoryId: number | null) => void,
   onCategoryItemCreateReqeust: (callback: (event: any) => void) => void,
+}
+
+export interface ICategoryApi {
+  ping2:() => void
 }

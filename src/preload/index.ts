@@ -47,3 +47,7 @@ contextBridge.exposeInMainWorld('mainApi', {
   },
 })
 
+
+contextBridge.exposeInMainWorld('categoryApi', {
+  ping2: () => ipcRenderer.send('ping2')
+})

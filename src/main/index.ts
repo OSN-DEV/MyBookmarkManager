@@ -106,18 +106,17 @@ app.whenReady().then(() => {
  * カテゴリ編集ウィンドウの作成
  */
 function createCategoryEditWindow(): void {
-  if (null != categoryEditWindow) {
+  if (null != categoryEditWindow && !categoryEditWindow.isDestroyed()) {
     categoryEditWindow.close()
   }
 
   categoryEditWindow = new BrowserWindow({
+    parent: mainWindow!,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }
   })
-devLog(`createCategoryEditWindow`)
-devLog(join(__dirname, '../renderer/category.html'))
   // categoryEditWindow.loadFile(join(__dirname, '../renderer/category.html'))
   // categoryEditWindow.loadURL(new URL('category.html', process.env['ELECTRON_RENDERER_URL']).href);
   if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
@@ -150,6 +149,7 @@ const registerEvent = () => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+  ipcMain.on('ping2', () => console.log('pong2'))
 
   // Pattern1
   ipcMain.on('set-title', (ev: IpcMainEvent, title: string) => {

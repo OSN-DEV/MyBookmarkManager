@@ -153,17 +153,16 @@ electron.app.whenReady().then(() => {
   toggleDevTool();
 });
 function createCategoryEditWindow() {
-  if (null != categoryEditWindow) {
+  if (null != categoryEditWindow && !categoryEditWindow.isDestroyed()) {
     categoryEditWindow.close();
   }
   categoryEditWindow = new electron.BrowserWindow({
+    parent: mainWindow,
     webPreferences: {
       preload: path.join(__dirname, "../preload/index.js"),
       sandbox: false
     }
   });
-  devLog(`createCategoryEditWindow`);
-  devLog(path.join(__dirname, "../renderer/category.html"));
   if (!electron.app.isPackaged && process.env["ELECTRON_RENDERER_URL"]) {
     categoryEditWindow.loadURL(`${process.env["ELECTRON_RENDERER_URL"]}/category.html`);
   } else {
@@ -182,6 +181,7 @@ const registerEvent = () => {
     showContextMenu(mainWindow, categoryId, categoryContextMenuCallback);
   });
   electron.ipcMain.on("ping", () => console.log("pong"));
+  electron.ipcMain.on("ping2", () => console.log("pong2"));
   electron.ipcMain.on("set-title", (ev, title) => {
     const webContents = ev.sender;
     const win = electron.BrowserWindow.fromWebContents(webContents);
