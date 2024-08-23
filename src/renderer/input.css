@@ -7,11 +7,7 @@ body {
 }
 
 
-/** カテゴリリスト */
-/* .left-side {
-  background-color: #D7C8CA;
-} */
-
+/** カテゴリ リスト */
 .category-list {
   color: #9b767a;
   background-color: #D7C8CA;
@@ -29,6 +25,27 @@ body {
   margin-right: 0.4em;
 }
 
+/** カテゴリ編集 */
+.category-edit-body {
+  padding-top: 0.5em;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.category-edit-caption {
+  font-size: 10pt;
+}
+
+.category-edit-input {
+  width: 300px;
+  outline: none;
+  border-bottom: solid 1px #D7C8CA;
+}
+.category-edit-input:focus {
+  border-bottom: solid 1px #b8a9ab;
+}
+
+/** カテゴリリスト */
 .item-list {
   padding: 0.5em;
   color: #9b767a;

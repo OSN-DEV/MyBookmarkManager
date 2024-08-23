@@ -163,6 +163,7 @@ function createCategoryEditWindow() {
       sandbox: false
     }
   });
+  categoryEditWindow.setMenuBarVisibility(false);
   if (!electron.app.isPackaged && process.env["ELECTRON_RENDERER_URL"]) {
     categoryEditWindow.loadURL(`${process.env["ELECTRON_RENDERER_URL"]}/category.html`);
   } else {

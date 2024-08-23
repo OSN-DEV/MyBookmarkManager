@@ -53,3 +53,10 @@ export const shuffleArray = <T>(array:T[]):T[] =>  {
 
   return result;
 }
+
+// export const getKeys = <T extends {[key: string]: unknown}>(obj: T): (keyof T)[] => {
+//   return Object.keys(obj)
+// }
+export const getKeys = <T extends {[key: string]: any}>(obj: T): (keyof T)[] => {
+  return Object.keys(obj) as (keyof T)[];
+}

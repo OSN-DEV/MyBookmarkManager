@@ -112,11 +112,13 @@ function createCategoryEditWindow(): void {
 
   categoryEditWindow = new BrowserWindow({
     parent: mainWindow!,
+    width: 350, height: 200,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }
   })
+  categoryEditWindow.setMenuBarVisibility(false)
   // categoryEditWindow.loadFile(join(__dirname, '../renderer/category.html'))
   // categoryEditWindow.loadURL(new URL('category.html', process.env['ELECTRON_RENDERER_URL']).href);
   if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
