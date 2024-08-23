@@ -1,12 +1,35 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Resize, ResizeHorizon } from 'react-resize-layout'
 import CategoryList from '../feature/BookmarkList/CategoryList'
 import ItemList from '../feature/BookmarkList/ItemList'
-import { TCategory } from '../../type/TCategory'
+import { TCategory } from '../../@types/TCategory'
 import { FaGithub } from 'react-icons/fa'
-import { TItem } from '../../type/Titem'
+import { TItem } from '../../@types/TItem'
+import { devLog } from '../../util/common'
 
 export const BookmarkList = () => {
+    // register event from main process
+    useEffect(() => {
+      /**
+       * Create category list item request
+       */
+      window.mainApi?.onCategoryItemCreateReqeust((_: any) => { 
+          devLog(`onCategoryItemCreateReqeust`)
+      })
+    //   /**
+    //    * Edit category list item request
+    //    */
+    //   window.mainApi?.onCategoryItemEditReqeust((_: any, categoryId: number) => { 
+    //     devLog(`onCategoryItemEditReqeust: ${categoryId}`)
+    // })
+    //   /**
+    //    * Ddit category list item request
+    //    */
+    //   window.mainApi?.onCategoryItemDeleteReqeust((_: any, categoryId: number) => { 
+    //     devLog(`onCategoryItemDeleteReqeust: ${categoryId}`)
+    // })
+    },[])
+    
   const [currentCategoryId, setCurrentCategoryId] = useState(0)
 
   const categoryList: TCategory[] = [
@@ -22,26 +45,15 @@ export const BookmarkList = () => {
     {categoryId: 1, itemId: 1, itemName: 'Google', order:1, url:'https://www.google.co.jp', explanation: 'ぐぐるとは'},
     {categoryId: 1, itemId: 2, itemName: 'Youtube', order:1, url:'httsp:www.youtube.com/', explanation: 'ぐぐるとは'},
     {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
-    {categoryId: 1, itemId: 3, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
+    {categoryId: 1, itemId: 4, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
+    {categoryId: 1, itemId: 5, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
+    {categoryId: 1, itemId: 6, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
+    {categoryId: 1, itemId: 7, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
+    {categoryId: 1, itemId: 8, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
+    {categoryId: 1, itemId: 9, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
+    {categoryId: 1, itemId: 10, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
+    {categoryId: 1, itemId: 11, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
+    {categoryId: 1, itemId: 12, itemName: 'Zenn', order:1, url:'https://zenn.dev/', explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'},
   ]
 
   return (

@@ -1,5 +1,5 @@
 import React from "react"
-import { IconBaseProps, IconManifestType, IconType } from "react-icons"
+import { IconType } from "react-icons"
 
 type CategoryProps = {
     icon: IconType
@@ -13,7 +13,9 @@ type CategoryProps = {
 const Category = (props: CategoryProps) => {
     const {icon, id, isSelected, name, handleClick, onContextMenu} = props
     const RenderIcon = icon
-
+    if (isSelected) {
+        console.log("selected")
+    }
     const handleContextmenu = (e: React.MouseEvent) => {
         e.stopPropagation()
         onContextMenu()

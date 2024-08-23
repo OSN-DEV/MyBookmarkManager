@@ -2,9 +2,14 @@ import { app, shell, BrowserWindow, ipcMain, IpcMainEvent, dialog, Menu } from '
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import * as CL from './categoryList'
+import { ED } from '../preload/EventDef'
+import { devLog } from '../util/common'
+import { RequestMode } from '../util/Constant'
 
 let showDevTool: boolean = false;
 let mainWindow: BrowserWindow | null = null
+let categoryEditWindow : BrowserWindow | null = null
 
 function createWindow(): void {
   // Create the browser window.
@@ -37,7 +42,7 @@ function createWindow(): void {
       { label: showDevTool ? 'hide dev tool' : 'show dev tool', click: () => toggleDevTool() },
       {
         click: () => {
-          mainWindow?.webContents.send('update-counter', 1)
+          mainWindow?.webContents.send('update-counterXXX', 1)
         },
         label: 'increment'
       },
@@ -47,6 +52,13 @@ function createWindow(): void {
         },
         label: 'decrement'
       },
+      {
+        click: () => {
+          console.log('send request')
+          mainWindow?.webContents.send(ED.CategoryList.ContextMenu.CreateRequest)
+        },
+        label: 'test'
+      }
     ]
   }
   ])
@@ -65,10 +77,10 @@ function createWindow(): void {
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow?.loadURL(process.env['ELECTRON_RENDERER_URL'])
+
   } else {
     mainWindow?.loadFile(join(__dirname, '../renderer/index.html'))
   }
-  
 }
 
 // This method will be called when Electron has finished
@@ -86,8 +98,60 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
+  registerEvent()
+  toggleDevTool()
+})
+
+/**
+ * カテゴリ編集ウィンドウの作成
+ */
+function createCategoryEditWindow(): void {
+  if (null != categoryEditWindow && !categoryEditWindow.isDestroyed()) {
+    categoryEditWindow.close()
+  }
+
+  categoryEditWindow = new BrowserWindow({
+    parent: mainWindow!,
+    width: 350, height: 200,
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false
+    }
+  })
+  categoryEditWindow.setMenuBarVisibility(false)
+  // categoryEditWindow.loadFile(join(__dirname, '../renderer/category.html'))
+  // categoryEditWindow.loadURL(new URL('category.html', process.env['ELECTRON_RENDERER_URL']).href);
+  if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
+    categoryEditWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/category.html`)
+  } else {
+    categoryEditWindow.loadFile(join(__dirname, '../renderer/category.html'))
+  }
+}
+
+
+
+const openFile = async(): Promise<string> => {
+  const {canceled, filePaths} = await dialog.showOpenDialog({})
+  if (!canceled) {
+    return filePaths[0]
+  }
+  return ""
+}
+
+
+/**
+ * register event
+ */
+const registerEvent = () => {
+  // Category list
+  ipcMain.on(ED.CategoryList.ContextMenu.Show, (_: IpcMainEvent, categoryId: number | null) => {
+    CL.showContextMenu(mainWindow, categoryId, categoryContextMenuCallback)
+  })
+
+
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+  ipcMain.on('ping2', () => console.log('pong2'))
 
   // Pattern1
   ipcMain.on('set-title', (ev: IpcMainEvent, title: string) => {
@@ -100,7 +164,7 @@ app.whenReady().then(() => {
   ipcMain.handle('dialog:openFile', openFile)
 
   // Pattern3
-  ipcMain.on('counter-value', (ev: IpcMainEvent, value: number) => {
+  ipcMain.on('counter-value', (_: IpcMainEvent, value: number) => {
     console.log(value)
   })
 
@@ -111,24 +175,21 @@ app.whenReady().then(() => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
-})
 
-const openFile = async(): Promise<string> => {
-  const {canceled, filePaths} = await dialog.showOpenDialog({})
-  if (!canceled) {
-    return filePaths[0]
-  }
-  return ""
+  // Quit when all windows are closed, except on macOS. There, it's common
+  // for applications and their menu bar to stay active until the user quits
+  // explicitly with Cmd + Q.
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
+  })
 }
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
+const categoryContextMenuCallback = (categoryId: number | null , mode: RequestMode) => {
+  devLog(`categoryContextMenuCallback: ${categoryId}, ${mode}`)
+  createCategoryEditWindow()
+}
 
 /**
  * Devツールの表示切替

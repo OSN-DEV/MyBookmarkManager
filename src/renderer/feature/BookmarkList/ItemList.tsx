@@ -1,6 +1,6 @@
 import React from "react"
-import { TItem } from "../../../type/Titem"
 import Item from "./Item"
+import { TItem } from "../../../@types/TItem"
 
 type ItemListProps = {
     itemList: TItem[]
@@ -14,7 +14,7 @@ const ItemList = (props: ItemListProps) => {
             {
                 itemList.map((item:TItem) => {
                     return(
-                        <Item key={item.categoryId} item={item} />
+                        <Item key={item.itemId} item={item} />
                     )
                 })
             }
