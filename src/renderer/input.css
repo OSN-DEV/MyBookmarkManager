@@ -6,11 +6,10 @@ body {
   font-size: 14pt;
 }
 
-
 /** カテゴリ リスト */
 .category-list {
   color: #9b767a;
-  background-color: #D7C8CA;
+  background-color: #d7c8ca;
   padding: 1em;
   height: 100%;
 }
@@ -39,7 +38,7 @@ body {
 .category-edit-input {
   width: 300px;
   outline: none;
-  border-bottom: solid 1px #D7C8CA;
+  border-bottom: solid 1px #d7c8ca;
 }
 .category-edit-input:focus {
   border-bottom: solid 1px #b8a9ab;
@@ -56,4 +55,3 @@ body {
   margin-left: 1em;
   margin-top: 1em;
 }
-

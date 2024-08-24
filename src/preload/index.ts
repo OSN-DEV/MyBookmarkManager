@@ -1,7 +1,6 @@
 import { IpcRendererEvent, contextBridge, ipcRenderer } from 'electron'
 import { ED } from './EventDef'
 
-
 contextBridge.exposeInMainWorld('mainApi', {
   ping: () => ipcRenderer.send('ping'),
   setTitle: (title: string) => ipcRenderer.send('set-title', title),
@@ -10,7 +9,7 @@ contextBridge.exposeInMainWorld('mainApi', {
   onUpdateCounter: (callback: (event: any, value: number) => void) => {
     ipcRenderer.on('update-counter', (ev: IpcRendererEvent, value: number) => callback(ev, value))
   },
-  
+
   /** category list */
   /**
    * Show context menu for category list
@@ -44,9 +43,8 @@ contextBridge.exposeInMainWorld('mainApi', {
    */
   onCategoryItemDeleteReqeust: (callback: (event: any, categoryId: number) => void) => {
     ipcRenderer.on(ED.CategoryList.ContextMenu.EditRequest, (ev: IpcRendererEvent, categoryId: number) => callback(ev, categoryId))
-  },
+  }
 })
-
 
 contextBridge.exposeInMainWorld('categoryApi', {
   ping2: () => ipcRenderer.send('ping2')

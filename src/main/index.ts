@@ -7,9 +7,9 @@ import { ED } from '../preload/EventDef'
 import { devLog } from '../util/common'
 import { RequestMode } from '../util/Constant'
 
-let showDevTool: boolean = false;
+let showDevTool: boolean = false
 let mainWindow: BrowserWindow | null = null
-let categoryEditWindow : BrowserWindow | null = null
+let categoryEditWindow: BrowserWindow | null = null
 
 function createWindow(): void {
   // Create the browser window.
@@ -20,12 +20,12 @@ function createWindow(): void {
     autoHideMenuBar: false,
     // titleBarStyle: 'hidden',
     titleBarOverlay: {
-        // color of titile bar
-        color: '#3b3b3b',
-        // color of titile bar control
-        symbolColor: '#74b1be',
-        // height of titile bar
-        height: 32
+      // color of titile bar
+      color: '#3b3b3b',
+      // color of titile bar control
+      symbolColor: '#74b1be',
+      // height of titile bar
+      height: 32
     },
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -35,49 +35,48 @@ function createWindow(): void {
   })
 
   // Pattern3
-  const menu  = Menu.buildFromTemplate([
+  const menu = Menu.buildFromTemplate([
     {
-    label: app.name,
-    submenu: [
-      { label: showDevTool ? 'hide dev tool' : 'show dev tool', click: () => toggleDevTool() },
-      {
-        click: () => {
-          mainWindow?.webContents.send('update-counterXXX', 1)
+      label: app.name,
+      submenu: [
+        { label: showDevTool ? 'hide dev tool' : 'show dev tool', click: () => toggleDevTool() },
+        {
+          click: () => {
+            mainWindow?.webContents.send('update-counterXXX', 1)
+          },
+          label: 'increment'
         },
-        label: 'increment'
-      },
-      {
-        click: () => {
-          mainWindow?.webContents.send('update-counter', -1)
+        {
+          click: () => {
+            mainWindow?.webContents.send('update-counter', -1)
+          },
+          label: 'decrement'
         },
-        label: 'decrement'
-      },
-      {
-        click: () => {
-          console.log('send request')
-          mainWindow?.webContents.send(ED.CategoryList.ContextMenu.CreateRequest)
-        },
-        label: 'test'
-      }
-    ]
-  }
+        {
+          click: () => {
+            console.log('send request')
+            mainWindow?.webContents.send(ED.CategoryList.ContextMenu.CreateRequest)
+          },
+          label: 'test'
+        }
+      ]
+    }
   ])
   Menu.setApplicationMenu(menu)
-  
+
   mainWindow.on('ready-to-show', () => {
     mainWindow?.show()
   })
 
   mainWindow?.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
-    return { action: 'deny' }         // 新しいウィンドウを開くことを拒否(指定されたURLがデフォルトブラウザで表示されることを強要)
+    return { action: 'deny' } // 新しいウィンドウを開くことを拒否(指定されたURLがデフォルトブラウザで表示されることを強要)
   })
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow?.loadURL(process.env['ELECTRON_RENDERER_URL'])
-
   } else {
     mainWindow?.loadFile(join(__dirname, '../renderer/index.html'))
   }
@@ -112,7 +111,8 @@ function createCategoryEditWindow(): void {
 
   categoryEditWindow = new BrowserWindow({
     parent: mainWindow!,
-    width: 350, height: 200,
+    width: 350,
+    height: 200,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
@@ -128,16 +128,13 @@ function createCategoryEditWindow(): void {
   }
 }
 
-
-
-const openFile = async(): Promise<string> => {
-  const {canceled, filePaths} = await dialog.showOpenDialog({})
+const openFile = async (): Promise<string> => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({})
   if (!canceled) {
     return filePaths[0]
   }
-  return ""
+  return ''
 }
-
 
 /**
  * register event
@@ -147,7 +144,6 @@ const registerEvent = () => {
   ipcMain.on(ED.CategoryList.ContextMenu.Show, (_: IpcMainEvent, categoryId: number | null) => {
     CL.showContextMenu(mainWindow, categoryId, categoryContextMenuCallback)
   })
-
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
@@ -159,7 +155,7 @@ const registerEvent = () => {
     const win = BrowserWindow.fromWebContents(webContents)
     win?.setTitle(title)
   })
-  
+
   // Pattern2
   ipcMain.handle('dialog:openFile', openFile)
 
@@ -186,7 +182,7 @@ const registerEvent = () => {
   })
 }
 
-const categoryContextMenuCallback = (categoryId: number | null , mode: RequestMode) => {
+const categoryContextMenuCallback = (categoryId: number | null, mode: RequestMode) => {
   devLog(`categoryContextMenuCallback: ${categoryId}, ${mode}`)
   createCategoryEditWindow()
 }
@@ -196,14 +192,14 @@ const categoryContextMenuCallback = (categoryId: number | null , mode: RequestMo
  */
 const toggleDevTool = (): void => {
   if (null === mainWindow) {
-    return;
+    return
   }
   if (showDevTool) {
-    mainWindow.webContents.closeDevTools();
+    mainWindow.webContents.closeDevTools()
   } else {
-    mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools()
   }
-  showDevTool = !showDevTool;
+  showDevTool = !showDevTool
 }
 
 // In this file you can include the rest of your app"s specific main process

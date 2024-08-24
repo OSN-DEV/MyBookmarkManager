@@ -1,11 +1,11 @@
-import { IconType } from "react-icons"
-import { FaBookmark, FaHome } from "react-icons/fa";
+import { IconType } from 'react-icons'
+import { FaBookmark, FaHome } from 'react-icons/fa'
 
 interface IconMap {
-    [key: string]: IconType;
-  }
+  [key: string]: IconType
+}
 
 export const IconsPair: IconMap = {
-    'FaBookmark': FaBookmark,
-    'FaHome': FaHome,
+  FaBookmark: FaBookmark,
+  FaHome: FaHome
 }

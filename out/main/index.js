@@ -158,6 +158,8 @@ function createCategoryEditWindow() {
   }
   categoryEditWindow = new electron.BrowserWindow({
     parent: mainWindow,
+    width: 350,
+    height: 200,
     webPreferences: {
       preload: path.join(__dirname, "../preload/index.js"),
       sandbox: false
