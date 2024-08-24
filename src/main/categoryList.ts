@@ -2,44 +2,46 @@ import { BrowserWindow, Menu } from 'electron'
 import * as cm from '../util/common'
 import { ED } from '../preload/EventDef'
 import { RequestMode } from '../util/Constant'
+import { TCategory } from '../@types/TCategory'
 
 let contextMenu: Menu | null = null
 export const showContextMenu = (
   window: BrowserWindow | null,
-  categoryId: number | null,
-  callback: (categoryId: number | null, mode: RequestMode) => void
+  category: TCategory | null,
+  callback: (category: TCategory | null, mode: RequestMode) => void
 ) => {
-  cm.devLog(`showContextMenu: ${categoryId}`)
+  const isCreate = (category?.categoryId === null)
+  cm.devLog(`showContextMenu: ${category?.categoryId}`)
   if (!contextMenu) {
     contextMenu = Menu.buildFromTemplate([
       {
         label: 'Create',
-        enabled: categoryId === null,
+        enabled: isCreate,
         click: () => {
-          callback(categoryId, RequestMode.Create)
+          callback(category, RequestMode.Create)
         }
       },
       {
         label: 'Edit',
-        enabled: categoryId !== null,
+        enabled: !isCreate,
         click: () => {
-          callback(categoryId, RequestMode.Edit)
+          callback(category, RequestMode.Edit)
         }
       },
       {
         label: 'Delete',
-        enabled: categoryId !== null,
+        enabled: !isCreate,
         click: () => {
-          handleDeleteClick(window, categoryId)
+          // handleDeleteClick(window, categoryId)
         }
       }
     ])
   } else {
     contextMenu.items.map((m) => {
       if (m.label === 'Create') {
-        m.enabled = categoryId === null
+        m.enabled = isCreate
       } else {
-        m.enabled = categoryId !== null
+        m.enabled = !isCreate
       }
     })
   }

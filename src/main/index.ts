@@ -6,6 +6,7 @@ import * as CL from './categoryList'
 import { ED } from '../preload/EventDef'
 import { devLog } from '../util/common'
 import { RequestMode } from '../util/Constant'
+import { TCategory } from '../@types/TCategory'
 
 let showDevTool: boolean = false
 let mainWindow: BrowserWindow | null = null
@@ -104,7 +105,7 @@ app.whenReady().then(() => {
 /**
  * カテゴリ編集ウィンドウの作成
  */
-function createCategoryEditWindow(): void {
+function createCategoryEditWindow(category: TCategory | null): void {
   if (null != categoryEditWindow && !categoryEditWindow.isDestroyed()) {
     categoryEditWindow.close()
   }
@@ -119,13 +120,16 @@ function createCategoryEditWindow(): void {
     }
   })
   categoryEditWindow.setMenuBarVisibility(false)
-  // categoryEditWindow.loadFile(join(__dirname, '../renderer/category.html'))
-  // categoryEditWindow.loadURL(new URL('category.html', process.env['ELECTRON_RENDERER_URL']).href);
   if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
     categoryEditWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/category.html`)
   } else {
     categoryEditWindow.loadFile(join(__dirname, '../renderer/category.html'))
   }
+
+  categoryEditWindow.on('ready-to-show', () => {
+    categoryEditWindow?.show()
+    categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, null)
+  })
 }
 
 const openFile = async (): Promise<string> => {
@@ -139,15 +143,11 @@ const openFile = async (): Promise<string> => {
 /**
  * register event
  */
-const registerEvent = () => {
+const registerEvent = (): void => {
   // Category list
-  ipcMain.on(ED.CategoryList.ContextMenu.Show, (_: IpcMainEvent, categoryId: number | null) => {
-    CL.showContextMenu(mainWindow, categoryId, categoryContextMenuCallback)
+  ipcMain.on(ED.CategoryList.ContextMenu.Show, (_: IpcMainEvent, category: TCategory | null) => {
+    CL.showContextMenu(mainWindow, category, categoryContextMenuCallback)
   })
-
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
-  ipcMain.on('ping2', () => console.log('pong2'))
 
   // Pattern1
   ipcMain.on('set-title', (ev: IpcMainEvent, title: string) => {
@@ -182,9 +182,12 @@ const registerEvent = () => {
   })
 }
 
-const categoryContextMenuCallback = (categoryId: number | null, mode: RequestMode) => {
-  devLog(`categoryContextMenuCallback: ${categoryId}, ${mode}`)
-  createCategoryEditWindow()
+/**
+ * コンテキストメニュー コールバック
+ */
+const categoryContextMenuCallback = (category: TCategory | null, mode: RequestMode): void => {
+  devLog(`categoryContextMenuCallback: ${category?.categoryId}, ${mode}`)
+  createCategoryEditWindow(category)
 }
 
 /**
@@ -204,3 +207,6 @@ const toggleDevTool = (): void => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+//
+//
+//

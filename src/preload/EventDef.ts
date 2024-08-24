@@ -23,5 +23,12 @@ export const ED = {
       EditResponset: 'ed.category-list.context-menu.edit-response',
       DeleteResponse: 'ed.category-list.context-menu.edit-response'
     }
+  },
+  /** カテゴリ編集 */
+  CategoryEdit: {
+    /**
+     * ロードイベント
+     */
+    Load: 'ed.category-edit.loadd'
   }
 }

@@ -6,7 +6,7 @@ import { CategoryEdit } from './page/CategoryEdit'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    {/* <BookmarkList /> */}
-    <CategoryEdit />
+    <BookmarkList />
+    {/* <CategoryEdit /> */}
   </React.StrictMode>
 )

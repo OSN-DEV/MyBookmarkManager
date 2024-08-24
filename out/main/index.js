@@ -29,6 +29,13 @@ const ED = {
       EditResponset: "ed.category-list.context-menu.edit-response",
       DeleteResponse: "ed.category-list.context-menu.edit-response"
     }
+  },
+  /** カテゴリ編集 */
+  CategoryEdit: {
+    /**
+     * ロードイベント
+     */
+    Load: "ed.category-edit.loadd"
   }
 };
 var RequestMode = /* @__PURE__ */ ((RequestMode2) => {
@@ -38,46 +45,42 @@ var RequestMode = /* @__PURE__ */ ((RequestMode2) => {
   return RequestMode2;
 })(RequestMode || {});
 let contextMenu = null;
-const showContextMenu = (window, categoryId, callback) => {
-  devLog(`showContextMenu: ${categoryId}`);
+const showContextMenu = (window, category, callback) => {
+  const isCreate = category?.categoryId === null;
+  devLog(`showContextMenu: ${category?.categoryId}`);
   if (!contextMenu) {
     contextMenu = electron.Menu.buildFromTemplate([
       {
         label: "Create",
-        enabled: categoryId === null,
+        enabled: isCreate,
         click: () => {
-          callback(categoryId, RequestMode.Create);
+          callback(category, RequestMode.Create);
         }
       },
       {
         label: "Edit",
-        enabled: categoryId !== null,
+        enabled: !isCreate,
         click: () => {
-          callback(categoryId, RequestMode.Edit);
+          callback(category, RequestMode.Edit);
         }
       },
       {
         label: "Delete",
-        enabled: categoryId !== null,
+        enabled: !isCreate,
         click: () => {
-          handleDeleteClick(window, categoryId);
         }
       }
     ]);
   } else {
     contextMenu.items.map((m) => {
       if (m.label === "Create") {
-        m.enabled = categoryId === null;
+        m.enabled = isCreate;
       } else {
-        m.enabled = categoryId !== null;
+        m.enabled = !isCreate;
       }
     });
   }
   contextMenu.popup();
-};
-const handleDeleteClick = (window, categoryId) => {
-  devLog(`handleDeleteClick: ${categoryId}`);
-  contextMenu?.closePopup();
 };
 let showDevTool = false;
 let mainWindow = null;
@@ -152,7 +155,7 @@ electron.app.whenReady().then(() => {
   registerEvent();
   toggleDevTool();
 });
-function createCategoryEditWindow() {
+function createCategoryEditWindow(category) {
   if (null != categoryEditWindow && !categoryEditWindow.isDestroyed()) {
     categoryEditWindow.close();
   }
@@ -171,6 +174,10 @@ function createCategoryEditWindow() {
   } else {
     categoryEditWindow.loadFile(path.join(__dirname, "../renderer/category.html"));
   }
+  categoryEditWindow.on("ready-to-show", () => {
+    categoryEditWindow?.show();
+    categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, null);
+  });
 }
 const openFile = async () => {
   const { canceled, filePaths } = await electron.dialog.showOpenDialog({});
@@ -180,11 +187,9 @@ const openFile = async () => {
   return "";
 };
 const registerEvent = () => {
-  electron.ipcMain.on(ED.CategoryList.ContextMenu.Show, (_, categoryId) => {
-    showContextMenu(mainWindow, categoryId, categoryContextMenuCallback);
+  electron.ipcMain.on(ED.CategoryList.ContextMenu.Show, (_, category) => {
+    showContextMenu(mainWindow, category, categoryContextMenuCallback);
   });
-  electron.ipcMain.on("ping", () => console.log("pong"));
-  electron.ipcMain.on("ping2", () => console.log("pong2"));
   electron.ipcMain.on("set-title", (ev, title) => {
     const webContents = ev.sender;
     const win = electron.BrowserWindow.fromWebContents(webContents);
@@ -205,8 +210,8 @@ const registerEvent = () => {
     }
   });
 };
-const categoryContextMenuCallback = (categoryId, mode) => {
-  devLog(`categoryContextMenuCallback: ${categoryId}, ${mode}`);
+const categoryContextMenuCallback = (category, mode) => {
+  devLog(`categoryContextMenuCallback: ${category?.categoryId}, ${mode}`);
   createCategoryEditWindow();
 };
 const toggleDevTool = () => {

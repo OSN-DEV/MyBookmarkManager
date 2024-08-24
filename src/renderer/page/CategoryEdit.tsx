@@ -1,8 +1,13 @@
+import { TCategory } from '../../@types/TCategory'
 import { devLog } from '../../util/common'
 import { EditText } from '../components/EditText'
 import { TextButton } from '../components/TextButton'
 
 export const CategoryEdit = (): JSX.Element => {
+  window.categoryApi.onLoad((_: any, category: TCategory | null) => {
+    alert('OKOKOK')
+  })
+
   /**
    * OKボタンクリック
    */

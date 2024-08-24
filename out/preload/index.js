@@ -23,6 +23,13 @@ const ED = {
       EditResponset: "ed.category-list.context-menu.edit-response",
       DeleteResponse: "ed.category-list.context-menu.edit-response"
     }
+  },
+  /** カテゴリ編集 */
+  CategoryEdit: {
+    /**
+     * ロードイベント
+     */
+    Load: "ed.category-edit.loadd"
   }
 };
 electron.contextBridge.exposeInMainWorld("mainApi", {
@@ -66,5 +73,13 @@ electron.contextBridge.exposeInMainWorld("mainApi", {
   }
 });
 electron.contextBridge.exposeInMainWorld("categoryApi", {
-  ping2: () => electron.ipcRenderer.send("ping2")
+  /**
+   * ロードイベント
+   * @param callback コールバック
+   * @param callback.event IPCメッセージイベント
+   * @param callback.category カテゴリ情報
+   */
+  onLoad: (callback) => {
+    electron.ipcRenderer.on(ED.CategoryEdit.Load, (event, category) => callback(event, category));
+  }
 });
