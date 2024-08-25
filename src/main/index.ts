@@ -146,7 +146,7 @@ const openFile = async (): Promise<string> => {
 const registerEvent = (): void => {
   // Category list
   ipcMain.on(ED.CategoryList.ContextMenu.Show, (_: IpcMainEvent, category: TCategory | null) => {
-    CL.showContextMenu(mainWindow, category, categoryContextMenuCallback)
+    CL.showContextMenu(category, categoryContextMenuCallback)
   })
 
   // Pattern1

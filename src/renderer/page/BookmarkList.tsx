@@ -33,12 +33,12 @@ export const BookmarkList = () => {
   const [currentCategoryId, setCurrentCategoryId] = useState(0)
 
   const categoryList: TCategory[] = [
-    { categoryId: 1, categoryName: 'c1', order: 1, icon: FaGithub },
-    { categoryId: 2, categoryName: 'c2', order: 2, icon: FaGithub },
-    { categoryId: 3, categoryName: 'c3', order: 2, icon: FaGithub },
-    { categoryId: 4, categoryName: 'c4', order: 2, icon: FaGithub },
-    { categoryId: 5, categoryName: 'c5', order: 2, icon: FaGithub },
-    { categoryId: 6, categoryName: 'c6', order: 2, icon: FaGithub }
+    { categoryId: 1, categoryName: 'c1', order: 1 },
+    { categoryId: 2, categoryName: 'c2', order: 2 },
+    { categoryId: 3, categoryName: 'c3', order: 2 },
+    { categoryId: 4, categoryName: 'c4', order: 2 },
+    { categoryId: 5, categoryName: 'c5', order: 2 },
+    { categoryId: 6, categoryName: 'c6', order: 2 }
   ]
 
   const itemList: TItem[] = [

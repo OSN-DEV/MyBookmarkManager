@@ -1,3 +1,4 @@
+import { IpcRendererEvent } from 'electron'
 import { TCategory } from './TCategory'
 
 // import { ElectronAPI } from '@electron-toolkit/preload'
@@ -17,6 +18,7 @@ export interface IMainApi {
    * @param category カテゴリ情報
    */
   showCategoryListContextMenu: (category: TCategory | null) => void
+
   onCategoryItemCreateReqeust: (callback: (event: Electron.IpcMessageEvent) => void) => void
   ping: () => void
   setTitle: (title: string) => void
@@ -35,5 +37,5 @@ export interface ICategoryApi {
    * @param callback.event IPCメッセージイベント
    * @param callback.category カテゴリ情報
    */
-  onLoad: (callback: (event: any, category: TCategory | null) => void) => void
+  onLoad: (callback: (event: IpcRendererEvent, category: TCategory | null) => void) => void
 }

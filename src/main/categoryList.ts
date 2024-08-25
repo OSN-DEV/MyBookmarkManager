@@ -6,12 +6,13 @@ import { TCategory } from '../@types/TCategory'
 
 let contextMenu: Menu | null = null
 export const showContextMenu = (
-  window: BrowserWindow | null,
   category: TCategory | null,
   callback: (category: TCategory | null, mode: RequestMode) => void
 ) => {
-  const isCreate = (category?.categoryId === null)
+  const isCreate = (category === null)
   cm.devLog(`showContextMenu: ${category?.categoryId}`)
+  cm.devLog(isCreate ? 'aa' : 'bb')
+
   if (!contextMenu) {
     contextMenu = Menu.buildFromTemplate([
       {

@@ -45,9 +45,10 @@ var RequestMode = /* @__PURE__ */ ((RequestMode2) => {
   return RequestMode2;
 })(RequestMode || {});
 let contextMenu = null;
-const showContextMenu = (window, category, callback) => {
-  const isCreate = category?.categoryId === null;
+const showContextMenu = (category, callback) => {
+  const isCreate = category === null;
   devLog(`showContextMenu: ${category?.categoryId}`);
+  devLog(isCreate ? "aa" : "bb");
   if (!contextMenu) {
     contextMenu = electron.Menu.buildFromTemplate([
       {
@@ -188,7 +189,7 @@ const openFile = async () => {
 };
 const registerEvent = () => {
   electron.ipcMain.on(ED.CategoryList.ContextMenu.Show, (_, category) => {
-    showContextMenu(mainWindow, category, categoryContextMenuCallback);
+    showContextMenu(category, categoryContextMenuCallback);
   });
   electron.ipcMain.on("set-title", (ev, title) => {
     const webContents = ev.sender;

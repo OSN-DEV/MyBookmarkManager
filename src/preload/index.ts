@@ -20,7 +20,7 @@ contextBridge.exposeInMainWorld('mainApi', {
    * @param categoryId - category id.
    * @returns void
    */
-  showCategoryListContextMenu: (categoryId: number | null) => ipcRenderer.send(ED.CategoryList.ContextMenu.Show, categoryId),
+  showCategoryListContextMenu: (category: TCategory | null) => ipcRenderer.send(ED.CategoryList.ContextMenu.Show, category),
 
   /**
    * Create category item request

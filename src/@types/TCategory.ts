@@ -4,5 +4,4 @@ export type TCategory = {
   categoryId: number
   categoryName: string
   order: number
-  icon: IconType
 }

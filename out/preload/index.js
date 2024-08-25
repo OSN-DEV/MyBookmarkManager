@@ -46,7 +46,7 @@ electron.contextBridge.exposeInMainWorld("mainApi", {
    * @param categoryId - category id.
    * @returns void
    */
-  showCategoryListContextMenu: (categoryId) => electron.ipcRenderer.send(ED.CategoryList.ContextMenu.Show, categoryId),
+  showCategoryListContextMenu: (category) => electron.ipcRenderer.send(ED.CategoryList.ContextMenu.Show, category),
   /**
    * Create category item request
    * @param callback - callback

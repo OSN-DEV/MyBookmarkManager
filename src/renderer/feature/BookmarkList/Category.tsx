@@ -2,7 +2,6 @@ import React from 'react'
 import { IconType } from 'react-icons'
 
 type CategoryProps = {
-  icon: IconType
   id: number
   isSelected: boolean
   name: string
@@ -11,8 +10,7 @@ type CategoryProps = {
 }
 
 const Category = (props: CategoryProps) => {
-  const { icon, id, isSelected, name, handleClick, onContextMenu } = props
-  const RenderIcon = icon
+  const { id, isSelected, name, handleClick, onContextMenu } = props
   if (isSelected) {
     console.log('selected')
   }
@@ -22,7 +20,6 @@ const Category = (props: CategoryProps) => {
   }
   return (
     <div className="category-list-category" onClick={() => handleClick(id)} onContextMenu={handleContextmenu}>
-      <RenderIcon className="icon" />
       {name}
     </div>
   )
