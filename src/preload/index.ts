@@ -61,6 +61,6 @@ contextBridge.exposeInMainWorld('categoryApi', {
    * @param callback.category カテゴリ情報
    */
   onLoad: (callback: (event: IpcRendererEvent, category: TCategory | null) => void) => {
-    ipcRenderer.on(ED.CategoryEdit.Load, (event: IpcRendererEvent, category: TCategory | null) => callback(event, category));
+    ipcRenderer.on(ED.CategoryEdit.Load, (event: IpcRendererEvent, category: TCategory | null) => callback(event, category))
   }
 })

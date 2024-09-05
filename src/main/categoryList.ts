@@ -5,11 +5,8 @@ import { RequestMode } from '../util/Constant'
 import { TCategory } from '../@types/TCategory'
 
 let contextMenu: Menu | null = null
-export const showContextMenu = (
-  category: TCategory | null,
-  callback: (category: TCategory | null, mode: RequestMode) => void
-) => {
-  const isCreate = (category === null)
+export const showContextMenu = (category: TCategory | null, callback: (category: TCategory | null, mode: RequestMode) => void) => {
+  const isCreate = category === null
   cm.devLog(`showContextMenu: ${category?.categoryId}`)
   cm.devLog(isCreate ? 'aa' : 'bb')
 

@@ -7,6 +7,8 @@ import { ED } from '../preload/EventDef'
 import { devLog } from '../util/common'
 import { RequestMode } from '../util/Constant'
 import { TCategory } from '../@types/TCategory'
+import { createDataDir } from './settings'
+import { initDatabase } from './database'
 
 let showDevTool: boolean = false
 let mainWindow: BrowserWindow | null = null
@@ -43,7 +45,8 @@ function createWindow(): void {
         { label: showDevTool ? 'hide dev tool' : 'show dev tool', click: () => toggleDevTool() },
         {
           click: () => {
-            mainWindow?.webContents.send('update-counterXXX', 1)
+            // mainWindow?.webContents.send('update-counterXXX', 1)
+            initDatabase()
           },
           label: 'increment'
         },
@@ -86,7 +89,15 @@ function createWindow(): void {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
+app.whenReady().then(async() => {
+  // 以下の処理行うことで例外のアラートのか笑いにログを出力
+  process.on('uncaughtException', function(error) {
+    console.error(error)
+  })
+
+  createDataDir()
+  await initDatabase()
+
   // Set app user model id for windows
   // windows環境における識別子のようなもの。
   electronApp.setAppUserModelId('com.electron')
