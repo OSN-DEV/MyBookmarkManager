@@ -38,4 +38,11 @@ export interface ICategoryApi {
    * @param callback.category カテゴリ情報
    */
   onLoad: (callback: (event: IpcRendererEvent, category: TCategory | null) => void) => void
+
+  /**
+   * カテゴリ作成
+   * @param category カテゴリ情報
+   * @return カテゴリ情報(IDを設定)
+   */
+  insert: (category: TCategory) => Promise<TCategory>
 }

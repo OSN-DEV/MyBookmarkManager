@@ -51,10 +51,10 @@ const ED = {
   },
   /** カテゴリ編集 */
   CategoryEdit: {
-    /**
-     * ロードイベント
-     */
-    Load: "ed.category-edit.loadd"
+    /** ロードイベント */
+    Load: "ed.category-edit.loadd",
+    /** データ作成イベント */
+    Insert: "ed.category-edit.insert"
   }
 };
 var RequestMode = /* @__PURE__ */ ((RequestMode2) => {
