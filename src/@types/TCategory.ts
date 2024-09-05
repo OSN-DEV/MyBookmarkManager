@@ -1,8 +1,8 @@
-import { IconType } from "react-icons"
-
+/**
+ * カテゴリ情報
+ */
 export type TCategory = {
-    categoryId: number
-    categoryName: string
-    order: number
-    icon: IconType
+  categoryId: number
+  categoryName: string
+  sort: number
 }

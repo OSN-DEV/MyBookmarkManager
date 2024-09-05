@@ -2,6 +2,25 @@
 const electron = require("electron");
 const path = require("path");
 const utils = require("@electron-toolkit/utils");
+const fs = require("fs");
+const sqlite3 = require("sqlite3");
+function _interopNamespaceDefault(e) {
+  const n = Object.create(null, { [Symbol.toStringTag]: { value: "Module" } });
+  if (e) {
+    for (const k in e) {
+      if (k !== "default") {
+        const d = Object.getOwnPropertyDescriptor(e, k);
+        Object.defineProperty(n, k, d.get ? d : {
+          enumerable: true,
+          get: () => e[k]
+        });
+      }
+    }
+  }
+  n.default = e;
+  return Object.freeze(n);
+}
+const sqlite3__namespace = /* @__PURE__ */ _interopNamespaceDefault(sqlite3);
 const icon = path.join(__dirname, "../../resources/icon.png");
 const devLog = (message) => {
   console.log(`##### ${message}`);
@@ -29,6 +48,13 @@ const ED = {
       EditResponset: "ed.category-list.context-menu.edit-response",
       DeleteResponse: "ed.category-list.context-menu.edit-response"
     }
+  },
+  /** カテゴリ編集 */
+  CategoryEdit: {
+    /**
+     * ロードイベント
+     */
+    Load: "ed.category-edit.loadd"
   }
 };
 var RequestMode = /* @__PURE__ */ ((RequestMode2) => {
@@ -37,47 +63,113 @@ var RequestMode = /* @__PURE__ */ ((RequestMode2) => {
   RequestMode2["Delete"] = "delete";
   return RequestMode2;
 })(RequestMode || {});
+var FilePath = /* @__PURE__ */ ((FilePath2) => {
+  FilePath2["AppDirectory"] = "MyBookmark";
+  FilePath2["SettingFile"] = "MyBookmark/settings.json";
+  return FilePath2;
+})(FilePath || {});
 let contextMenu = null;
-const showContextMenu = (window, categoryId, callback) => {
-  devLog(`showContextMenu: ${categoryId}`);
+const showContextMenu = (category, callback) => {
+  const isCreate = category === null;
+  devLog(`showContextMenu: ${category?.categoryId}`);
+  devLog(isCreate ? "aa" : "bb");
   if (!contextMenu) {
     contextMenu = electron.Menu.buildFromTemplate([
       {
         label: "Create",
-        enabled: categoryId === null,
+        enabled: isCreate,
         click: () => {
-          callback(categoryId, RequestMode.Create);
+          callback(category, RequestMode.Create);
         }
       },
       {
         label: "Edit",
-        enabled: categoryId !== null,
+        enabled: !isCreate,
         click: () => {
-          callback(categoryId, RequestMode.Edit);
+          callback(category, RequestMode.Edit);
         }
       },
       {
         label: "Delete",
-        enabled: categoryId !== null,
+        enabled: !isCreate,
         click: () => {
-          handleDeleteClick(window, categoryId);
         }
       }
     ]);
   } else {
     contextMenu.items.map((m) => {
       if (m.label === "Create") {
-        m.enabled = categoryId === null;
+        m.enabled = isCreate;
       } else {
-        m.enabled = categoryId !== null;
+        m.enabled = !isCreate;
       }
     });
   }
   contextMenu.popup();
 };
-const handleDeleteClick = (window, categoryId) => {
-  devLog(`handleDeleteClick: ${categoryId}`);
-  contextMenu?.closePopup();
+const createDataDir = () => {
+  const filePath = path.join(electron.app.getPath("appData"), FilePath.AppDirectory);
+  if (!fs.existsSync(filePath)) {
+    fs.mkdirSync(filePath);
+  }
+};
+const db = new sqlite3__namespace.Database("app");
+const initDatabase = async () => {
+  let hasError = true;
+  try {
+    await query("select id from category limit 1");
+    hasError = false;
+  } catch (error) {
+    console.error("Error query database:", error);
+  }
+  if (!hasError) {
+    return;
+  }
+  try {
+    let sql = `
+      CREATE TABLE category (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT,
+          sort INTEGER DEFAULT 0
+      )
+    `;
+    await modify(sql);
+    sql = `
+      CREATE TABLE item (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          categoryId INTEGER,
+          name TEXT,
+          sort INTEGER,
+          url TEXT,
+          explanation TEXT
+      )
+    `;
+    await modify(sql);
+  } catch (error) {
+    console.error("Error query database:", error);
+  }
+};
+const query = async (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function(err, rows) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+};
+const modify = async (sql, params = []) => {
+  return new Promise((resolve, rejects2) => {
+    db.run(sql, params, function(err) {
+      if (err) {
+        rejects2(err);
+      } else {
+        resolve();
+      }
+    });
+  });
 };
 let showDevTool = false;
 let mainWindow = null;
@@ -110,7 +202,7 @@ function createWindow() {
         { label: showDevTool ? "hide dev tool" : "show dev tool", click: () => toggleDevTool() },
         {
           click: () => {
-            mainWindow?.webContents.send("update-counterXXX", 1);
+            initDatabase();
           },
           label: "increment"
         },
@@ -144,7 +236,12 @@ function createWindow() {
     mainWindow?.loadFile(path.join(__dirname, "../renderer/index.html"));
   }
 }
-electron.app.whenReady().then(() => {
+electron.app.whenReady().then(async () => {
+  process.on("uncaughtException", function(error) {
+    console.error(error);
+  });
+  createDataDir();
+  await initDatabase();
   utils.electronApp.setAppUserModelId("com.electron");
   electron.app.on("browser-window-created", (_, window) => {
     utils.optimizer.watchWindowShortcuts(window);
@@ -152,12 +249,14 @@ electron.app.whenReady().then(() => {
   registerEvent();
   toggleDevTool();
 });
-function createCategoryEditWindow() {
+function createCategoryEditWindow(category) {
   if (null != categoryEditWindow && !categoryEditWindow.isDestroyed()) {
     categoryEditWindow.close();
   }
   categoryEditWindow = new electron.BrowserWindow({
     parent: mainWindow,
+    width: 350,
+    height: 200,
     webPreferences: {
       preload: path.join(__dirname, "../preload/index.js"),
       sandbox: false
@@ -169,6 +268,10 @@ function createCategoryEditWindow() {
   } else {
     categoryEditWindow.loadFile(path.join(__dirname, "../renderer/category.html"));
   }
+  categoryEditWindow.on("ready-to-show", () => {
+    categoryEditWindow?.show();
+    categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, null);
+  });
 }
 const openFile = async () => {
   const { canceled, filePaths } = await electron.dialog.showOpenDialog({});
@@ -178,11 +281,9 @@ const openFile = async () => {
   return "";
 };
 const registerEvent = () => {
-  electron.ipcMain.on(ED.CategoryList.ContextMenu.Show, (_, categoryId) => {
-    showContextMenu(mainWindow, categoryId, categoryContextMenuCallback);
+  electron.ipcMain.on(ED.CategoryList.ContextMenu.Show, (_, category) => {
+    showContextMenu(category, categoryContextMenuCallback);
   });
-  electron.ipcMain.on("ping", () => console.log("pong"));
-  electron.ipcMain.on("ping2", () => console.log("pong2"));
   electron.ipcMain.on("set-title", (ev, title) => {
     const webContents = ev.sender;
     const win = electron.BrowserWindow.fromWebContents(webContents);
@@ -203,8 +304,8 @@ const registerEvent = () => {
     }
   });
 };
-const categoryContextMenuCallback = (categoryId, mode) => {
-  devLog(`categoryContextMenuCallback: ${categoryId}, ${mode}`);
+const categoryContextMenuCallback = (category, mode) => {
+  devLog(`categoryContextMenuCallback: ${category?.categoryId}, ${mode}`);
   createCategoryEditWindow();
 };
 const toggleDevTool = () => {

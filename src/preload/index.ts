@@ -1,7 +1,10 @@
-import { IpcRendererEvent, contextBridge, ipcRenderer } from 'electron'
+import { IpcRendererEvent, contextBridge, ipcRenderer, IpcMainEvent } from 'electron'
 import { ED } from './EventDef'
+import { TCategory } from '../@types/TCategory'
 
-
+/**
+ * メインウィンドウ
+ */
 contextBridge.exposeInMainWorld('mainApi', {
   ping: () => ipcRenderer.send('ping'),
   setTitle: (title: string) => ipcRenderer.send('set-title', title),
@@ -10,14 +13,14 @@ contextBridge.exposeInMainWorld('mainApi', {
   onUpdateCounter: (callback: (event: any, value: number) => void) => {
     ipcRenderer.on('update-counter', (ev: IpcRendererEvent, value: number) => callback(ev, value))
   },
-  
+
   /** category list */
   /**
    * Show context menu for category list
    * @param categoryId - category id.
    * @returns void
    */
-  showCategoryListContextMenu: (categoryId: number | null) => ipcRenderer.send(ED.CategoryList.ContextMenu.Show, categoryId),
+  showCategoryListContextMenu: (category: TCategory | null) => ipcRenderer.send(ED.CategoryList.ContextMenu.Show, category),
 
   /**
    * Create category item request
@@ -44,10 +47,20 @@ contextBridge.exposeInMainWorld('mainApi', {
    */
   onCategoryItemDeleteReqeust: (callback: (event: any, categoryId: number) => void) => {
     ipcRenderer.on(ED.CategoryList.ContextMenu.EditRequest, (ev: IpcRendererEvent, categoryId: number) => callback(ev, categoryId))
-  },
+  }
 })
 
-
+/**
+ * カテゴリ編集
+ */
 contextBridge.exposeInMainWorld('categoryApi', {
-  ping2: () => ipcRenderer.send('ping2')
+  /**
+   * ロードイベント
+   * @param callback コールバック
+   * @param callback.event IPCメッセージイベント
+   * @param callback.category カテゴリ情報
+   */
+  onLoad: (callback: (event: IpcRendererEvent, category: TCategory | null) => void) => {
+    ipcRenderer.on(ED.CategoryEdit.Load, (event: IpcRendererEvent, category: TCategory | null) => callback(event, category))
+  }
 })
