@@ -28,11 +28,12 @@ const ED = {
   CategoryEdit: {
     /** ロードイベント */
     Load: "ed.category-edit.loadd",
-    /** データ作成イベント */
-    Insert: "ed.category-edit.insert"
+    /** データ作成 */
+    Create: "ed.category-edit.create"
   }
 };
 electron.contextBridge.exposeInMainWorld("mainApi", {
+  // ping: () => ipcRenderer.send('ping'),
   ping: () => electron.ipcRenderer.send("ping"),
   setTitle: (title) => electron.ipcRenderer.send("set-title", title),
   openFile: () => electron.ipcRenderer.invoke("dialog:openFile"),
@@ -83,8 +84,8 @@ electron.contextBridge.exposeInMainWorld("categoryApi", {
     electron.ipcRenderer.on(ED.CategoryEdit.Load, (event, category) => callback(event, category));
   },
   /**
-   * データ作成
+   * カテゴリ作成
    * @param category カテゴリ情報
    */
-  insert: (category) => electron.ipcRenderer.invoke(ED.CategoryEdit.Insert, category)
+  create: (category) => electron.ipcRenderer.invoke(ED.CategoryEdit.Create, category)
 });

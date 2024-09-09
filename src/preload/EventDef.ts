@@ -28,7 +28,7 @@ export const ED = {
   CategoryEdit: {
     /** ロードイベント */
     Load: 'ed.category-edit.loadd',
-    /** データ作成イベント */
-    Insert: 'ed.category-edit.insert'
+    /** データ作成 */
+    Create: 'ed.category-edit.create'
   }
 }

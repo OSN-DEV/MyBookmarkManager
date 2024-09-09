@@ -6,6 +6,7 @@ import { TCategory } from '../@types/TCategory'
  * メインウィンドウ
  */
 contextBridge.exposeInMainWorld('mainApi', {
+  // ping: () => ipcRenderer.send('ping'),
   ping: () => ipcRenderer.send('ping'),
   setTitle: (title: string) => ipcRenderer.send('set-title', title),
   openFile: () => ipcRenderer.invoke('dialog:openFile'),
@@ -65,8 +66,8 @@ contextBridge.exposeInMainWorld('categoryApi', {
   },
 
   /**
-   * データ作成
+   * カテゴリ作成
    * @param category カテゴリ情報
    */
-  insert: (category: TCategory) => ipcRenderer.invoke(ED.CategoryEdit.Insert, category)
+  create: (category: TCategory) => ipcRenderer.invoke(ED.CategoryEdit.Create, category)
 })

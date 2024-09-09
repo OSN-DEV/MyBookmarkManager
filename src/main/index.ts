@@ -8,7 +8,8 @@ import { devLog } from '../util/common'
 import { RequestMode } from '../util/Constant'
 import { TCategory } from '../@types/TCategory'
 import { createDataDir } from './settings'
-import { initDatabase } from './database'
+import { initDatabase } from './database/database'
+import * as categoryTable from './database/categoryTable'
 
 let showDevTool: boolean = false
 let mainWindow: BrowserWindow | null = null
@@ -89,11 +90,11 @@ function createWindow(): void {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(async() => {
+app.whenReady().then(async () => {
   // 以下の処理行うことで例外のアラートのか笑いにログを出力
-  process.on('uncaughtException', function(error) {
-    console.error(error)
-  })
+  // process.on('uncaughtException', function (error) {
+  //   console.error(error)
+  // })
 
   createDataDir()
   await initDatabase()
@@ -123,7 +124,7 @@ function createCategoryEditWindow(category: TCategory | null): void {
 
   categoryEditWindow = new BrowserWindow({
     parent: mainWindow!,
-    width: 350,
+    width: 400,
     height: 200,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -152,13 +153,16 @@ const openFile = async (): Promise<string> => {
 }
 
 /**
- * register event
+ * イベント登録
  */
 const registerEvent = (): void => {
   // Category list
   ipcMain.on(ED.CategoryList.ContextMenu.Show, (_: IpcMainEvent, category: TCategory | null) => {
     CL.showContextMenu(category, categoryContextMenuCallback)
   })
+
+  // Category Edit
+  ipcMain.handle(ED.CategoryEdit.Create, (_, category: TCategory) => categoryTable.create(category))
 
   // Pattern1
   ipcMain.on('set-title', (ev: IpcMainEvent, title: string) => {

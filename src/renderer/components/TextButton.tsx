@@ -4,7 +4,7 @@ type TextButtonProps = {
   onClick: () => void
 }
 
-export const TextButton = (props: TextButtonProps) => {
+export const TextButton = (props: TextButtonProps): React.ReactNode => {
   const { styles, onClick, children } = props
   const styleList: string[] = ['text-gray-500', 'text-[14pt]', 'p-1', styles ?? '']
   return (

@@ -2,7 +2,7 @@
  * カテゴリ情報
  */
 export type TCategory = {
-  categoryId: number
-  categoryName: string
+  id: number
+  name: string
   sort: number
 }

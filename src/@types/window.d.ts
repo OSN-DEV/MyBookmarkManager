@@ -44,5 +44,5 @@ export interface ICategoryApi {
    * @param category カテゴリ情報
    * @return カテゴリ情報(IDを設定)
    */
-  insert: (category: TCategory) => Promise<TCategory>
+  create: (category: TCategory) => Promise<TCategory>
 }
