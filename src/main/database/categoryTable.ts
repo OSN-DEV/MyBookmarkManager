@@ -36,8 +36,7 @@ export const create = async(category: TCategory): Promise<TCategory | undefined>
       select max(sort) as max_sort from category
     `
     const rows = await query(sql) as number[]
-console.dir(rows)
-    category.sort = rows[0]
+    category.sort = rows[0] + 1
 
     sql = `
       update category set
