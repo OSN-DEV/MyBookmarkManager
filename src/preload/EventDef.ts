@@ -26,9 +26,9 @@ export const ED = {
   },
   /** カテゴリ編集 */
   CategoryEdit: {
-    /**
-     * ロードイベント
-     */
-    Load: 'ed.category-edit.loadd'
+    /** ロードイベント */
+    Load: 'ed.category-edit.loadd',
+    /** データ作成 */
+    Create: 'ed.category-edit.create'
   }
 }

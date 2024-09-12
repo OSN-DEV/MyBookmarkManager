@@ -6,6 +6,7 @@ import { TCategory } from '../@types/TCategory'
  * メインウィンドウ
  */
 contextBridge.exposeInMainWorld('mainApi', {
+  // ping: () => ipcRenderer.send('ping'),
   ping: () => ipcRenderer.send('ping'),
   setTitle: (title: string) => ipcRenderer.send('set-title', title),
   openFile: () => ipcRenderer.invoke('dialog:openFile'),
@@ -62,5 +63,11 @@ contextBridge.exposeInMainWorld('categoryApi', {
    */
   onLoad: (callback: (event: IpcRendererEvent, category: TCategory | null) => void) => {
     ipcRenderer.on(ED.CategoryEdit.Load, (event: IpcRendererEvent, category: TCategory | null) => callback(event, category))
-  }
+  },
+
+  /**
+   * カテゴリ作成
+   * @param category カテゴリ情報
+   */
+  create: (category: TCategory) => ipcRenderer.invoke(ED.CategoryEdit.Create, category)
 })

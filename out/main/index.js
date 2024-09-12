@@ -51,10 +51,10 @@ const ED = {
   },
   /** カテゴリ編集 */
   CategoryEdit: {
-    /**
-     * ロードイベント
-     */
-    Load: "ed.category-edit.loadd"
+    /** ロードイベント */
+    Load: "ed.category-edit.loadd",
+    /** データ作成 */
+    Create: "ed.category-edit.create"
   }
 };
 var RequestMode = /* @__PURE__ */ ((RequestMode2) => {
@@ -113,8 +113,54 @@ const createDataDir = () => {
     fs.mkdirSync(filePath);
   }
 };
-const db = new sqlite3__namespace.Database("app");
+const getCreateTableSql$1 = () => {
+  return `
+    CREATE TABLE category (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        sort INTEGER DEFAULT 0
+    )
+  `;
+};
+const create = async (category) => {
+  try {
+    let sql = `
+      insert into category(name) values(?)
+    `;
+    category.id = await insert(sql, [category.name]);
+    sql = `
+      select max(sort) as max_sort from category
+    `;
+    const rows = await query(sql);
+    console.dir(rows);
+    category.sort = rows[0];
+    sql = `
+      update category set
+        sort=?
+      where id=?
+    `;
+    modify(sql, [category.sort, category.id]);
+    return category;
+  } catch (error) {
+    console.error("Error query database:", error);
+    return void 0;
+  }
+};
+const getCreateTableSql = () => {
+  return `
+    CREATE TABLE item (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        categoryId INTEGER,
+        name TEXT,
+        sort INTEGER,
+        url TEXT,
+        explanation TEXT
+    )
+  `;
+};
+const db = new sqlite3__namespace.Database("app.db");
 const initDatabase = async () => {
+  devLog(`initDatabase`);
   let hasError = true;
   try {
     await query("select id from category limit 1");
@@ -126,32 +172,16 @@ const initDatabase = async () => {
     return;
   }
   try {
-    let sql = `
-      CREATE TABLE category (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          name TEXT,
-          sort INTEGER DEFAULT 0
-      )
-    `;
-    await modify(sql);
-    sql = `
-      CREATE TABLE item (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          categoryId INTEGER,
-          name TEXT,
-          sort INTEGER,
-          url TEXT,
-          explanation TEXT
-      )
-    `;
-    await modify(sql);
+    devLog(`create table`);
+    await modify(getCreateTableSql$1());
+    await modify(getCreateTableSql());
   } catch (error) {
     console.error("Error query database:", error);
   }
 };
 const query = async (sql, params = []) => {
   return new Promise((resolve, reject) => {
-    db.run(sql, params, function(err, rows) {
+    db.all(sql, params, function(err, rows) {
       if (err) {
         reject(err);
       } else {
@@ -161,12 +191,23 @@ const query = async (sql, params = []) => {
   });
 };
 const modify = async (sql, params = []) => {
-  return new Promise((resolve, rejects2) => {
+  return new Promise((resolve, rejects) => {
     db.run(sql, params, function(err) {
       if (err) {
-        rejects2(err);
+        rejects(err);
       } else {
         resolve();
+      }
+    });
+  });
+};
+const insert = async (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function(err) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(this.lastID);
       }
     });
   });
@@ -237,9 +278,6 @@ function createWindow() {
   }
 }
 electron.app.whenReady().then(async () => {
-  process.on("uncaughtException", function(error) {
-    console.error(error);
-  });
   createDataDir();
   await initDatabase();
   utils.electronApp.setAppUserModelId("com.electron");
@@ -255,7 +293,7 @@ function createCategoryEditWindow(category) {
   }
   categoryEditWindow = new electron.BrowserWindow({
     parent: mainWindow,
-    width: 350,
+    width: 400,
     height: 200,
     webPreferences: {
       preload: path.join(__dirname, "../preload/index.js"),
@@ -284,6 +322,7 @@ const registerEvent = () => {
   electron.ipcMain.on(ED.CategoryList.ContextMenu.Show, (_, category) => {
     showContextMenu(category, categoryContextMenuCallback);
   });
+  electron.ipcMain.handle(ED.CategoryEdit.Create, (_, category) => create(category));
   electron.ipcMain.on("set-title", (ev, title) => {
     const webContents = ev.sender;
     const win = electron.BrowserWindow.fromWebContents(webContents);
