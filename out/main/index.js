@@ -125,17 +125,18 @@ const getCreateTableSql$1 = () => {
 const create = async (category) => {
   try {
     let sql = `
-      insert category(name) values(?)
+      insert into category(name) values(?)
     `;
     category.id = await insert(sql, [category.name]);
     sql = `
-      select mac(sort) as max_sort from category
+      select max(sort) as max_sort from category
     `;
     const rows = await query(sql);
+    console.dir(rows);
     category.sort = rows[0];
     sql = `
       update category set
-        set=?
+        sort=?
       where id=?
     `;
     modify(sql, [category.sort, category.id]);
@@ -180,7 +181,7 @@ const initDatabase = async () => {
 };
 const query = async (sql, params = []) => {
   return new Promise((resolve, reject) => {
-    db.run(sql, params, function(err, rows) {
+    db.all(sql, params, function(err, rows) {
       if (err) {
         reject(err);
       } else {

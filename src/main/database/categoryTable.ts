@@ -26,20 +26,22 @@ export const getCreateTableSql = (): string => {
  */
 export const create = async(category: TCategory): Promise<TCategory | undefined> => {
   try {
+    
     let sql = `
-      insert category(name) values(?)
+      insert into category(name) values(?)
     `
     category.id = await insert(sql, [category.name])
 
     sql = `
-      select mac(sort) as max_sort from category
+      select max(sort) as max_sort from category
     `
     const rows = await query(sql) as number[]
+console.dir(rows)
     category.sort = rows[0]
 
     sql = `
       update category set
-        set=?
+        sort=?
       where id=?
     `
     modify(sql, [category.sort, category.id])

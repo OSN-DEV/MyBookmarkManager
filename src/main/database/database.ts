@@ -39,11 +39,11 @@ export const initDatabase = async (): Promise<void> => {
  */
 export const query = async <T>(sql: string, params: TSqlParam[] = []): Promise<T[]> => {
   return new Promise<T[]>((resolve, reject) => {
-    db.run(sql, params, function (err, rows) {
+    db.all(sql, params, function (err, rows) {
       if (err) {
         reject(err)
       } else {
-        resolve(rows)
+        resolve(rows as T[])
       }
     })
   })
