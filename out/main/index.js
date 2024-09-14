@@ -1,7 +1,7 @@
 "use strict";
 const electron = require("electron");
-const path = require("path");
 const utils = require("@electron-toolkit/utils");
+const path = require("path");
 const fs = require("fs");
 const sqlite3 = require("sqlite3");
 function _interopNamespaceDefault(e) {
@@ -21,7 +21,6 @@ function _interopNamespaceDefault(e) {
   return Object.freeze(n);
 }
 const sqlite3__namespace = /* @__PURE__ */ _interopNamespaceDefault(sqlite3);
-const icon = path.join(__dirname, "../../resources/icon.png");
 const devLog = (message) => {
   console.log(`##### ${message}`);
 };
@@ -242,9 +241,18 @@ const createCategoryEditWindow = (parent, category) => {
     categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, null);
   });
 };
+const closeCategoryEditWindow = () => {
+  if (categoryEditWindow != null) {
+    categoryEditWindow.close();
+    categoryEditWindow = null;
+  }
+};
 let showDevTool = false;
 let mainWindow = null;
-function createWindow() {
+const getmainWindow = () => {
+  return mainWindow;
+};
+const createWindow = () => {
   mainWindow = new electron.BrowserWindow({
     width: 900,
     height: 670,
@@ -259,7 +267,8 @@ function createWindow() {
       // height of titile bar
       height: 32
     },
-    ...process.platform === "linux" ? { icon } : {},
+    ...process.platform === "linux" ? {} : {},
+    // ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: path.join(__dirname, "../preload/index.js"),
       sandbox: false
@@ -305,7 +314,18 @@ function createWindow() {
   } else {
     mainWindow?.loadFile(path.join(__dirname, "../renderer/index.html"));
   }
-}
+};
+const toggleDevTool = () => {
+  if (null === mainWindow) {
+    return;
+  }
+  if (showDevTool) {
+    mainWindow.webContents.closeDevTools();
+  } else {
+    mainWindow.webContents.openDevTools();
+  }
+  showDevTool = !showDevTool;
+};
 electron.app.whenReady().then(async () => {
   createDataDir();
   await initDatabase();
@@ -351,18 +371,5 @@ const registerEvent = () => {
 };
 const categoryContextMenuCallback = (category, mode) => {
   devLog(`categoryContextMenuCallback: ${category?.id}, ${mode}`);
-  createCategoryEditWindow(mainWindow);
-};
-const toggleDevTool = () => {
-  if (null === mainWindow) {
-    return;
-  }
-  if (showDevTool) {
-    mainWindow.webContents.closeDevTools();
-  } else {
-    mainWindow.webContents.openDevTools();
-  }
-  showDevTool = !showDevTool;
-};
-const closeCategoryEditWindow = () => {
+  createCategoryEditWindow(getmainWindow());
 };

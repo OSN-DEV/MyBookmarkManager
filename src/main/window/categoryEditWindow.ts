@@ -1,10 +1,15 @@
 import { app, BrowserWindow } from "electron"
 import { join } from "path"
-import { ED } from "../preload/EventDef"
-import { TCategory } from "../@types/TCategory"
+import { ED } from "../../preload/EventDef"
+import { TCategory } from "../../@types/TCategory"
 
 let categoryEditWindow: BrowserWindow | null = null
 
+/**
+ * カテゴリウィンドウを作成
+ * @param parent 親ウィンドウ
+ * @param category カテゴリ情報
+ */
 export const createCategoryEditWindow = (parent: BrowserWindow, category: TCategory | null): void => {
   if (null != categoryEditWindow && !categoryEditWindow.isDestroyed()) {
     categoryEditWindow.close()
@@ -32,3 +37,12 @@ export const createCategoryEditWindow = (parent: BrowserWindow, category: TCateg
   })
 }
 
+/*
+ * カテゴリ編集ウィンドウをクローズ
+ */
+export const closeCategoryEditWindow = (): void => {
+  if (categoryEditWindow != null) {
+    categoryEditWindow.close()
+    categoryEditWindow = null
+  }
+}

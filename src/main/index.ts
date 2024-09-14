@@ -10,83 +10,84 @@ import { TCategory } from '../@types/TCategory'
 import { createDataDir } from './settings'
 import { initDatabase } from './database/database'
 import * as categoryTable from './database/categoryTable'
-import {createCategoryEditWindow} from './editCategory'
+import {closeCategoryEditWindow, createCategoryEditWindow} from './window/categoryEditWindow'
+import { createWindow, getmainWindow, toggleDevTool } from './window/mainWindow'
 
-let showDevTool: boolean = false
-let mainWindow: BrowserWindow | null = null
-let categoryEditWindow: BrowserWindow | null = null
+// let showDevTool: boolean = false
+// let mainWindow: BrowserWindow | null = null
+// let categoryEditWindow: BrowserWindow | null = null
 
-function createWindow(): void {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
-    show: false,
-    autoHideMenuBar: false,
-    // titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      // color of titile bar
-      color: '#3b3b3b',
-      // color of titile bar control
-      symbolColor: '#74b1be',
-      // height of titile bar
-      height: 32
-    },
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
+// function createWindow(): void {
+//   // Create the browser window.
+//   mainWindow = new BrowserWindow({
+//     width: 900,
+//     height: 670,
+//     show: false,
+//     autoHideMenuBar: false,
+//     // titleBarStyle: 'hidden',
+//     titleBarOverlay: {
+//       // color of titile bar
+//       color: '#3b3b3b',
+//       // color of titile bar control
+//       symbolColor: '#74b1be',
+//       // height of titile bar
+//       height: 32
+//     },
+//     ...(process.platform === 'linux' ? { icon } : {}),
+//     webPreferences: {
+//       preload: join(__dirname, '../preload/index.js'),
+//       sandbox: false
+//     }
+//   })
 
-  // Pattern3
-  const menu = Menu.buildFromTemplate([
-    {
-      label: app.name,
-      submenu: [
-        { label: showDevTool ? 'hide dev tool' : 'show dev tool', click: () => toggleDevTool() },
-        {
-          click: () => {
-            // mainWindow?.webContents.send('update-counterXXX', 1)
-            initDatabase()
-          },
-          label: 'increment'
-        },
-        {
-          click: () => {
-            mainWindow?.webContents.send('update-counter', -1)
-          },
-          label: 'decrement'
-        },
-        {
-          click: () => {
-            console.log('send request')
-            mainWindow?.webContents.send(ED.CategoryList.ContextMenu.CreateRequest)
-          },
-          label: 'test'
-        }
-      ]
-    }
-  ])
-  Menu.setApplicationMenu(menu)
+//   // Pattern3
+//   const menu = Menu.buildFromTemplate([
+//     {
+//       label: app.name,
+//       submenu: [
+//         { label: showDevTool ? 'hide dev tool' : 'show dev tool', click: () => toggleDevTool() },
+//         {
+//           click: () => {
+//             // mainWindow?.webContents.send('update-counterXXX', 1)
+//             initDatabase()
+//           },
+//           label: 'increment'
+//         },
+//         {
+//           click: () => {
+//             mainWindow?.webContents.send('update-counter', -1)
+//           },
+//           label: 'decrement'
+//         },
+//         {
+//           click: () => {
+//             console.log('send request')
+//             mainWindow?.webContents.send(ED.CategoryList.ContextMenu.CreateRequest)
+//           },
+//           label: 'test'
+//         }
+//       ]
+//     }
+//   ])
+//   Menu.setApplicationMenu(menu)
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow?.show()
-  })
+//   mainWindow.on('ready-to-show', () => {
+//     mainWindow?.show()
+//   })
 
-  mainWindow?.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' } // 新しいウィンドウを開くことを拒否(指定されたURLがデフォルトブラウザで表示されることを強要)
-  })
+//   mainWindow?.webContents.setWindowOpenHandler((details) => {
+//     shell.openExternal(details.url)
+//     return { action: 'deny' } // 新しいウィンドウを開くことを拒否(指定されたURLがデフォルトブラウザで表示されることを強要)
+//   })
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow?.loadURL(process.env['ELECTRON_RENDERER_URL'])
-  } else {
-    mainWindow?.loadFile(join(__dirname, '../renderer/index.html'))
-  }
-}
+//   // HMR for renderer base on electron-vite cli.
+//   // Load the remote URL for development or the local html file for production.
+//   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+//     mainWindow?.loadURL(process.env['ELECTRON_RENDERER_URL'])
+//   } else {
+//     mainWindow?.loadFile(join(__dirname, '../renderer/index.html'))
+//   }
+// }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -115,35 +116,35 @@ app.whenReady().then(async () => {
   toggleDevTool()
 })
 
-/**
- * カテゴリ編集ウィンドウの作成
- */
-function createCategoryEditWindow2(category: TCategory | null): void {
-  if (null != categoryEditWindow && !categoryEditWindow.isDestroyed()) {
-    categoryEditWindow.close()
-  }
+// /**
+//  * カテゴリ編集ウィンドウの作成
+//  */
+// function createCategoryEditWindow2(category: TCategory | null): void {
+//   if (null != categoryEditWindow && !categoryEditWindow.isDestroyed()) {
+//     categoryEditWindow.close()
+//   }
 
-  categoryEditWindow = new BrowserWindow({
-    parent: mainWindow!,
-    width: 400,
-    height: 200,
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
-  categoryEditWindow.setMenuBarVisibility(false)
-  if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
-    categoryEditWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/category.html`)
-  } else {
-    categoryEditWindow.loadFile(join(__dirname, '../renderer/category.html'))
-  }
+//   categoryEditWindow = new BrowserWindow({
+//     parent: mainWindow!,
+//     width: 400,
+//     height: 200,
+//     webPreferences: {
+//       preload: join(__dirname, '../preload/index.js'),
+//       sandbox: false
+//     }
+//   })
+//   categoryEditWindow.setMenuBarVisibility(false)
+//   if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
+//     categoryEditWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/category.html`)
+//   } else {
+//     categoryEditWindow.loadFile(join(__dirname, '../renderer/category.html'))
+//   }
 
-  categoryEditWindow.on('ready-to-show', () => {
-    categoryEditWindow?.show()
-    categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, null)
-  })
-}
+//   categoryEditWindow.on('ready-to-show', () => {
+//     categoryEditWindow?.show()
+//     categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, null)
+//   })
+// }
 
 const openFile = async (): Promise<string> => {
   const { canceled, filePaths } = await dialog.showOpenDialog({})
@@ -204,24 +205,23 @@ const registerEvent = (): void => {
  */
 const categoryContextMenuCallback = (category: TCategory | null, mode: RequestMode): void => {
   devLog(`categoryContextMenuCallback: ${category?.id}, ${mode}`)
-  // createCategoryEditWindow(category)
-  createCategoryEditWindow(mainWindow!, category)
+  createCategoryEditWindow(getmainWindow()!, category)
 }
 
-/**
- * Devツールの表示切替
- */
-const toggleDevTool = (): void => {
-  if (null === mainWindow) {
-    return
-  }
-  if (showDevTool) {
-    mainWindow.webContents.closeDevTools()
-  } else {
-    mainWindow.webContents.openDevTools()
-  }
-  showDevTool = !showDevTool
-}
+// /**
+//  * Devツールの表示切替
+//  */
+// const toggleDevTool = (): void => {
+//   if (null === mainWindow) {
+//     return
+//   }
+//   if (showDevTool) {
+//     mainWindow.webContents.closeDevTools()
+//   } else {
+//     mainWindow.webContents.openDevTools()
+//   }
+//   showDevTool = !showDevTool
+// }
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
@@ -232,13 +232,13 @@ const toggleDevTool = (): void => {
 /* =======================================================================
  * カテゴリ編集
 ======================================================================= */
-/*
- * カテゴリ編集ウィンドウをクローズ
- */
-const closeCategoryEditWindow = (): void => {
-  if (categoryEditWindow != null) {
-    categoryEditWindow.close()
-    categoryEditWindow = null
-  }
-}
+// /*
+//  * カテゴリ編集ウィンドウをクローズ
+//  */
+// const closeCategoryEditWindow = (): void => {
+//   if (categoryEditWindow != null) {
+//     categoryEditWindow.close()
+//     categoryEditWindow = null
+//   }
+// }
 
