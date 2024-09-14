@@ -25,6 +25,9 @@ const icon = path.join(__dirname, "../../resources/icon.png");
 const devLog = (message) => {
   console.log(`##### ${message}`);
 };
+const Prefix = {
+  CategoriEdit: "ed.category-edit"
+};
 const ED = {
   /** カテゴリリスト */
   CategoryList: {
@@ -54,7 +57,10 @@ const ED = {
     /** ロードイベント */
     Load: "ed.category-edit.loadd",
     /** データ作成 */
-    Create: "ed.category-edit.create"
+    Create: "ed.category-edit.create",
+    /** キャンセル */
+    // Cancel: 'ed.category-edit.cancel'
+    Cancel: `${Prefix.CategoriEdit}.cancel`
   }
 };
 var RequestMode = /* @__PURE__ */ ((RequestMode2) => {
@@ -132,8 +138,7 @@ const create = async (category) => {
       select max(sort) as max_sort from category
     `;
     const rows = await query(sql);
-    console.dir(rows);
-    category.sort = rows[0];
+    category.sort = rows[0] + 1;
     sql = `
       update category set
         sort=?
@@ -212,9 +217,33 @@ const insert = async (sql, params = []) => {
     });
   });
 };
+let categoryEditWindow = null;
+const createCategoryEditWindow = (parent, category) => {
+  if (null != categoryEditWindow && !categoryEditWindow.isDestroyed()) {
+    categoryEditWindow.close();
+  }
+  categoryEditWindow = new electron.BrowserWindow({
+    parent,
+    width: 400,
+    height: 200,
+    webPreferences: {
+      preload: path.join(__dirname, "../preload/index.js"),
+      sandbox: false
+    }
+  });
+  categoryEditWindow.setMenuBarVisibility(false);
+  if (!electron.app.isPackaged && process.env["ELECTRON_RENDERER_URL"]) {
+    categoryEditWindow.loadURL(`${process.env["ELECTRON_RENDERER_URL"]}/category.html`);
+  } else {
+    categoryEditWindow.loadFile(path.join(__dirname, "../renderer/category.html"));
+  }
+  categoryEditWindow.on("ready-to-show", () => {
+    categoryEditWindow?.show();
+    categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, null);
+  });
+};
 let showDevTool = false;
 let mainWindow = null;
-let categoryEditWindow = null;
 function createWindow() {
   mainWindow = new electron.BrowserWindow({
     width: 900,
@@ -287,30 +316,6 @@ electron.app.whenReady().then(async () => {
   registerEvent();
   toggleDevTool();
 });
-function createCategoryEditWindow(category) {
-  if (null != categoryEditWindow && !categoryEditWindow.isDestroyed()) {
-    categoryEditWindow.close();
-  }
-  categoryEditWindow = new electron.BrowserWindow({
-    parent: mainWindow,
-    width: 400,
-    height: 200,
-    webPreferences: {
-      preload: path.join(__dirname, "../preload/index.js"),
-      sandbox: false
-    }
-  });
-  categoryEditWindow.setMenuBarVisibility(false);
-  if (!electron.app.isPackaged && process.env["ELECTRON_RENDERER_URL"]) {
-    categoryEditWindow.loadURL(`${process.env["ELECTRON_RENDERER_URL"]}/category.html`);
-  } else {
-    categoryEditWindow.loadFile(path.join(__dirname, "../renderer/category.html"));
-  }
-  categoryEditWindow.on("ready-to-show", () => {
-    categoryEditWindow?.show();
-    categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, null);
-  });
-}
 const openFile = async () => {
   const { canceled, filePaths } = await electron.dialog.showOpenDialog({});
   if (!canceled) {
@@ -323,6 +328,7 @@ const registerEvent = () => {
     showContextMenu(category, categoryContextMenuCallback);
   });
   electron.ipcMain.handle(ED.CategoryEdit.Create, (_, category) => create(category));
+  electron.ipcMain.on(ED.CategoryEdit.Cancel, closeCategoryEditWindow);
   electron.ipcMain.on("set-title", (ev, title) => {
     const webContents = ev.sender;
     const win = electron.BrowserWindow.fromWebContents(webContents);
@@ -344,8 +350,8 @@ const registerEvent = () => {
   });
 };
 const categoryContextMenuCallback = (category, mode) => {
-  devLog(`categoryContextMenuCallback: ${category?.categoryId}, ${mode}`);
-  createCategoryEditWindow();
+  devLog(`categoryContextMenuCallback: ${category?.id}, ${mode}`);
+  createCategoryEditWindow(mainWindow);
 };
 const toggleDevTool = () => {
   if (null === mainWindow) {
@@ -357,4 +363,6 @@ const toggleDevTool = () => {
     mainWindow.webContents.openDevTools();
   }
   showDevTool = !showDevTool;
+};
+const closeCategoryEditWindow = () => {
 };

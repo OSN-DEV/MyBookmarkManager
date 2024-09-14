@@ -45,4 +45,9 @@ export interface ICategoryApi {
    * @return カテゴリ情報(IDを設定)
    */
   create: (category: TCategory) => Promise<TCategory>
+
+  /**
+   * キャンセル
+   */
+  cancel: () => void
 }

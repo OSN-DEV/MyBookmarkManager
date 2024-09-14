@@ -10,6 +10,7 @@ import { TCategory } from '../@types/TCategory'
 import { createDataDir } from './settings'
 import { initDatabase } from './database/database'
 import * as categoryTable from './database/categoryTable'
+import {createCategoryEditWindow} from './editCategory'
 
 let showDevTool: boolean = false
 let mainWindow: BrowserWindow | null = null
@@ -117,7 +118,7 @@ app.whenReady().then(async () => {
 /**
  * カテゴリ編集ウィンドウの作成
  */
-function createCategoryEditWindow(category: TCategory | null): void {
+function createCategoryEditWindow2(category: TCategory | null): void {
   if (null != categoryEditWindow && !categoryEditWindow.isDestroyed()) {
     categoryEditWindow.close()
   }
@@ -163,6 +164,7 @@ const registerEvent = (): void => {
 
   // Category Edit
   ipcMain.handle(ED.CategoryEdit.Create, (_, category: TCategory) => categoryTable.create(category))
+  ipcMain.on(ED.CategoryEdit.Cancel, closeCategoryEditWindow)
 
   // Pattern1
   ipcMain.on('set-title', (ev: IpcMainEvent, title: string) => {
@@ -201,8 +203,9 @@ const registerEvent = (): void => {
  * コンテキストメニュー コールバック
  */
 const categoryContextMenuCallback = (category: TCategory | null, mode: RequestMode): void => {
-  devLog(`categoryContextMenuCallback: ${category?.categoryId}, ${mode}`)
-  createCategoryEditWindow(category)
+  devLog(`categoryContextMenuCallback: ${category?.id}, ${mode}`)
+  // createCategoryEditWindow(category)
+  createCategoryEditWindow(mainWindow!, category)
 }
 
 /**
@@ -225,3 +228,17 @@ const toggleDevTool = (): void => {
 //
 //
 //
+
+/* =======================================================================
+ * カテゴリ編集
+======================================================================= */
+/*
+ * カテゴリ編集ウィンドウをクローズ
+ */
+const closeCategoryEditWindow = (): void => {
+  if (categoryEditWindow != null) {
+    categoryEditWindow.close()
+    categoryEditWindow = null
+  }
+}
+

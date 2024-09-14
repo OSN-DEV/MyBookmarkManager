@@ -36,6 +36,7 @@ export const CategoryEdit = (): JSX.Element => {
    */
   const handleCancelClick = (): void => {
     devLog(`handleCancelClick`)
+    window.categoryApi.cancel()
   }
 
   /**

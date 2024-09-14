@@ -1,3 +1,7 @@
+const Prefix = {
+  CategoriEdit: 'ed.category-edit'
+}
+
 export const ED = {
   /** カテゴリリスト */
   CategoryList: {
@@ -24,11 +28,15 @@ export const ED = {
       DeleteResponse: 'ed.category-list.context-menu.edit-response'
     }
   },
+
   /** カテゴリ編集 */
   CategoryEdit: {
     /** ロードイベント */
     Load: 'ed.category-edit.loadd',
     /** データ作成 */
-    Create: 'ed.category-edit.create'
+    Create: 'ed.category-edit.create',
+    /** キャンセル */
+    // Cancel: 'ed.category-edit.cancel'
+    Cancel: `${Prefix.CategoriEdit}.cancel`
   }
 }

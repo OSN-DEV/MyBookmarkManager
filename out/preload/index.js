@@ -1,5 +1,8 @@
 "use strict";
 const electron = require("electron");
+const Prefix = {
+  CategoriEdit: "ed.category-edit"
+};
 const ED = {
   /** カテゴリリスト */
   CategoryList: {
@@ -29,7 +32,10 @@ const ED = {
     /** ロードイベント */
     Load: "ed.category-edit.loadd",
     /** データ作成 */
-    Create: "ed.category-edit.create"
+    Create: "ed.category-edit.create",
+    /** キャンセル */
+    // Cancel: 'ed.category-edit.cancel'
+    Cancel: `${Prefix.CategoriEdit}.cancel`
   }
 };
 electron.contextBridge.exposeInMainWorld("mainApi", {
@@ -87,5 +93,9 @@ electron.contextBridge.exposeInMainWorld("categoryApi", {
    * カテゴリ作成
    * @param category カテゴリ情報
    */
-  create: (category) => electron.ipcRenderer.invoke(ED.CategoryEdit.Create, category)
+  create: (category) => electron.ipcRenderer.invoke(ED.CategoryEdit.Create, category),
+  /**
+   * キャンセル
+   */
+  cancel: () => electron.ipcRenderer.send(ED.CategoryEdit.Cancel)
 });
