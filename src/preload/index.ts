@@ -1,4 +1,4 @@
-import { IpcRendererEvent, contextBridge, ipcRenderer, IpcMainEvent } from 'electron'
+import { IpcRendererEvent, contextBridge, ipcRenderer } from 'electron'
 import { ED } from './EventDef'
 import { TCategory } from '../@types/TCategory'
 
@@ -11,7 +11,7 @@ contextBridge.exposeInMainWorld('mainApi', {
   setTitle: (title: string) => ipcRenderer.send('set-title', title),
   openFile: () => ipcRenderer.invoke('dialog:openFile'),
   counterValue: (value: number) => ipcRenderer.send('counter-value', value),
-  onUpdateCounter: (callback: (event: any, value: number) => void) => {
+  onUpdateCounter: (callback: (event: IpcRendererEvent, value: number) => void) => {
     ipcRenderer.on('update-counter', (ev: IpcRendererEvent, value: number) => callback(ev, value))
   },
 
@@ -28,7 +28,7 @@ contextBridge.exposeInMainWorld('mainApi', {
    * @param callback - callback
    * @return void
    */
-  onCategoryItemCreateReqeust: (callback: (event: any) => void) => {
+  onCategoryItemCreateReqeust: (callback: (event: IpcRendererEvent) => void) => {
     ipcRenderer.on(ED.CategoryList.ContextMenu.CreateRequest, (ev: IpcRendererEvent) => callback(ev))
   },
 
@@ -37,7 +37,7 @@ contextBridge.exposeInMainWorld('mainApi', {
    * @param callback - callback
    * @return void
    */
-  onCategoryItemEditReqeust: (callback: (event: any, categoryId: number) => void) => {
+  onCategoryItemEditReqeust: (callback: (event: IpcRendererEvent, categoryId: number) => void) => {
     ipcRenderer.on(ED.CategoryList.ContextMenu.EditRequest, (ev: IpcRendererEvent, categoryId: number) => callback(ev, categoryId))
   },
 
@@ -46,7 +46,7 @@ contextBridge.exposeInMainWorld('mainApi', {
    * @param callback - callback
    * @return void
    */
-  onCategoryItemDeleteReqeust: (callback: (event: any, categoryId: number) => void) => {
+  onCategoryItemDeleteReqeust: (callback: (event: IpcRendererEvent, categoryId: number) => void) => {
     ipcRenderer.on(ED.CategoryList.ContextMenu.EditRequest, (ev: IpcRendererEvent, categoryId: number) => callback(ev, categoryId))
   }
 })

@@ -1,7 +1,7 @@
-import { app, BrowserWindow } from "electron"
-import { join } from "path"
-import { ED } from "../../preload/EventDef"
-import { TCategory } from "../../@types/TCategory"
+import { app, BrowserWindow } from 'electron'
+import { join } from 'path'
+import { ED } from '../../preload/EventDef'
+import { TCategory } from '../../@types/TCategory'
 
 let categoryEditWindow: BrowserWindow | null = null
 
@@ -24,6 +24,7 @@ export const createCategoryEditWindow = (parent: BrowserWindow, category: TCateg
       sandbox: false
     }
   })
+  categoryEditWindow.title = 'category'
   categoryEditWindow.setMenuBarVisibility(false)
   if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
     categoryEditWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/category.html`)
@@ -33,7 +34,7 @@ export const createCategoryEditWindow = (parent: BrowserWindow, category: TCateg
 
   categoryEditWindow.on('ready-to-show', () => {
     categoryEditWindow?.show()
-    categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, null)
+    categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, category)
   })
 }
 

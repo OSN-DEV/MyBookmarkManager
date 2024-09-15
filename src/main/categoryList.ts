@@ -1,13 +1,12 @@
-import { BrowserWindow, Menu } from 'electron'
+import { Menu } from 'electron'
 import * as cm from '../util/common'
-import { ED } from '../preload/EventDef'
 import { RequestMode } from '../util/Constant'
 import { TCategory } from '../@types/TCategory'
 
 let contextMenu: Menu | null = null
-export const showContextMenu = (category: TCategory | null, callback: (category: TCategory | null, mode: RequestMode) => void) => {
+export const showContextMenu = (category: TCategory | null, callback: (category: TCategory | null, mode: RequestMode) => void): void => {
   const isCreate = category === null
-  cm.devLog(`showContextMenu: ${category?.categoryId}`)
+  cm.devLog(`showContextMenu: ${category?.id}`)
   cm.devLog(isCreate ? 'aa' : 'bb')
 
   if (!contextMenu) {
@@ -15,21 +14,21 @@ export const showContextMenu = (category: TCategory | null, callback: (category:
       {
         label: 'Create',
         enabled: isCreate,
-        click: () => {
+        click: (): void => {
           callback(category, RequestMode.Create)
         }
       },
       {
         label: 'Edit',
         enabled: !isCreate,
-        click: () => {
+        click: (): void => {
           callback(category, RequestMode.Edit)
         }
       },
       {
         label: 'Delete',
         enabled: !isCreate,
-        click: () => {
+        click: (): void => {
           // handleDeleteClick(window, categoryId)
         }
       }
@@ -44,22 +43,4 @@ export const showContextMenu = (category: TCategory | null, callback: (category:
     })
   }
   contextMenu.popup()
-}
-
-const handleCreateClick = (window: BrowserWindow | null) => {
-  cm.devLog(`handleCreateClick`)
-  contextMenu?.closePopup()
-  window!.webContents.send(ED.CategoryList.ContextMenu.CreateRequest)
-  window!.webContents.send('update-counter', 1)
-  cm.devLog(`send create category item request: ${ED.CategoryList.ContextMenu.CreateRequest}`)
-}
-
-const handleEditClick = (window: BrowserWindow | null, categoryId: number | null) => {
-  cm.devLog(`handleEditClick: ${categoryId}`)
-  contextMenu?.closePopup()
-}
-
-const handleDeleteClick = (window: BrowserWindow | null, categoryId: number | null) => {
-  cm.devLog(`handleDeleteClick: ${categoryId}`)
-  contextMenu?.closePopup()
 }

@@ -3,6 +3,7 @@ import { TCategory } from '../../@types/TCategory'
 import { devLog } from '../../util/common'
 import { EditText } from '../components/EditText'
 import { TextButton } from '../components/TextButton'
+import { IpcRendererEvent } from 'electron'
 
 export const CategoryEdit = (): JSX.Element => {
   const [category, setCategory] = useState<TCategory | null>(null)
@@ -11,7 +12,7 @@ export const CategoryEdit = (): JSX.Element => {
   /**
    * ロードイベント
    */
-  window.categoryApi.onLoad((_: any, category: TCategory | null) => {
+  window.categoryApi.onLoad((_: IpcRendererEvent, category: TCategory | null) => {
     if (category == null) {
       devLog('create')
     } else {

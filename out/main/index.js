@@ -24,6 +24,56 @@ const sqlite3__namespace = /* @__PURE__ */ _interopNamespaceDefault(sqlite3);
 const devLog = (message) => {
   console.log(`##### ${message}`);
 };
+var RequestMode = /* @__PURE__ */ ((RequestMode2) => {
+  RequestMode2["Create"] = "create";
+  RequestMode2["Edit"] = "edit";
+  RequestMode2["Delete"] = "delete";
+  return RequestMode2;
+})(RequestMode || {});
+var FilePath = /* @__PURE__ */ ((FilePath2) => {
+  FilePath2["AppDirectory"] = "MyBookmark";
+  FilePath2["SettingFile"] = "MyBookmark/settings.json";
+  return FilePath2;
+})(FilePath || {});
+let contextMenu = null;
+const showContextMenu = (category, callback) => {
+  const isCreate = category === null;
+  devLog(`showContextMenu: ${category?.id}`);
+  devLog(isCreate ? "aa" : "bb");
+  if (!contextMenu) {
+    contextMenu = electron.Menu.buildFromTemplate([
+      {
+        label: "Create",
+        enabled: isCreate,
+        click: () => {
+          callback(category, RequestMode.Create);
+        }
+      },
+      {
+        label: "Edit",
+        enabled: !isCreate,
+        click: () => {
+          callback(category, RequestMode.Edit);
+        }
+      },
+      {
+        label: "Delete",
+        enabled: !isCreate,
+        click: () => {
+        }
+      }
+    ]);
+  } else {
+    contextMenu.items.map((m) => {
+      if (m.label === "Create") {
+        m.enabled = isCreate;
+      } else {
+        m.enabled = !isCreate;
+      }
+    });
+  }
+  contextMenu.popup();
+};
 const Prefix = {
   CategoriEdit: "ed.category-edit"
 };
@@ -61,56 +111,6 @@ const ED = {
     // Cancel: 'ed.category-edit.cancel'
     Cancel: `${Prefix.CategoriEdit}.cancel`
   }
-};
-var RequestMode = /* @__PURE__ */ ((RequestMode2) => {
-  RequestMode2["Create"] = "create";
-  RequestMode2["Edit"] = "edit";
-  RequestMode2["Delete"] = "delete";
-  return RequestMode2;
-})(RequestMode || {});
-var FilePath = /* @__PURE__ */ ((FilePath2) => {
-  FilePath2["AppDirectory"] = "MyBookmark";
-  FilePath2["SettingFile"] = "MyBookmark/settings.json";
-  return FilePath2;
-})(FilePath || {});
-let contextMenu = null;
-const showContextMenu = (category, callback) => {
-  const isCreate = category === null;
-  devLog(`showContextMenu: ${category?.categoryId}`);
-  devLog(isCreate ? "aa" : "bb");
-  if (!contextMenu) {
-    contextMenu = electron.Menu.buildFromTemplate([
-      {
-        label: "Create",
-        enabled: isCreate,
-        click: () => {
-          callback(category, RequestMode.Create);
-        }
-      },
-      {
-        label: "Edit",
-        enabled: !isCreate,
-        click: () => {
-          callback(category, RequestMode.Edit);
-        }
-      },
-      {
-        label: "Delete",
-        enabled: !isCreate,
-        click: () => {
-        }
-      }
-    ]);
-  } else {
-    contextMenu.items.map((m) => {
-      if (m.label === "Create") {
-        m.enabled = isCreate;
-      } else {
-        m.enabled = !isCreate;
-      }
-    });
-  }
-  contextMenu.popup();
 };
 const createDataDir = () => {
   const filePath = path.join(electron.app.getPath("appData"), FilePath.AppDirectory);
@@ -230,6 +230,7 @@ const createCategoryEditWindow = (parent, category) => {
       sandbox: false
     }
   });
+  categoryEditWindow.title = "category";
   categoryEditWindow.setMenuBarVisibility(false);
   if (!electron.app.isPackaged && process.env["ELECTRON_RENDERER_URL"]) {
     categoryEditWindow.loadURL(`${process.env["ELECTRON_RENDERER_URL"]}/category.html`);
@@ -238,7 +239,7 @@ const createCategoryEditWindow = (parent, category) => {
   }
   categoryEditWindow.on("ready-to-show", () => {
     categoryEditWindow?.show();
-    categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, null);
+    categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, category);
   });
 };
 const closeCategoryEditWindow = () => {
@@ -247,6 +248,7 @@ const closeCategoryEditWindow = () => {
     categoryEditWindow = null;
   }
 };
+const icon = path.join(__dirname, "../../resources/icon.png");
 let showDevTool = false;
 let mainWindow = null;
 const getmainWindow = () => {
@@ -267,8 +269,7 @@ const createWindow = () => {
       // height of titile bar
       height: 32
     },
-    ...process.platform === "linux" ? {} : {},
-    // ...(process.platform === 'linux' ? { icon } : {}),
+    ...process.platform === "linux" ? { icon } : {},
     webPreferences: {
       preload: path.join(__dirname, "../preload/index.js"),
       sandbox: false
@@ -336,28 +337,12 @@ electron.app.whenReady().then(async () => {
   registerEvent();
   toggleDevTool();
 });
-const openFile = async () => {
-  const { canceled, filePaths } = await electron.dialog.showOpenDialog({});
-  if (!canceled) {
-    return filePaths[0];
-  }
-  return "";
-};
 const registerEvent = () => {
   electron.ipcMain.on(ED.CategoryList.ContextMenu.Show, (_, category) => {
     showContextMenu(category, categoryContextMenuCallback);
   });
   electron.ipcMain.handle(ED.CategoryEdit.Create, (_, category) => create(category));
   electron.ipcMain.on(ED.CategoryEdit.Cancel, closeCategoryEditWindow);
-  electron.ipcMain.on("set-title", (ev, title) => {
-    const webContents = ev.sender;
-    const win = electron.BrowserWindow.fromWebContents(webContents);
-    win?.setTitle(title);
-  });
-  electron.ipcMain.handle("dialog:openFile", openFile);
-  electron.ipcMain.on("counter-value", (_, value) => {
-    console.log(value);
-  });
   createWindow();
   electron.app.on("activate", function() {
     if (electron.BrowserWindow.getAllWindows().length === 0)
@@ -371,5 +356,5 @@ const registerEvent = () => {
 };
 const categoryContextMenuCallback = (category, mode) => {
   devLog(`categoryContextMenuCallback: ${category?.id}, ${mode}`);
-  createCategoryEditWindow(getmainWindow());
+  createCategoryEditWindow(getmainWindow(), category);
 };

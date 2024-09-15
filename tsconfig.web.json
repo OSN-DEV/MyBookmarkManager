@@ -4,9 +4,15 @@
     "src/renderer/src/env.d.ts",
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
-    "src/renderer/src/**/*.css",
     "src/preload/*.d.ts"
-  ],
+, "src/@type/window.d.ts"  ],
+  // "include": [
+  //   "src/renderer/src/**/*",
+  //   "src/renderer/src/env.d.ts",
+  //   "src/renderer/src/**/*.tsx",
+  //   "src/renderer/src/**/*.css",
+  //   "src/preload/*.d.ts"
+  // ],
   "compilerOptions": {
     "composite": true,
     "jsx": "react-jsx",

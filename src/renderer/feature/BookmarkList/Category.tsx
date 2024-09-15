@@ -1,5 +1,4 @@
 import React from 'react'
-import { IconType } from 'react-icons'
 
 type CategoryProps = {
   id: number
@@ -9,12 +8,12 @@ type CategoryProps = {
   onContextMenu: () => void
 }
 
-const Category = (props: CategoryProps) => {
+const Category = (props: CategoryProps): JSX.Element => {
   const { id, isSelected, name, handleClick, onContextMenu } = props
   if (isSelected) {
     console.log('selected')
   }
-  const handleContextmenu = (e: React.MouseEvent) => {
+  const handleContextmenu = (e: React.MouseEvent): void => {
     e.stopPropagation()
     onContextMenu()
   }

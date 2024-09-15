@@ -1,4 +1,3 @@
-import React from 'react'
 import { TCategory } from '../../../@types/TCategory'
 import Category from './Category'
 
@@ -30,10 +29,10 @@ const CategoryList = (props: CategoryListProps): JSX.Element => {
       {categoryList.map((category: TCategory) => {
         return (
           <Category
-            key={`category-${category.categoryId}`}
-            id={category.categoryId}
-            isSelected={category.categoryId === currentId}
-            name={category.categoryName}
+            key={`category-${category.id}`}
+            id={category.id}
+            isSelected={category.id === currentId}
+            name={category.name}
             handleClick={handleClick}
             onContextMenu={() => handleContextMenu(category)}
           />
