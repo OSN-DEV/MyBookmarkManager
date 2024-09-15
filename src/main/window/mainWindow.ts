@@ -3,8 +3,7 @@ import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import { initDatabase } from '../database/database'
 import { ED } from '../../preload/EventDef'
-import icon from '../../../resources/icon.png?asset'
-
+import icon from '../../../resources/icon.png'
 let showDevTool: boolean = false
 let mainWindow: BrowserWindow | null = null
 
@@ -35,6 +34,7 @@ export const createWindow = (): void => {
       // height of titile bar
       height: 32
     },
+    // ...(process.platform === 'linux' ? { icon } : {}),
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
