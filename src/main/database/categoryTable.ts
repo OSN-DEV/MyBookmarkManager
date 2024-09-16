@@ -1,9 +1,7 @@
 /** カテゴリテーブル操作クラス */
 
-import { Database } from "sqlite3"
-import { TCategory } from "../../@types/TCategory"
-import { getDatabase, insert, modify, query } from "./database"
-import { warn } from "console"
+import { TCategory } from '../../@types/TCategory'
+import { insert, modify, query } from './database'
 
 /**
  * テーブル作成SQLの作成
@@ -24,9 +22,8 @@ export const getCreateTableSql = (): string => {
  * @param カテゴリ情報
  * @returns データ作成後のカテゴリ情報(idとsortを設定)
  */
-export const create = async(category: TCategory): Promise<TCategory | undefined> => {
+export const create = async (category: TCategory): Promise<TCategory | undefined> => {
   try {
-    
     let sql = `
       insert into category(name) values(?)
     `
@@ -35,7 +32,7 @@ export const create = async(category: TCategory): Promise<TCategory | undefined>
     sql = `
       select max(sort) as max_sort from category
     `
-    const rows = await query(sql) as number[]
+    const rows = (await query(sql)) as number[]
     category.sort = rows[0] + 1
 
     sql = `
@@ -48,5 +45,22 @@ export const create = async(category: TCategory): Promise<TCategory | undefined>
   } catch (error) {
     console.error('Error query database:', error)
     return undefined
+  }
+}
+
+/**
+ * カテゴリ情報の一覧取得
+ * @returns カテゴリ情報
+ */
+export const selectAll = async (): Promise<TCategory[]> => {
+  try {
+    const sql = `
+      SELECT id, name, sort FROM category
+        ORDER BY sort
+    `
+    return (await query(sql)) as TCategory[]
+  } catch (error) {
+    console.error('Error query database:', error)
+    return []
   }
 }

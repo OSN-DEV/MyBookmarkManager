@@ -19,6 +19,16 @@ export interface IMainApi {
    */
   showCategoryListContextMenu: (category: TCategory | null) => void
 
+  /**
+   * カテゴリリスト一覧取得イベント
+   * @param callback カテゴリ情報
+   * @param callback.event IPCメッセージイベント
+   * @param callback.categoryList カテゴリ一覧
+   * @summary アプリ起動時、カテゴリ情報変更時に発生
+   */
+  onCategoryListLoad: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => void
+
+
   onCategoryItemCreateReqeust: (callback: (event: Electron.IpcMessageEvent) => void) => void
   ping: () => void
   setTitle: (title: string) => void
@@ -45,4 +55,9 @@ export interface ICategoryApi {
    * @return カテゴリ情報(IDを設定)
    */
   create: (category: TCategory) => Promise<TCategory>
+
+  /**
+   * キャンセル
+   */
+  cancel: () => void
 }

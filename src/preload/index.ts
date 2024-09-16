@@ -1,4 +1,4 @@
-import { IpcRendererEvent, contextBridge, ipcRenderer, IpcMainEvent } from 'electron'
+import { IpcRendererEvent, contextBridge, ipcRenderer } from 'electron'
 import { ED } from './EventDef'
 import { TCategory } from '../@types/TCategory'
 
@@ -6,15 +6,6 @@ import { TCategory } from '../@types/TCategory'
  * メインウィンドウ
  */
 contextBridge.exposeInMainWorld('mainApi', {
-  // ping: () => ipcRenderer.send('ping'),
-  ping: () => ipcRenderer.send('ping'),
-  setTitle: (title: string) => ipcRenderer.send('set-title', title),
-  openFile: () => ipcRenderer.invoke('dialog:openFile'),
-  counterValue: (value: number) => ipcRenderer.send('counter-value', value),
-  onUpdateCounter: (callback: (event: any, value: number) => void) => {
-    ipcRenderer.on('update-counter', (ev: IpcRendererEvent, value: number) => callback(ev, value))
-  },
-
   /** category list */
   /**
    * Show context menu for category list
@@ -24,11 +15,33 @@ contextBridge.exposeInMainWorld('mainApi', {
   showCategoryListContextMenu: (category: TCategory | null) => ipcRenderer.send(ED.CategoryList.ContextMenu.Show, category),
 
   /**
+   * カテゴリリスト一覧取得イベント
+   * @param callback カテゴリ情報
+   * @param callback.event IPCメッセージイベント
+   * @param callback.categoryList カテゴリ一覧
+   * @summary アプリ起動時、カテゴリ情報変更時に発生
+   */
+  onCategoryListLoad: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => {
+    ipcRenderer.on(ED.CategoryList.Load, (ev: IpcRendererEvent, categoryList: TCategory[]) => callback(ev, categoryList))
+  },
+
+
+  // ping: () => ipcRenderer.send('ping'),
+  ping: () => ipcRenderer.send('ping'),
+  setTitle: (title: string) => ipcRenderer.send('set-title', title),
+  openFile: () => ipcRenderer.invoke('dialog:openFile'),
+  counterValue: (value: number) => ipcRenderer.send('counter-value', value),
+  onUpdateCounter: (callback: (event: IpcRendererEvent, value: number) => void) => {
+    ipcRenderer.on('update-counter', (ev: IpcRendererEvent, value: number) => callback(ev, value))
+  },
+
+
+  /**
    * Create category item request
    * @param callback - callback
    * @return void
    */
-  onCategoryItemCreateReqeust: (callback: (event: any) => void) => {
+  onCategoryItemCreateReqeust: (callback: (event: IpcRendererEvent) => void) => {
     ipcRenderer.on(ED.CategoryList.ContextMenu.CreateRequest, (ev: IpcRendererEvent) => callback(ev))
   },
 
@@ -37,7 +50,7 @@ contextBridge.exposeInMainWorld('mainApi', {
    * @param callback - callback
    * @return void
    */
-  onCategoryItemEditReqeust: (callback: (event: any, categoryId: number) => void) => {
+  onCategoryItemEditReqeust: (callback: (event: IpcRendererEvent, categoryId: number) => void) => {
     ipcRenderer.on(ED.CategoryList.ContextMenu.EditRequest, (ev: IpcRendererEvent, categoryId: number) => callback(ev, categoryId))
   },
 
@@ -46,7 +59,7 @@ contextBridge.exposeInMainWorld('mainApi', {
    * @param callback - callback
    * @return void
    */
-  onCategoryItemDeleteReqeust: (callback: (event: any, categoryId: number) => void) => {
+  onCategoryItemDeleteReqeust: (callback: (event: IpcRendererEvent, categoryId: number) => void) => {
     ipcRenderer.on(ED.CategoryList.ContextMenu.EditRequest, (ev: IpcRendererEvent, categoryId: number) => callback(ev, categoryId))
   }
 })
@@ -69,5 +82,10 @@ contextBridge.exposeInMainWorld('categoryApi', {
    * カテゴリ作成
    * @param category カテゴリ情報
    */
-  create: (category: TCategory) => ipcRenderer.invoke(ED.CategoryEdit.Create, category)
+  create: (category: TCategory) => ipcRenderer.invoke(ED.CategoryEdit.Create, category),
+
+  /**
+   * キャンセル
+   */
+  cancel: () => ipcRenderer.send(ED.CategoryEdit.Cancel)
 })
