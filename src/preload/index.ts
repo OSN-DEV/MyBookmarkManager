@@ -6,6 +6,26 @@ import { TCategory } from '../@types/TCategory'
  * メインウィンドウ
  */
 contextBridge.exposeInMainWorld('mainApi', {
+  /** category list */
+  /**
+   * Show context menu for category list
+   * @param categoryId - category id.
+   * @returns void
+   */
+  showCategoryListContextMenu: (category: TCategory | null) => ipcRenderer.send(ED.CategoryList.ContextMenu.Show, category),
+
+  /**
+   * カテゴリリスト一覧取得イベント
+   * @param callback カテゴリ情報
+   * @param callback.event IPCメッセージイベント
+   * @param callback.categoryList カテゴリ一覧
+   * @summary アプリ起動時、カテゴリ情報変更時に発生
+   */
+  onCategoryListLoad: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => {
+    ipcRenderer.on(ED.CategoryList.Load, (ev: IpcRendererEvent, categoryList: TCategory[]) => callback(ev, categoryList))
+  },
+
+
   // ping: () => ipcRenderer.send('ping'),
   ping: () => ipcRenderer.send('ping'),
   setTitle: (title: string) => ipcRenderer.send('set-title', title),
@@ -15,13 +35,6 @@ contextBridge.exposeInMainWorld('mainApi', {
     ipcRenderer.on('update-counter', (ev: IpcRendererEvent, value: number) => callback(ev, value))
   },
 
-  /** category list */
-  /**
-   * Show context menu for category list
-   * @param categoryId - category id.
-   * @returns void
-   */
-  showCategoryListContextMenu: (category: TCategory | null) => ipcRenderer.send(ED.CategoryList.ContextMenu.Show, category),
 
   /**
    * Create category item request

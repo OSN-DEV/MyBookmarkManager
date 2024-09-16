@@ -3,6 +3,7 @@ import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import { initDatabase } from '../database/database'
 import { ED } from '../../preload/EventDef'
+import * as CategoryTable from '../database/categoryTable'
 import icon from '../../../resources/icon.png'
 let showDevTool: boolean = false
 let mainWindow: BrowserWindow | null = null
@@ -18,7 +19,7 @@ export const getmainWindow = (): BrowserWindow | null => {
 /**
  * メインウィンドウを作成
  */
-export const createWindow = (): void => {
+export const createWindow = async (): Promise<void> => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 900,
@@ -84,11 +85,17 @@ export const createWindow = (): void => {
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
+  mainWindow.hide()
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow?.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
     mainWindow?.loadFile(join(__dirname, '../renderer/index.html'))
   }
+  mainWindow?.webContents.on('did-finish-load', async () => {
+    const categoryList = await CategoryTable.selectAll()
+    mainWindow?.webContents.send(ED.CategoryList.Load, categoryList)
+    mainWindow?.show()
+  })
 }
 
 /**

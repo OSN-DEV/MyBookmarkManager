@@ -41,7 +41,7 @@ app.whenReady().then(async () => {
 /**
  * イベント登録
  */
-const registerEvent = (): void => {
+const registerEvent = async (): Promise<void> => {
   // Category List
   ipcMain.on(ED.CategoryList.ContextMenu.Show, (_: IpcMainEvent, category: TCategory | null) => {
     CL.showContextMenu(category, categoryContextMenuCallback)
@@ -51,7 +51,7 @@ const registerEvent = (): void => {
   ipcMain.handle(ED.CategoryEdit.Create, (_, category: TCategory) => categoryTable.create(category))
   ipcMain.on(ED.CategoryEdit.Cancel, closeCategoryEditWindow)
 
-  createWindow()
+  await createWindow()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

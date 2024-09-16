@@ -5,6 +5,8 @@ const Prefix = {
 export const ED = {
   /** カテゴリリスト */
   CategoryList: {
+    /** カテゴリリストロード */
+    Load: 'ed.category-list.load',
     /** コンテキストメニュー */
     ContextMenu: {
       /**

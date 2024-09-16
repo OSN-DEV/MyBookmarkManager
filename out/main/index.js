@@ -80,6 +80,8 @@ const Prefix = {
 const ED = {
   /** カテゴリリスト */
   CategoryList: {
+    /** カテゴリリストロード */
+    Load: "ed.category-list.load",
     /** コンテキストメニュー */
     ContextMenu: {
       /**
@@ -148,6 +150,18 @@ const create = async (category) => {
   } catch (error) {
     console.error("Error query database:", error);
     return void 0;
+  }
+};
+const selectAll = async () => {
+  try {
+    const sql = `
+      SELECT id, name, sort FROM category
+        ORDER BY sort
+    `;
+    return await query(sql);
+  } catch (error) {
+    console.error("Error query database:", error);
+    return [];
   }
 };
 const getCreateTableSql = () => {
@@ -254,7 +268,7 @@ let mainWindow = null;
 const getmainWindow = () => {
   return mainWindow;
 };
-const createWindow = () => {
+const createWindow = async () => {
   mainWindow = new electron.BrowserWindow({
     width: 900,
     height: 670,
@@ -311,11 +325,17 @@ const createWindow = () => {
     electron.shell.openExternal(details.url);
     return { action: "deny" };
   });
+  mainWindow.hide();
   if (utils.is.dev && process.env["ELECTRON_RENDERER_URL"]) {
     mainWindow?.loadURL(process.env["ELECTRON_RENDERER_URL"]);
   } else {
     mainWindow?.loadFile(path.join(__dirname, "../renderer/index.html"));
   }
+  mainWindow?.webContents.on("did-finish-load", async () => {
+    const categoryList = await selectAll();
+    mainWindow?.webContents.send(ED.CategoryList.Load, categoryList);
+    mainWindow?.show();
+  });
 };
 const toggleDevTool = () => {
   if (null === mainWindow) {
@@ -338,13 +358,13 @@ electron.app.whenReady().then(async () => {
   registerEvent();
   toggleDevTool();
 });
-const registerEvent = () => {
+const registerEvent = async () => {
   electron.ipcMain.on(ED.CategoryList.ContextMenu.Show, (_, category) => {
     showContextMenu(category, categoryContextMenuCallback);
   });
   electron.ipcMain.handle(ED.CategoryEdit.Create, (_, category) => create(category));
   electron.ipcMain.on(ED.CategoryEdit.Cancel, closeCategoryEditWindow);
-  createWindow();
+  await createWindow();
   electron.app.on("activate", function() {
     if (electron.BrowserWindow.getAllWindows().length === 0)
       createWindow();

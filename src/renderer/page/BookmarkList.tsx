@@ -4,6 +4,8 @@ import CategoryList from '../feature/BookmarkList/CategoryList'
 import ItemList from '../feature/BookmarkList/ItemList'
 import { TCategory } from '../../@types/TCategory'
 import { TItem } from '../../@types/TItem'
+import { IpcRendererEvent } from 'electron'
+import { devLog } from '../../util/common'
 
 export const BookmarkList = (): JSX.Element => {
   // register event from main process
@@ -16,16 +18,26 @@ export const BookmarkList = (): JSX.Element => {
     // })
   }, [])
 
+
+  const [categoryList, setCategoryList] = useState<TCategory[]>([])
+  /**
+   * ロードイベント
+   */
+  window.mainApi.onCategoryListLoad((_: IpcRendererEvent, categoryList: TCategory[]) => {
+    devLog(`window.mainApi.onCategoryListLoad`)
+    setCategoryList(categoryList)
+  })
+
   const [currentCategoryId, setCurrentCategoryId] = useState(0)
 
-  const categoryList: TCategory[] = [
-    { id: 1, name: 'c1', sort: 1 },
-    { id: 2, name: 'c2', sort: 2 },
-    { id: 3, name: 'c3', sort: 2 },
-    { id: 4, name: 'c4', sort: 2 },
-    { id: 5, name: 'c5', sort: 2 },
-    { id: 6, name: 'c6', sort: 2 }
-  ]
+  // const categoryList: TCategory[] = [
+  //   { id: 1, name: 'c1', sort: 1 },
+  //   { id: 2, name: 'c2', sort: 2 },
+  //   { id: 3, name: 'c3', sort: 2 },
+  //   { id: 4, name: 'c4', sort: 2 },
+  //   { id: 5, name: 'c5', sort: 2 },
+  //   { id: 6, name: 'c6', sort: 2 }
+  // ]
 
   const itemList: TItem[] = [
     { categoryId: 1, itemId: 1, itemName: 'Google', sort: 1, url: 'https://www.google.co.jp', explanation: 'ぐぐるとは' },

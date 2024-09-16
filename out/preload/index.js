@@ -6,6 +6,8 @@ const Prefix = {
 const ED = {
   /** カテゴリリスト */
   CategoryList: {
+    /** カテゴリリストロード */
+    Load: "ed.category-list.load",
     /** コンテキストメニュー */
     ContextMenu: {
       /**
@@ -39,6 +41,23 @@ const ED = {
   }
 };
 electron.contextBridge.exposeInMainWorld("mainApi", {
+  /** category list */
+  /**
+   * Show context menu for category list
+   * @param categoryId - category id.
+   * @returns void
+   */
+  showCategoryListContextMenu: (category) => electron.ipcRenderer.send(ED.CategoryList.ContextMenu.Show, category),
+  /**
+   * カテゴリリスト一覧取得イベント
+   * @param callback カテゴリ情報
+   * @param callback.event IPCメッセージイベント
+   * @param callback.categoryList カテゴリ一覧
+   * @summary アプリ起動時、カテゴリ情報変更時に発生
+   */
+  onCategoryListLoad: (callback) => {
+    electron.ipcRenderer.on(ED.CategoryList.Load, (ev, categoryList) => callback(ev, categoryList));
+  },
   // ping: () => ipcRenderer.send('ping'),
   ping: () => electron.ipcRenderer.send("ping"),
   setTitle: (title) => electron.ipcRenderer.send("set-title", title),
@@ -47,13 +66,6 @@ electron.contextBridge.exposeInMainWorld("mainApi", {
   onUpdateCounter: (callback) => {
     electron.ipcRenderer.on("update-counter", (ev, value) => callback(ev, value));
   },
-  /** category list */
-  /**
-   * Show context menu for category list
-   * @param categoryId - category id.
-   * @returns void
-   */
-  showCategoryListContextMenu: (category) => electron.ipcRenderer.send(ED.CategoryList.ContextMenu.Show, category),
   /**
    * Create category item request
    * @param callback - callback

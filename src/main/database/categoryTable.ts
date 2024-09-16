@@ -47,3 +47,20 @@ export const create = async (category: TCategory): Promise<TCategory | undefined
     return undefined
   }
 }
+
+/**
+ * カテゴリ情報の一覧取得
+ * @returns カテゴリ情報
+ */
+export const selectAll = async (): Promise<TCategory[]> => {
+  try {
+    const sql = `
+      SELECT id, name, sort FROM category
+        ORDER BY sort
+    `
+    return (await query(sql)) as TCategory[]
+  } catch (error) {
+    console.error('Error query database:', error)
+    return []
+  }
+}
