@@ -14,10 +14,13 @@ export const CategoryEdit = (): JSX.Element => {
    */
   window.categoryApi.onLoad((_: IpcRendererEvent, category: TCategory | null) => {
     if (category == null) {
-      devLog('create')
+      devLog('window.categoryApi.onLoad:create')
     } else {
-      devLog('update')
+      devLog('window.categoryApi.onLoad:update')
       setCategory(category)
+      if (categoryNameRef && categoryNameRef.current) {
+        categoryNameRef.current.value = category.name
+      }
     }
   })
 
@@ -29,6 +32,8 @@ export const CategoryEdit = (): JSX.Element => {
     if (category == null) {
       const category = { id: 0, name: categoryNameRef.current?.value ?? '', sort: 0 }
       window.categoryApi.create(category)
+    } else {
+      window.categoryApi.update({...category, name: categoryName.current?.value ?? ''})
     }
   }
 

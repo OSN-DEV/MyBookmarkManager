@@ -39,7 +39,6 @@ let contextMenu = null;
 const showContextMenu = (category, callback) => {
   const isCreate = category === null;
   devLog(`showContextMenu: ${category?.id}`);
-  devLog(isCreate ? "aa" : "bb");
   if (!contextMenu) {
     contextMenu = electron.Menu.buildFromTemplate([
       {
@@ -109,6 +108,8 @@ const ED = {
     Load: "ed.category-edit.loadd",
     /** データ作成 */
     Create: "ed.category-edit.create",
+    /** データ更新 */
+    Update: "ed.category-edit.update",
     /** キャンセル */
     // Cancel: 'ed.category-edit.cancel'
     Cancel: `${Prefix.CategoriEdit}.cancel`
@@ -130,6 +131,7 @@ const getCreateTableSql$1 = () => {
   `;
 };
 const create = async (category) => {
+  devLog(`categoryTable.create`);
   try {
     let sql = `
       insert into category(name) values(?)
@@ -146,6 +148,19 @@ const create = async (category) => {
       where id=?
     `;
     modify(sql, [category.sort, category.id]);
+    return category;
+  } catch (error) {
+    console.error("Error query database:", error);
+    return void 0;
+  }
+};
+const update = async (category) => {
+  try {
+    const sql = `
+      update category set name = ?
+      where id = ?
+    `;
+    modify(sql, [category.name, category.id]);
     return category;
   } catch (error) {
     console.error("Error query database:", error);
@@ -252,6 +267,7 @@ const createCategoryEditWindow = (parent, category) => {
     categoryEditWindow.loadFile(path.join(__dirname, "../renderer/category.html"));
   }
   categoryEditWindow.on("ready-to-show", () => {
+    console.log(`#### ready-to-show`);
     categoryEditWindow?.show();
     categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, category);
   });
@@ -362,7 +378,8 @@ const registerEvent = async () => {
   electron.ipcMain.on(ED.CategoryList.ContextMenu.Show, (_, category) => {
     showContextMenu(category, categoryContextMenuCallback);
   });
-  electron.ipcMain.handle(ED.CategoryEdit.Create, (_, category) => create(category));
+  electron.ipcMain.handle(ED.CategoryEdit.Create, (_, category) => handleCategoryCreate(category));
+  electron.ipcMain.handle(ED.CategoryEdit.Update, (_, category) => handleCategoryUpdate(category));
   electron.ipcMain.on(ED.CategoryEdit.Cancel, closeCategoryEditWindow);
   await createWindow();
   electron.app.on("activate", function() {
@@ -378,4 +395,14 @@ const registerEvent = async () => {
 const categoryContextMenuCallback = (category, mode) => {
   devLog(`categoryContextMenuCallback: ${category?.id}, ${mode}`);
   createCategoryEditWindow(getmainWindow(), category);
+};
+const handleCategoryCreate = (category) => {
+  devLog(`handleCategoryCreate`);
+  create(category);
+  closeCategoryEditWindow();
+};
+const handleCategoryUpdate = (category) => {
+  devLog(`handleCategoryUpdate`);
+  update(category);
+  closeCategoryEditWindow();
 };

@@ -37,6 +37,8 @@ export const ED = {
     Load: 'ed.category-edit.loadd',
     /** データ作成 */
     Create: 'ed.category-edit.create',
+    /** データ更新 */
+    Update: 'ed.category-edit.update',
     /** キャンセル */
     // Cancel: 'ed.category-edit.cancel'
     Cancel: `${Prefix.CategoriEdit}.cancel`

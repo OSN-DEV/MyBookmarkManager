@@ -33,6 +33,7 @@ export const createCategoryEditWindow = (parent: BrowserWindow, category: TCateg
   }
 
   categoryEditWindow.on('ready-to-show', () => {
+    console.log(`#### ready-to-show`)
     categoryEditWindow?.show()
     categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, category)
   })

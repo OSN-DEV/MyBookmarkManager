@@ -7,7 +7,6 @@ let contextMenu: Menu | null = null
 export const showContextMenu = (category: TCategory | null, callback: (category: TCategory | null, mode: RequestMode) => void): void => {
   const isCreate = category === null
   cm.devLog(`showContextMenu: ${category?.id}`)
-  cm.devLog(isCreate ? 'aa' : 'bb')
 
   if (!contextMenu) {
     contextMenu = Menu.buildFromTemplate([

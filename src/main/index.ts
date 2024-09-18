@@ -48,7 +48,8 @@ const registerEvent = async (): Promise<void> => {
   })
 
   // Category Edit
-  ipcMain.handle(ED.CategoryEdit.Create, (_, category: TCategory) => categoryTable.create(category))
+  ipcMain.handle(ED.CategoryEdit.Create, (_, category: TCategory) => handleCategoryCreate(category))
+  ipcMain.handle(ED.CategoryEdit.Update, (_, category: TCategory) => handleCategoryUpdate(category))
   ipcMain.on(ED.CategoryEdit.Cancel, closeCategoryEditWindow)
 
   await createWindow()
@@ -75,4 +76,27 @@ const registerEvent = async (): Promise<void> => {
 const categoryContextMenuCallback = (category: TCategory | null, mode: RequestMode): void => {
   devLog(`categoryContextMenuCallback: ${category?.id}, ${mode}`)
   createCategoryEditWindow(getmainWindow()!, category)
+}
+
+// ------------------------------------------------------------------
+// カテゴリ編集
+// ------------------------------------------------------------------
+/*
+ * カテゴリ作成
+ * @params category カテゴリ情報
+ */
+const handleCategoryCreate = (category: TCategory): void => {
+  devLog(`handleCategoryCreate`)
+  categoryTable.create(category)
+  closeCategoryEditWindow()
+}
+
+/*
+ * カテゴリ更新
+ * @params category カテゴリ情報
+ */
+const handleCategoryUpdate = (category: TCategory): void => {
+  devLog(`handleCategoryUpdate`)
+  categoryTable.update(category)
+  closeCategoryEditWindow()
 }
