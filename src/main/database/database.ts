@@ -4,7 +4,7 @@ import * as item from './itemTable'
 import { devLog } from '../../util/common'
 
 const db = new sqlite3.Database('app.db')
-type TSqlParam  = number | string
+type TSqlParam = number | string
 
 /**
  * データベースの初期化

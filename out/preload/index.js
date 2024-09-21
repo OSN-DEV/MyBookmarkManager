@@ -35,6 +35,8 @@ const ED = {
     Load: "ed.category-edit.loadd",
     /** データ作成 */
     Create: "ed.category-edit.create",
+    /** データ更新 */
+    Update: "ed.category-edit.update",
     /** キャンセル */
     // Cancel: 'ed.category-edit.cancel'
     Cancel: `${Prefix.CategoriEdit}.cancel`
@@ -106,6 +108,11 @@ electron.contextBridge.exposeInMainWorld("categoryApi", {
    * @param category カテゴリ情報
    */
   create: (category) => electron.ipcRenderer.invoke(ED.CategoryEdit.Create, category),
+  /**
+   * カテゴリ更新
+   * @param category カテゴリ情報
+   */
+  update: (category) => electron.ipcRenderer.invoke(ED.CategoryEdit.Update, category),
   /**
    * キャンセル
    */

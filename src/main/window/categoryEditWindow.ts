@@ -3,6 +3,7 @@ import { join } from 'path'
 import { ED } from '../../preload/EventDef'
 import { TCategory } from '../../@types/TCategory'
 
+let showDevTool: boolean = false
 let categoryEditWindow: BrowserWindow | null = null
 
 /**
@@ -33,8 +34,10 @@ export const createCategoryEditWindow = (parent: BrowserWindow, category: TCateg
   }
 
   categoryEditWindow.on('ready-to-show', () => {
+    console.log(`#### ready-to-show`)
     categoryEditWindow?.show()
     categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, category)
+    // toggleDevTool()
   })
 }
 
@@ -46,4 +49,16 @@ export const closeCategoryEditWindow = (): void => {
     categoryEditWindow.close()
     categoryEditWindow = null
   }
+}
+
+export const toggleDevTool = (): void => {
+  if (null === categoryEditWindow) {
+    return
+  }
+  if (showDevTool) {
+    categoryEditWindow.webContents.closeDevTools()
+  } else {
+    categoryEditWindow.webContents.openDevTools()
+  }
+  showDevTool = !showDevTool
 }

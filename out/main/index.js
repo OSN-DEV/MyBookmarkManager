@@ -35,43 +35,32 @@ var FilePath = /* @__PURE__ */ ((FilePath2) => {
   FilePath2["SettingFile"] = "MyBookmark/settings.json";
   return FilePath2;
 })(FilePath || {});
-let contextMenu = null;
 const showContextMenu = (category, callback) => {
   const isCreate = category === null;
-  devLog(`showContextMenu: ${category?.id}`);
-  devLog(isCreate ? "aa" : "bb");
-  if (!contextMenu) {
-    contextMenu = electron.Menu.buildFromTemplate([
-      {
-        label: "Create",
-        enabled: isCreate,
-        click: () => {
-          callback(category, RequestMode.Create);
-        }
-      },
-      {
-        label: "Edit",
-        enabled: !isCreate,
-        click: () => {
-          callback(category, RequestMode.Edit);
-        }
-      },
-      {
-        label: "Delete",
-        enabled: !isCreate,
-        click: () => {
-        }
+  devLog(`showContextMenu: ${category?.id}: ${category?.name}`);
+  let contextMenu = null;
+  contextMenu = electron.Menu.buildFromTemplate([
+    {
+      label: "Create",
+      enabled: isCreate,
+      click: () => {
+        callback(category, RequestMode.Create);
       }
-    ]);
-  } else {
-    contextMenu.items.map((m) => {
-      if (m.label === "Create") {
-        m.enabled = isCreate;
-      } else {
-        m.enabled = !isCreate;
+    },
+    {
+      label: "Edit",
+      enabled: !isCreate,
+      click: () => {
+        callback(category, RequestMode.Edit);
       }
-    });
-  }
+    },
+    {
+      label: "Delete",
+      enabled: !isCreate,
+      click: () => {
+      }
+    }
+  ]);
   contextMenu.popup();
 };
 const Prefix = {
@@ -109,6 +98,8 @@ const ED = {
     Load: "ed.category-edit.loadd",
     /** データ作成 */
     Create: "ed.category-edit.create",
+    /** データ更新 */
+    Update: "ed.category-edit.update",
     /** キャンセル */
     // Cancel: 'ed.category-edit.cancel'
     Cancel: `${Prefix.CategoriEdit}.cancel`
@@ -130,6 +121,7 @@ const getCreateTableSql$1 = () => {
   `;
 };
 const create = async (category) => {
+  devLog(`categoryTable.create: ${JSON.stringify(category)}`);
   try {
     let sql = `
       insert into category(name) values(?)
@@ -139,7 +131,7 @@ const create = async (category) => {
       select max(sort) as max_sort from category
     `;
     const rows = await query(sql);
-    category.sort = rows[0] + 1;
+    category.sort = rows[0].max_sort + 1;
     sql = `
       update category set
         sort=?
@@ -152,7 +144,22 @@ const create = async (category) => {
     return void 0;
   }
 };
+const update = async (category) => {
+  devLog(`categoryTable.update:${JSON.stringify(category)}`);
+  try {
+    const sql = `
+      update category set name = ?
+      where id = ?
+    `;
+    modify(sql, [category.name, category.id]);
+    return category;
+  } catch (error) {
+    console.error("Error query database:", error);
+    return void 0;
+  }
+};
 const selectAll = async () => {
+  devLog(`categoryTable.selectAll`);
   try {
     const sql = `
       SELECT id, name, sort FROM category
@@ -252,6 +259,7 @@ const createCategoryEditWindow = (parent, category) => {
     categoryEditWindow.loadFile(path.join(__dirname, "../renderer/category.html"));
   }
   categoryEditWindow.on("ready-to-show", () => {
+    console.log(`#### ready-to-show`);
     categoryEditWindow?.show();
     categoryEditWindow?.webContents.send(ED.CategoryEdit.Load, category);
   });
@@ -332,10 +340,14 @@ const createWindow = async () => {
     mainWindow?.loadFile(path.join(__dirname, "../renderer/index.html"));
   }
   mainWindow?.webContents.on("did-finish-load", async () => {
-    const categoryList = await selectAll();
-    mainWindow?.webContents.send(ED.CategoryList.Load, categoryList);
+    await sendRefreshCategoryList();
     mainWindow?.show();
   });
+};
+const sendRefreshCategoryList = async () => {
+  devLog("sendRefreshCategoryList");
+  const categoryList = await selectAll();
+  mainWindow?.webContents.send(ED.CategoryList.Load, categoryList);
 };
 const toggleDevTool = () => {
   if (null === mainWindow) {
@@ -362,7 +374,8 @@ const registerEvent = async () => {
   electron.ipcMain.on(ED.CategoryList.ContextMenu.Show, (_, category) => {
     showContextMenu(category, categoryContextMenuCallback);
   });
-  electron.ipcMain.handle(ED.CategoryEdit.Create, (_, category) => create(category));
+  electron.ipcMain.handle(ED.CategoryEdit.Create, (_, category) => handleCategoryCreate(category));
+  electron.ipcMain.handle(ED.CategoryEdit.Update, (_, category) => handleCategoryUpdate(category));
   electron.ipcMain.on(ED.CategoryEdit.Cancel, closeCategoryEditWindow);
   await createWindow();
   electron.app.on("activate", function() {
@@ -377,5 +390,18 @@ const registerEvent = async () => {
 };
 const categoryContextMenuCallback = (category, mode) => {
   devLog(`categoryContextMenuCallback: ${category?.id}, ${mode}`);
+  console.log(category);
   createCategoryEditWindow(getmainWindow(), category);
+};
+const handleCategoryCreate = (category) => {
+  devLog(`handleCategoryCreate`);
+  create(category);
+  closeCategoryEditWindow();
+  sendRefreshCategoryList();
+};
+const handleCategoryUpdate = (category) => {
+  devLog(`handleCategoryUpdate`);
+  update(category);
+  closeCategoryEditWindow();
+  sendRefreshCategoryList();
 };

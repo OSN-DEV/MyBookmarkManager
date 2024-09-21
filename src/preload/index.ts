@@ -85,6 +85,12 @@ contextBridge.exposeInMainWorld('categoryApi', {
   create: (category: TCategory) => ipcRenderer.invoke(ED.CategoryEdit.Create, category),
 
   /**
+   * カテゴリ更新
+   * @param category カテゴリ情報
+   */
+  update: (category: TCategory) => ipcRenderer.invoke(ED.CategoryEdit.Update, category),
+
+  /**
    * キャンセル
    */
   cancel: () => ipcRenderer.send(ED.CategoryEdit.Cancel)
