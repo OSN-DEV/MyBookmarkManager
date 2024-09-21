@@ -9,7 +9,7 @@ import { createDataDir } from './settings'
 import { initDatabase } from './database/database'
 import * as categoryTable from './database/categoryTable'
 import { closeCategoryEditWindow, createCategoryEditWindow } from './window/categoryEditWindow'
-import { createWindow, getmainWindow, toggleDevTool } from './window/mainWindow'
+import { createWindow, getmainWindow, sendRefreshCategoryList, toggleDevTool } from './window/mainWindow'
 
 app.whenReady().then(async () => {
   // 以下の処理行うことで例外のアラート表示を良くしてログを出力
@@ -75,6 +75,7 @@ const registerEvent = async (): Promise<void> => {
  */
 const categoryContextMenuCallback = (category: TCategory | null, mode: RequestMode): void => {
   devLog(`categoryContextMenuCallback: ${category?.id}, ${mode}`)
+  console.log(category)
   createCategoryEditWindow(getmainWindow()!, category)
 }
 
@@ -89,6 +90,7 @@ const handleCategoryCreate = (category: TCategory): void => {
   devLog(`handleCategoryCreate`)
   categoryTable.create(category)
   closeCategoryEditWindow()
+  sendRefreshCategoryList()
 }
 
 /*
@@ -99,4 +101,5 @@ const handleCategoryUpdate = (category: TCategory): void => {
   devLog(`handleCategoryUpdate`)
   categoryTable.update(category)
   closeCategoryEditWindow()
+  sendRefreshCategoryList()
 }

@@ -33,7 +33,7 @@ export const CategoryEdit = (): JSX.Element => {
       const category = { id: 0, name: categoryNameRef.current?.value ?? '', sort: 0 }
       window.categoryApi.create(category)
     } else {
-      window.categoryApi.update({...category, name: categoryName.current?.value ?? ''})
+      window.categoryApi.update({ ...category, name: categoryNameRef.current?.value ?? '' })
     }
   }
 

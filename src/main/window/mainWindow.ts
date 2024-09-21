@@ -5,6 +5,7 @@ import { initDatabase } from '../database/database'
 import { ED } from '../../preload/EventDef'
 import * as CategoryTable from '../database/categoryTable'
 import icon from '../../../resources/icon.png'
+import { devLog } from '../../util/common'
 let showDevTool: boolean = false
 let mainWindow: BrowserWindow | null = null
 
@@ -92,10 +93,18 @@ export const createWindow = async (): Promise<void> => {
     mainWindow?.loadFile(join(__dirname, '../renderer/index.html'))
   }
   mainWindow?.webContents.on('did-finish-load', async () => {
-    const categoryList = await CategoryTable.selectAll()
-    mainWindow?.webContents.send(ED.CategoryList.Load, categoryList)
+    await sendRefreshCategoryList()
     mainWindow?.show()
   })
+}
+
+/**
+ * カテゴリストの更新
+ */
+export const sendRefreshCategoryList = async (): Promise<void> => {
+  devLog('sendRefreshCategoryList')
+  const categoryList = await CategoryTable.selectAll()
+  mainWindow?.webContents.send(ED.CategoryList.Load, categoryList)
 }
 
 /**

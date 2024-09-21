@@ -35,42 +35,32 @@ var FilePath = /* @__PURE__ */ ((FilePath2) => {
   FilePath2["SettingFile"] = "MyBookmark/settings.json";
   return FilePath2;
 })(FilePath || {});
-let contextMenu = null;
 const showContextMenu = (category, callback) => {
   const isCreate = category === null;
-  devLog(`showContextMenu: ${category?.id}`);
-  if (!contextMenu) {
-    contextMenu = electron.Menu.buildFromTemplate([
-      {
-        label: "Create",
-        enabled: isCreate,
-        click: () => {
-          callback(category, RequestMode.Create);
-        }
-      },
-      {
-        label: "Edit",
-        enabled: !isCreate,
-        click: () => {
-          callback(category, RequestMode.Edit);
-        }
-      },
-      {
-        label: "Delete",
-        enabled: !isCreate,
-        click: () => {
-        }
+  devLog(`showContextMenu: ${category?.id}: ${category?.name}`);
+  let contextMenu = null;
+  contextMenu = electron.Menu.buildFromTemplate([
+    {
+      label: "Create",
+      enabled: isCreate,
+      click: () => {
+        callback(category, RequestMode.Create);
       }
-    ]);
-  } else {
-    contextMenu.items.map((m) => {
-      if (m.label === "Create") {
-        m.enabled = isCreate;
-      } else {
-        m.enabled = !isCreate;
+    },
+    {
+      label: "Edit",
+      enabled: !isCreate,
+      click: () => {
+        callback(category, RequestMode.Edit);
       }
-    });
-  }
+    },
+    {
+      label: "Delete",
+      enabled: !isCreate,
+      click: () => {
+      }
+    }
+  ]);
   contextMenu.popup();
 };
 const Prefix = {
@@ -131,7 +121,7 @@ const getCreateTableSql$1 = () => {
   `;
 };
 const create = async (category) => {
-  devLog(`categoryTable.create`);
+  devLog(`categoryTable.create: ${JSON.stringify(category)}`);
   try {
     let sql = `
       insert into category(name) values(?)
@@ -141,7 +131,7 @@ const create = async (category) => {
       select max(sort) as max_sort from category
     `;
     const rows = await query(sql);
-    category.sort = rows[0] + 1;
+    category.sort = rows[0].max_sort + 1;
     sql = `
       update category set
         sort=?
@@ -155,6 +145,7 @@ const create = async (category) => {
   }
 };
 const update = async (category) => {
+  devLog(`categoryTable.update:${JSON.stringify(category)}`);
   try {
     const sql = `
       update category set name = ?
@@ -168,6 +159,7 @@ const update = async (category) => {
   }
 };
 const selectAll = async () => {
+  devLog(`categoryTable.selectAll`);
   try {
     const sql = `
       SELECT id, name, sort FROM category
@@ -348,10 +340,14 @@ const createWindow = async () => {
     mainWindow?.loadFile(path.join(__dirname, "../renderer/index.html"));
   }
   mainWindow?.webContents.on("did-finish-load", async () => {
-    const categoryList = await selectAll();
-    mainWindow?.webContents.send(ED.CategoryList.Load, categoryList);
+    await sendRefreshCategoryList();
     mainWindow?.show();
   });
+};
+const sendRefreshCategoryList = async () => {
+  devLog("sendRefreshCategoryList");
+  const categoryList = await selectAll();
+  mainWindow?.webContents.send(ED.CategoryList.Load, categoryList);
 };
 const toggleDevTool = () => {
   if (null === mainWindow) {
@@ -394,15 +390,18 @@ const registerEvent = async () => {
 };
 const categoryContextMenuCallback = (category, mode) => {
   devLog(`categoryContextMenuCallback: ${category?.id}, ${mode}`);
+  console.log(category);
   createCategoryEditWindow(getmainWindow(), category);
 };
 const handleCategoryCreate = (category) => {
   devLog(`handleCategoryCreate`);
   create(category);
   closeCategoryEditWindow();
+  sendRefreshCategoryList();
 };
 const handleCategoryUpdate = (category) => {
   devLog(`handleCategoryUpdate`);
   update(category);
   closeCategoryEditWindow();
+  sendRefreshCategoryList();
 };

@@ -30,12 +30,11 @@ export const create = async (category: TCategory): Promise<TCategory | undefined
       insert into category(name) values(?)
     `
     category.id = await insert(sql, [category.name])
-
     sql = `
       select max(sort) as max_sort from category
     `
-    const rows = (await query(sql)) as number[]
-    category.sort = rows[0] + 1
+    const rows = (await query(sql)) as { max_sort: number }[]
+    category.sort = rows[0].max_sort + 1
 
     sql = `
       update category set
