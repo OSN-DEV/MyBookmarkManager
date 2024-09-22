@@ -35,7 +35,7 @@ var FilePath = /* @__PURE__ */ ((FilePath2) => {
   FilePath2["SettingFile"] = "MyBookmark/settings.json";
   return FilePath2;
 })(FilePath || {});
-const showContextMenu = (category, callback) => {
+const showContextMenu$1 = (category, callback) => {
   const isCreate = category === null;
   devLog(`showContextMenu: ${category?.id}: ${category?.name}`);
   let contextMenu = null;
@@ -63,8 +63,37 @@ const showContextMenu = (category, callback) => {
   ]);
   contextMenu.popup();
 };
+const showContextMenu = (item, callback) => {
+  const isCreate = item === null;
+  devLog(`showContextMenu: ${item?.id}: ${item?.name}`);
+  let contextMenu = null;
+  contextMenu = electron.Menu.buildFromTemplate([
+    {
+      label: "Create",
+      enabled: isCreate,
+      click: () => {
+        callback(item, RequestMode.Create);
+      }
+    },
+    {
+      label: "Edit",
+      enabled: !isCreate,
+      click: () => {
+        callback(item, RequestMode.Edit);
+      }
+    },
+    {
+      label: "Delete",
+      enabled: !isCreate,
+      click: () => {
+      }
+    }
+  ]);
+  contextMenu.popup();
+};
 const Prefix = {
-  CategoriEdit: "ed.category-edit"
+  CategoriEdit: "ed.category-edit",
+  ItemEdit: "ed.item-edit"
 };
 const ED = {
   /** カテゴリリスト */
@@ -92,17 +121,45 @@ const ED = {
       DeleteResponse: "ed.category-list.context-menu.edit-response"
     }
   },
+  /** アイテムリスト */
+  ItemList: {
+    /** アイテムリストロード */
+    Load: "ed.item-list.load",
+    /** コンテキストメニュー */
+    ContextMenu: {
+      /**
+       * メニュー表示
+       */
+      Show: "ed.item-list.context-menu.show",
+      /**
+       * メニュー選択
+       */
+      MenuSelected: "ed.item-list.context-menu.menu-selected"
+    }
+  },
   /** カテゴリ編集 */
   CategoryEdit: {
     /** ロードイベント */
-    Load: "ed.category-edit.loadd",
+    Load: `${Prefix.CategoriEdit}.load`,
     /** データ作成 */
-    Create: "ed.category-edit.create",
+    Create: `${Prefix.CategoriEdit}.create`,
     /** データ更新 */
-    Update: "ed.category-edit.update",
+    Update: `${Prefix.CategoriEdit}.update`,
     /** キャンセル */
     // Cancel: 'ed.category-edit.cancel'
     Cancel: `${Prefix.CategoriEdit}.cancel`
+  },
+  /** アイテム：編集 */
+  ItemEdit: {
+    /** ロードイベント */
+    Load: `${Prefix.ItemEdit}.load`,
+    /** データ作成 */
+    Create: `${Prefix.ItemEdit}.create`,
+    /** データ更新 */
+    Update: `${Prefix.ItemEdit}.update`,
+    /** キャンセル */
+    // Cancel: 'ed.category-edit.cancel'
+    Cancel: `${Prefix.ItemEdit}.cancel`
   }
 };
 const createDataDir = () => {
@@ -360,6 +417,33 @@ const toggleDevTool = () => {
   }
   showDevTool = !showDevTool;
 };
+let itemEditWindow = null;
+const createItemEditWindow = (parent, item) => {
+  if (null != itemEditWindow && !itemEditWindow.isDestroyed()) {
+    itemEditWindow.close();
+  }
+  itemEditWindow = new electron.BrowserWindow({
+    parent,
+    width: 400,
+    height: 200,
+    webPreferences: {
+      preload: path.join(__dirname, "../preload/index.js"),
+      sandbox: false
+    }
+  });
+  itemEditWindow.title = "item";
+  itemEditWindow.setMenuBarVisibility(false);
+  if (!electron.app.isPackaged && process.env["ELECTRON_RENDERER_URL"]) {
+    itemEditWindow.loadURL(`${process.env["ELECTRON_RENDERER_URL"]}/item.html`);
+  } else {
+    itemEditWindow.loadFile(path.join(__dirname, "../renderer/item.html"));
+  }
+  itemEditWindow.on("ready-to-show", () => {
+    console.log(`#### ready-to-show`);
+    itemEditWindow?.show();
+    itemEditWindow?.webContents.send(ED.ItemEdit.Load, item);
+  });
+};
 electron.app.whenReady().then(async () => {
   createDataDir();
   await initDatabase();
@@ -368,11 +452,13 @@ electron.app.whenReady().then(async () => {
     utils.optimizer.watchWindowShortcuts(window);
   });
   registerEvent();
-  toggleDevTool();
 });
 const registerEvent = async () => {
   electron.ipcMain.on(ED.CategoryList.ContextMenu.Show, (_, category) => {
-    showContextMenu(category, categoryContextMenuCallback);
+    showContextMenu$1(category, categoryContextMenuCallback);
+  });
+  electron.ipcMain.on(ED.ItemList.ContextMenu.Show, (_, item) => {
+    showContextMenu(item, itemContextMenuCallback);
   });
   electron.ipcMain.handle(ED.CategoryEdit.Create, (_, category) => handleCategoryCreate(category));
   electron.ipcMain.handle(ED.CategoryEdit.Update, (_, category) => handleCategoryUpdate(category));
@@ -392,6 +478,11 @@ const categoryContextMenuCallback = (category, mode) => {
   devLog(`categoryContextMenuCallback: ${category?.id}, ${mode}`);
   console.log(category);
   createCategoryEditWindow(getmainWindow(), category);
+};
+const itemContextMenuCallback = (item, mode) => {
+  devLog(`itemContextMenuCallback: ${item?.id}, ${mode}`);
+  console.log(item);
+  createItemEditWindow(getmainWindow(), item);
 };
 const handleCategoryCreate = (category) => {
   devLog(`handleCategoryCreate`);

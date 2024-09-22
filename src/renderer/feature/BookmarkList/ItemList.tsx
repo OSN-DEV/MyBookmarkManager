@@ -5,13 +5,18 @@ type ItemListProps = {
   itemList: TItem[]
 }
 
-const ItemList = (props: ItemListProps) => {
+const ItemList = (props: ItemListProps): JSX.Element => {
   const { itemList } = props
 
+  const handleContextMenu = (item: TItem | null): void => {
+    console.log(`handleContextMenu: ${item}`)
+    window.mainApi.showCategoryListContextMenu(item)
+  }
+
   return (
-    <div className="item-list" style={{ overflowY: 'auto' }}>
+    <div className="item-list" style={{ overflowY: 'auto' }} onContextMenu={() => handleContextMenu(null)}>
       {itemList.map((item: TItem) => {
-        return <Item key={item.itemId} item={item} />
+        return <Item key={item.id} item={item} />
       })}
     </div>
   )

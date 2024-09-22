@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Electron</title>
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:"
+    />
+    <link href="./output.css" rel="stylesheet" />
+    <link href="./src/renderer/output.css" rel="stylesheet" />
+  </head>
+
+  <body class="item-edit-body">
+    <div id="root"></div>
+    <script type="module" src="/itemEdit.tsx"></script>
+  </body>
+</html>

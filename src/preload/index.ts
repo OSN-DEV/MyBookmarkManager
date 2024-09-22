@@ -1,6 +1,7 @@
 import { IpcRendererEvent, contextBridge, ipcRenderer } from 'electron'
 import { ED } from './EventDef'
 import { TCategory } from '../@types/TCategory'
+import { TItem } from 'src/@types/TItem'
 
 /**
  * メインウィンドウ
@@ -94,4 +95,36 @@ contextBridge.exposeInMainWorld('categoryApi', {
    * キャンセル
    */
   cancel: () => ipcRenderer.send(ED.CategoryEdit.Cancel)
+})
+
+/**
+ * アイテム編集
+ */
+contextBridge.exposeInMainWorld('itemApi', {
+  /**
+   * ロードイベント
+   * @param callback コールバック
+   * @param callback.event IPCメッセージイベント
+   * @param callback.item アイテム情報
+   */
+  onLoad: (callback: (event: IpcRendererEvent, item: TItem | null) => void) => {
+    ipcRenderer.on(ED.ItemEdit.Load, (event: IpcRendererEvent, item: TItem | null) => callback(event, item))
+  },
+
+  /**
+   * アイテム作成
+   * @param item アイテム情報
+   */
+  create: (item: TItem) => ipcRenderer.invoke(ED.ItemEdit.Create, item),
+
+  /**
+   * アイテム更新
+   * @param item アイテム情報
+   */
+  update: (item: TItem) => ipcRenderer.invoke(ED.ItemEdit.Update, item),
+
+  /**
+   * キャンセル
+   */
+  cancel: () => ipcRenderer.send(ED.ItemEdit.Cancel)
 })

@@ -1,7 +1,7 @@
 export type TItem = {
   categoryId: number
-  itemId: number
-  itemName: string
+  id: number
+  name: string
   sort: number
   url: string
   explanation: string
