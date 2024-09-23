@@ -31,19 +31,6 @@ body {
   padding-right: 1em;
 }
 
-.category-edit-caption {
-  font-size: 10pt;
-}
-
-.category-edit-input {
-  width: 300px;
-  outline: none;
-  border-bottom: solid 1px #d7c8ca;
-}
-.category-edit-input:focus {
-  border-bottom: solid 1px #b8a9ab;
-}
-
 /** アイテムリスト */
 .item-list {
   padding: 0.5em;
@@ -75,4 +62,24 @@ body {
 }
 .item-edit-input:focus {
   border-bottom: solid 1px #b8a9ab;
+}
+
+/** 汎用コンポーネント */
+.edit-caption {
+  font-size: 10pt;
+}
+
+.edit-input {
+  width: 300px;
+  outline: none;
+  border-bottom: solid 1px #d7c8ca;
+}
+.edit-input:focus {
+  border-bottom: solid 1px #b8a9ab;
+}
+
+.edit-text-area {
+  width: 300px;
+  outline: none;
+  border-bottom: solid 1px #d7c8ca;
 }

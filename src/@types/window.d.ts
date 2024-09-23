@@ -30,6 +30,13 @@ export interface IMainApi {
    */
   onCategoryListLoad: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => void
 
+  /**
+   * アイテム コンテキストメニュー表示
+   * @param item アイテム情報
+   */
+  showItemListContextMenu: (item: TItem | null) => void
+
+
 
   onCategoryItemCreateReqeust: (callback: (event: Electron.IpcMessageEvent) => void) => void
   ping: () => void

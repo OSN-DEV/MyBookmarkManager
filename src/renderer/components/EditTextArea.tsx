@@ -7,7 +7,7 @@ type EditTextProps = {
 /**
  * ラベル付入力項目
  */
-export const EditText = forwardRef<HTMLInputElement, EditTextProps>((props, ref) => {
+export const EditTextArea = forwardRef<HTMLTextAreaElement, EditTextProps>((props, ref) => {
   const { title } = props
 
   /**
@@ -17,10 +17,10 @@ export const EditText = forwardRef<HTMLInputElement, EditTextProps>((props, ref)
     <div className="mt-1">
       {title && <label className="edit-caption">{title}</label>}
       <div>
-        <input type="text" ref={ref} className="edit-input" defaultValue="" />
+        <textarea ref={ref} defaultValue="" className="edit-text-area" />
       </div>
     </div>
   )
 })
 
-EditText.displayName = 'EditTextComponent'
+EditTextArea.displayName = 'EditTextAreaComponent'

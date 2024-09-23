@@ -10,7 +10,7 @@ contextBridge.exposeInMainWorld('mainApi', {
   /** category list */
   /**
    * Show context menu for category list
-   * @param categoryId - category id.
+   * @param category - category information.
    * @returns void
    */
   showCategoryListContextMenu: (category: TCategory | null) => ipcRenderer.send(ED.CategoryList.ContextMenu.Show, category),
@@ -25,6 +25,13 @@ contextBridge.exposeInMainWorld('mainApi', {
   onCategoryListLoad: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => {
     ipcRenderer.on(ED.CategoryList.Load, (ev: IpcRendererEvent, categoryList: TCategory[]) => callback(ev, categoryList))
   },
+
+  /**
+   * Show context menu for item list
+   * @param item - item infromation.
+   * @returns void
+   */
+  showItemListContextMenu: (item: TItem | null) => ipcRenderer.send(ED.ItemList.ContextMenu.Show, item),
 
 
   // ping: () => ipcRenderer.send('ping'),

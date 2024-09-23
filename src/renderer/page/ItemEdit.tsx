@@ -4,6 +4,7 @@ import { EditText } from '../components/EditText'
 import { TextButton } from '../components/TextButton'
 import { IpcRendererEvent } from 'electron'
 import { TItem } from 'src/@types/TItem'
+import { EditTextArea } from '../components/EditTextArea'
 
 export const ItemEdit = (): JSX.Element => {
   const [item, setItem] = useState<TItem | null>(null)
@@ -50,7 +51,9 @@ export const ItemEdit = (): JSX.Element => {
    */
   return (
     <form className="ml-5 mr-5">
-      <EditText title="Category Name" ref={categoryNameRef} />
+      <EditText title="Title" ref={categoryNameRef} />
+      <EditText title="Name" ref={categoryNameRef} />
+      <EditTextArea title="Explanation" ref={categoryNameRef} />
       <br />
       <div className="text-right">
         <TextButton onClick={handleOkClick}>OK</TextButton>

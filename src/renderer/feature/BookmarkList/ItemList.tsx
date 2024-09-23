@@ -10,7 +10,7 @@ const ItemList = (props: ItemListProps): JSX.Element => {
 
   const handleContextMenu = (item: TItem | null): void => {
     console.log(`handleContextMenu: ${item}`)
-    window.mainApi.showCategoryListContextMenu(item)
+    window.mainApi.showItemListContextMenu(item)
   }
 
   return (
