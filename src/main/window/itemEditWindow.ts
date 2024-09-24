@@ -19,7 +19,7 @@ export const createItemEditWindow = (parent: BrowserWindow, item: TItem | null):
   itemEditWindow = new BrowserWindow({
     parent: parent!,
     width: 400,
-    height: 400,
+    height: 350,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false

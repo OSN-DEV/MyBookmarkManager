@@ -8,19 +8,27 @@ import { EditTextArea } from '../components/EditTextArea'
 
 export const ItemEdit = (): JSX.Element => {
   const [item, setItem] = useState<TItem | null>(null)
-  const categoryNameRef = useRef<HTMLInputElement>(null)
+  const nameRef = useRef<HTMLInputElement>(null)
+  const urlRef = useRef<HTMLInputElement>(null)
+  const explanationRef = useRef<HTMLTextAreaElement>(null)
 
   /**
    * ロードイベント
    */
   window.itemApi.onLoad((_: IpcRendererEvent, item: TItem | null) => {
-    if (item == null) {
+    if (item == null || item.id == null) {
       devLog('window.itemApi.onLoad:create')
     } else {
       devLog('window.itemApi.onLoad:update')
       setItem(item)
-      if (categoryNameRef && categoryNameRef.current) {
-        categoryNameRef.current.value = item.name
+      if (nameRef && nameRef.current) {
+        nameRef.current.value = item.name
+      }
+      if (urlRef && urlRef.current) {
+        urlRef.current.value = item.url
+      }
+      if (explanationRef && explanationRef.current) {
+        explanationRef.current.value = item.explanation
       }
     }
   })
@@ -29,12 +37,15 @@ export const ItemEdit = (): JSX.Element => {
    * OKボタンクリック
    */
   const handleOkClick = (): void => {
-    devLog(`handleOkClick: ${categoryNameRef.current?.value}`)
+    devLog(`handleOkClick: ${nameRef.current?.value}`)
     if (item == null) {
-      const category = { id: 0, name: categoryNameRef.current?.value ?? '', sort: 0 }
-      window.categoryApi.create(category)
+      const newItem: TItem = {
+        id: 0, name: nameRef.current?.value ?? '', sort: 0, url: urlRef?.current?.value ?? '', categoryId: 0,
+        explanation: explanationRef?.current?.value ?? ''
+      }
+      window.itemApi.create(newItem)
     } else {
-      window.categoryApi.update({ ...item, name: categoryNameRef.current?.value ?? '' })
+      window.itemApi.update({ ...item, name: nameRef.current?.value ?? '',url: urlRef?.current?.value ?? '', explanation: explanationRef.current?.value ?? ''})
     }
   }
 
@@ -43,7 +54,7 @@ export const ItemEdit = (): JSX.Element => {
    */
   const handleCancelClick = (): void => {
     devLog(`handleCancelClick`)
-    window.categoryApi.cancel()
+    window.itemApi.cancel()
   }
 
   /**
@@ -51,9 +62,9 @@ export const ItemEdit = (): JSX.Element => {
    */
   return (
     <form className="ml-5 mr-5">
-      <EditText title="Title" ref={categoryNameRef} />
-      <EditText title="Name" ref={categoryNameRef} />
-      <EditTextArea title="Explanation" ref={categoryNameRef} />
+      <EditText title="Title" ref={nameRef} />
+      <EditText title="Name" ref={urlRef} />
+      <EditTextArea title="Explanation" ref={explanationRef} />
       <br />
       <div className="text-right">
         <TextButton onClick={handleOkClick}>OK</TextButton>
