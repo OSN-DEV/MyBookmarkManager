@@ -16,7 +16,7 @@ const ItemList = (props: ItemListProps): JSX.Element => {
   return (
     <div className="item-list" style={{ overflowY: 'auto' }} onContextMenu={() => handleContextMenu(null)}>
       {itemList.map((item: TItem) => {
-        return <Item key={item.id} item={item} />
+        return <Item handleContextMenu={handleContextMenu} key={item.id} item={item} />
       })}
     </div>
   )
