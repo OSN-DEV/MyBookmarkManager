@@ -31,20 +31,7 @@ body {
   padding-right: 1em;
 }
 
-.category-edit-caption {
-  font-size: 10pt;
-}
-
-.category-edit-input {
-  width: 300px;
-  outline: none;
-  border-bottom: solid 1px #d7c8ca;
-}
-.category-edit-input:focus {
-  border-bottom: solid 1px #b8a9ab;
-}
-
-/** カテゴリリスト */
+/** アイテムリスト */
 .item-list {
   padding: 0.5em;
   color: #9b767a;
@@ -54,4 +41,45 @@ body {
 .item-list-item {
   margin-left: 1em;
   margin-top: 1em;
+}
+
+
+/** アイテム編集 */
+.item-edit-body {
+  padding-top: 0.5em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+
+.item-edit-caption {
+  font-size: 10pt;
+}
+
+.item-edit-input {
+  width: 300px;
+  outline: none;
+  border-bottom: solid 1px #d7c8ca;
+}
+.item-edit-input:focus {
+  border-bottom: solid 1px #b8a9ab;
+}
+
+/** 汎用コンポーネント */
+.edit-caption {
+  font-size: 10pt;
+}
+
+.edit-input {
+  width: 300px;
+  outline: none;
+  border-bottom: solid 1px #d7c8ca;
+}
+.edit-input:focus {
+  border-bottom: solid 1px #b8a9ab;
+}
+
+.edit-text-area {
+  width: 300px;
+  outline: none;
+  border-bottom: solid 1px #d7c8ca;
 }

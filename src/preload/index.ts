@@ -1,6 +1,7 @@
 import { IpcRendererEvent, contextBridge, ipcRenderer } from 'electron'
 import { ED } from './EventDef'
 import { TCategory } from '../@types/TCategory'
+import { TItem } from 'src/@types/TItem'
 
 /**
  * メインウィンドウ
@@ -9,7 +10,7 @@ contextBridge.exposeInMainWorld('mainApi', {
   /** category list */
   /**
    * Show context menu for category list
-   * @param categoryId - category id.
+   * @param category - category information.
    * @returns void
    */
   showCategoryListContextMenu: (category: TCategory | null) => ipcRenderer.send(ED.CategoryList.ContextMenu.Show, category),
@@ -24,6 +25,13 @@ contextBridge.exposeInMainWorld('mainApi', {
   onCategoryListLoad: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => {
     ipcRenderer.on(ED.CategoryList.Load, (ev: IpcRendererEvent, categoryList: TCategory[]) => callback(ev, categoryList))
   },
+
+  /**
+   * Show context menu for item list
+   * @param item - item infromation.
+   * @returns void
+   */
+  showItemListContextMenu: (item: TItem | null) => ipcRenderer.send(ED.ItemList.ContextMenu.Show, item),
 
 
   // ping: () => ipcRenderer.send('ping'),
@@ -94,4 +102,36 @@ contextBridge.exposeInMainWorld('categoryApi', {
    * キャンセル
    */
   cancel: () => ipcRenderer.send(ED.CategoryEdit.Cancel)
+})
+
+/**
+ * アイテム編集
+ */
+contextBridge.exposeInMainWorld('itemApi', {
+  /**
+   * ロードイベント
+   * @param callback コールバック
+   * @param callback.event IPCメッセージイベント
+   * @param callback.item アイテム情報
+   */
+  onLoad: (callback: (event: IpcRendererEvent, item: TItem | null) => void) => {
+    ipcRenderer.on(ED.ItemEdit.Load, (event: IpcRendererEvent, item: TItem | null) => callback(event, item))
+  },
+
+  /**
+   * アイテム作成
+   * @param item アイテム情報
+   */
+  create: (item: TItem) => ipcRenderer.invoke(ED.ItemEdit.Create, item),
+
+  /**
+   * アイテム更新
+   * @param item アイテム情報
+   */
+  update: (item: TItem) => ipcRenderer.invoke(ED.ItemEdit.Update, item),
+
+  /**
+   * キャンセル
+   */
+  cancel: () => ipcRenderer.send(ED.ItemEdit.Cancel)
 })

@@ -1,11 +1,13 @@
 import { IpcRendererEvent } from 'electron'
 import { TCategory } from './TCategory'
+import { TItem } from './TItem'
 
 // import { ElectronAPI } from '@electron-toolkit/preload'
 declare global {
   interface Window {
     mainApi: IMainApi
     categoryApi: ICategoryApi
+    itemApi: IItemApi
   }
 }
 
@@ -27,6 +29,13 @@ export interface IMainApi {
    * @summary アプリ起動時、カテゴリ情報変更時に発生
    */
   onCategoryListLoad: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => void
+
+  /**
+   * アイテム コンテキストメニュー表示
+   * @param item アイテム情報
+   */
+  showItemListContextMenu: (item: TItem | null) => void
+
 
 
   onCategoryItemCreateReqeust: (callback: (event: Electron.IpcMessageEvent) => void) => void
@@ -57,11 +66,43 @@ export interface ICategoryApi {
   create: (category: TCategory) => Promise<TCategory>
 
   /**
-   * カテゴリ作更新
+   * カテゴリ更新
    * @param category カテゴリ情報
    * @return カテゴリ情報(IDを設定)
    */
   update: (category: TCategory) => Promise<TCategory>
+
+  /**
+   * キャンセル
+   */
+  cancel: () => void
+}
+
+/**
+ *  アイテム編集
+ */
+export interface IItemApi {
+  /**
+   * ロードイベント
+   * @param callback アイテム情報情報
+   * @param callback.event IPCメッセージイベント
+   * @param callback.item アイテム情報
+   */
+  onLoad: (callback: (event: IpcRendererEvent, item: TItem | null) => void) => void
+
+  /**
+   * アイテム作成
+   * @param item アイテム情報
+   * @return アイテム情報(IDを設定)
+   */
+  create: (item: TItem) => Promise<TItem>
+
+  /**
+   * アイテム更新
+   * @param item アイテム情報
+   * @return アイテム情報(IDを設定)
+   */
+  update: (item: TItem) => Promise<TItem>
 
   /**
    * キャンセル

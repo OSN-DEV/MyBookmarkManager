@@ -1,5 +1,6 @@
 const Prefix = {
-  CategoriEdit: 'ed.category-edit'
+  CategoriEdit: 'ed.category-edit',
+  ItemEdit: 'ed.item-edit'
 }
 
 export const ED = {
@@ -31,16 +32,47 @@ export const ED = {
     }
   },
 
+  /** アイテムリスト */
+  ItemList: {
+    /** アイテムリストロード */
+    Load: 'ed.item-list.load',
+    /** コンテキストメニュー */
+    ContextMenu: {
+      /**
+       * メニュー表示
+       */
+      Show: 'ed.item-list.context-menu.show',
+
+      /**
+       * メニュー選択
+       */
+      MenuSelected: 'ed.item-list.context-menu.menu-selected'
+    }
+  },
+
   /** カテゴリ編集 */
   CategoryEdit: {
     /** ロードイベント */
-    Load: 'ed.category-edit.loadd',
+    Load: `${Prefix.CategoriEdit}.load`,
     /** データ作成 */
-    Create: 'ed.category-edit.create',
+    Create: `${Prefix.CategoriEdit}.create`,
     /** データ更新 */
-    Update: 'ed.category-edit.update',
+    Update: `${Prefix.CategoriEdit}.update`,
     /** キャンセル */
     // Cancel: 'ed.category-edit.cancel'
     Cancel: `${Prefix.CategoriEdit}.cancel`
+  },
+
+  /** アイテム：編集 */
+  ItemEdit: {
+    /** ロードイベント */
+    Load: `${Prefix.ItemEdit}.load`,
+    /** データ作成 */
+    Create: `${Prefix.ItemEdit}.create`,
+    /** データ更新 */
+    Update: `${Prefix.ItemEdit}.update`,
+    /** キャンセル */
+    // Cancel: 'ed.category-edit.cancel'
+    Cancel: `${Prefix.ItemEdit}.cancel`
   }
 }

@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import * as CL from './categoryList'
+import * as IL from './itemList'
 import { ED } from '../preload/EventDef'
 import { devLog } from '../util/common'
 import { RequestMode } from '../util/Constant'
@@ -9,7 +10,9 @@ import { createDataDir } from './settings'
 import { initDatabase } from './database/database'
 import * as categoryTable from './database/categoryTable'
 import { closeCategoryEditWindow, createCategoryEditWindow } from './window/categoryEditWindow'
-import { createWindow, getmainWindow, sendRefreshCategoryList, toggleDevTool } from './window/mainWindow'
+import { createWindow, getmainWindow, sendRefreshCategoryList } from './window/mainWindow'
+import { TItem } from 'src/@types/TItem'
+import { createItemEditWindow } from './window/itemEditWindow'
 
 app.whenReady().then(async () => {
   // 以下の処理行うことで例外のアラート表示を良くしてログを出力
@@ -33,9 +36,6 @@ app.whenReady().then(async () => {
 
   // イベント登録
   registerEvent()
-
-  // ひとまず開発時は開発ツールをデフォルトで表示する。
-  toggleDevTool()
 })
 
 /**
@@ -45,6 +45,10 @@ const registerEvent = async (): Promise<void> => {
   // Category List
   ipcMain.on(ED.CategoryList.ContextMenu.Show, (_: IpcMainEvent, category: TCategory | null) => {
     CL.showContextMenu(category, categoryContextMenuCallback)
+  })
+  // Item List
+  ipcMain.on(ED.ItemList.ContextMenu.Show, (_: IpcMainEvent, item: TItem | null) => {
+    IL.showContextMenu(item, itemContextMenuCallback)
   })
 
   // Category Edit
@@ -77,6 +81,15 @@ const categoryContextMenuCallback = (category: TCategory | null, mode: RequestMo
   devLog(`categoryContextMenuCallback: ${category?.id}, ${mode}`)
   console.log(category)
   createCategoryEditWindow(getmainWindow()!, category)
+}
+
+/**
+ * コンテキストメニュー コールバック
+ */
+const itemContextMenuCallback = (item: TItem | null, mode: RequestMode): void => {
+  devLog(`itemContextMenuCallback: ${item?.id}, ${mode}`)
+  console.log(item)
+  createItemEditWindow(getmainWindow()!, item)
 }
 
 // ------------------------------------------------------------------
