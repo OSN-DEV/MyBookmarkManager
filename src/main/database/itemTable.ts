@@ -12,8 +12,8 @@ export const getCreateTableSql = (): string => {
         name TEXT,
         sort INTEGER,
         url TEXT,
-        explanation TEXT
+        explanation TEXT,
+        note TEXT
     )
   `
 }
-
