@@ -86,9 +86,10 @@ export interface IItemApi {
    * ロードイベント
    * @param callback アイテム情報情報
    * @param callback.event IPCメッセージイベント
+   * @param categoryId: カテゴリID
    * @param callback.item アイテム情報
    */
-  onLoad: (callback: (event: IpcRendererEvent, item: TItem | null) => void) => void
+  onLoad: (callback: (event: IpcRendererEvent, categoryId: number, item: TItem | null) => void) => void
 
   /**
    * アイテム作成

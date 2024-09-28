@@ -104,6 +104,10 @@ contextBridge.exposeInMainWorld('categoryApi', {
   cancel: () => ipcRenderer.send(ED.CategoryEdit.Cancel)
 })
 
+
+interface ItemLoadCallback {
+  (event: IpcRendererEvent, categoryId: number, item: TItem | null): void;
+}
 /**
  * アイテム編集
  */
@@ -112,10 +116,14 @@ contextBridge.exposeInMainWorld('itemApi', {
    * ロードイベント
    * @param callback コールバック
    * @param callback.event IPCメッセージイベント
+   * @param callback.categoryId カテゴリID
    * @param callback.item アイテム情報
    */
-  onLoad: (callback: (event: IpcRendererEvent, item: TItem | null) => void) => {
-    ipcRenderer.on(ED.ItemEdit.Load, (event: IpcRendererEvent, item: TItem | null) => callback(event, item))
+  // onLoad: (callback: (event: IpcRendererEvent, categoryId: number, item: TItem | null) => void) => {
+  //   ipcRenderer.on(ED.ItemEdit.Load, (event: IpcRendererEvent, categoryId: number, item: TItem | null) => callback(event, categoryId, item))
+  // },
+  onLoad: (callback: ItemLoadCallback) => {
+    ipcRenderer.on(ED.ItemEdit.Load, callback)
   },
 
   /**

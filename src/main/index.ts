@@ -9,10 +9,11 @@ import { TCategory } from '../@types/TCategory'
 import { createDataDir } from './settings'
 import { initDatabase } from './database/database'
 import * as categoryTable from './database/categoryTable'
+import * as itemTable from './database/itemTable'
 import { closeCategoryEditWindow, createCategoryEditWindow } from './window/categoryEditWindow'
-import { createWindow, getmainWindow, sendRefreshCategoryList } from './window/mainWindow'
+import { createWindow, getmainWindow, sendRefreshCategoryList, sendRefreshItemList } from './window/mainWindow'
 import { TItem } from 'src/@types/TItem'
-import { createItemEditWindow } from './window/itemEditWindow'
+import { closeItemEditWindow, createItemEditWindow } from './window/itemEditWindow'
 
 app.whenReady().then(async () => {
   // 以下の処理行うことで例外のアラート表示を良くしてログを出力
@@ -55,6 +56,11 @@ const registerEvent = async (): Promise<void> => {
   ipcMain.handle(ED.CategoryEdit.Create, (_, category: TCategory) => handleCategoryCreate(category))
   ipcMain.handle(ED.CategoryEdit.Update, (_, category: TCategory) => handleCategoryUpdate(category))
   ipcMain.on(ED.CategoryEdit.Cancel, closeCategoryEditWindow)
+
+  // Item Edit
+  ipcMain.handle(ED.ItemEdit.Create, (_, categoryId:number, item: TItem) => handleItemCreate(categoryId, item))
+  ipcMain.handle(ED.ItemEdit.Update, (_, categoryId:number, item: TItem) => handleItemUpdate(categoryId, item))
+  ipcMain.on(ED.ItemEdit.Cancel, closeItemEditWindow)
 
   await createWindow()
 
@@ -115,4 +121,29 @@ const handleCategoryUpdate = (category: TCategory): void => {
   categoryTable.update(category)
   closeCategoryEditWindow()
   sendRefreshCategoryList()
+}
+
+// ------------------------------------------------------------------
+// アイテム編集
+// ------------------------------------------------------------------
+/*
+ * アイテム作成
+ * @params item アイテム情報
+ */
+const handleItemCreate = (categoryId: number, item: TItem): void => {
+  devLog(`handleCategoryCreate`)
+  itemTable.create(item)
+  closeItemEditWindow()
+  sendRefreshItemList(categoryId)
+}
+
+/*
+ * アイテム更新
+ * @params item アイテム情報
+ */
+const handleItemUpdate = (categoryId: number, item: TItem): void => {
+  devLog(`handleItemUpdate`)
+  itemTable.update(item)
+  closeItemEditWindow()
+  sendRefreshItemList(categoryId)
 }

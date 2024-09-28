@@ -70,7 +70,7 @@ export const modify = async (sql: string, params: TSqlParam[] = []): Promise<voi
 /**
  * データ作成
  */
-export const insert = async (sql: string, params: string[] = []): Promise<number> => {
+export const insert = async (sql: string, params: TSqlParam[] = []): Promise<number> => {
   return new Promise<number>((resolve, reject) => {
     db.run(sql, params, function (err) {
       if (err) {
