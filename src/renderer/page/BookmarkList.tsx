@@ -6,8 +6,16 @@ import { TCategory } from '../../@types/TCategory'
 import { TItem } from '../../@types/TItem'
 import { IpcRendererEvent } from 'electron'
 import { devLog } from '../../util/common'
+import { CategoryIdProvider } from '../context/CategoryIdContext'
+
+// interface CartegoryIdContextType {
+//   currentCategoryId: number;
+//   setCurrentCategoryId: React.Dispatch<React.SetStateAction<number>>;
+// }
+// export const CartegoryIdContext = createContext<CartegoryIdContextType | undefined>(undefined)
 
 export const BookmarkList = (): JSX.Element => {
+
   // register event from main process
   useEffect(() => {
     /**
@@ -18,7 +26,6 @@ export const BookmarkList = (): JSX.Element => {
     // })
   }, [])
 
-
   const [categoryList, setCategoryList] = useState<TCategory[]>([])
   /**
    * ロードイベント
@@ -27,8 +34,6 @@ export const BookmarkList = (): JSX.Element => {
     devLog(`window.mainApi.onCategoryListLoad`)
     setCategoryList(categoryList)
   })
-
-  const [currentCategoryId, setCurrentCategoryId] = useState(0)
 
   // const categoryList: TCategory[] = [
   //   { id: 1, name: 'c1', sort: 1 },
@@ -40,15 +45,16 @@ export const BookmarkList = (): JSX.Element => {
   // ]
 
   const itemList: TItem[] = [
-    { categoryId: 1, itemId: 1, itemName: 'Google', sort: 1, url: 'https://www.google.co.jp', explanation: 'ぐぐるとは' },
-    { categoryId: 1, itemId: 2, itemName: 'Youtube', sort: 1, url: 'httsp:www.youtube.com/', explanation: 'ぐぐるとは' },
+    { categoryId: 1, id: 1, title: 'Google', sort: 1, url: 'https://www.google.co.jp', explanation: 'ぐぐるとは', note: '' },
+    { categoryId: 1, id: 2, title: 'Youtube', sort: 1, url: 'httsp:www.youtube.com/', explanation: 'ぐぐるとは', note: '' },
     {
       categoryId: 1,
-      itemId: 3,
-      itemName: 'Zenn',
+      id: 3,
+      title: 'Zenn',
       sort: 1,
       url: 'https://zenn.dev/',
-      explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
+      explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所',
+      note: ''
     },
     {
       categoryId: 1,
@@ -101,13 +107,15 @@ export const BookmarkList = (): JSX.Element => {
   ]
 
   return (
-    <Resize handleWidth="3px" handleColor="#FF0000">
-      <ResizeHorizon minWidth="200px" width="200px" overflow="auto" className="left-side">
-        <CategoryList currentId={currentCategoryId} categoryList={categoryList} setCurrentId={setCurrentCategoryId} />
-      </ResizeHorizon>
-      <ResizeHorizon minWidth="100px" overflow="auto">
-        <ItemList itemList={itemList} />
-      </ResizeHorizon>
-    </Resize>
+    <CategoryIdProvider>
+      <Resize handleWidth="3px" handleColor="#FF0000">
+        <ResizeHorizon minWidth="200px" width="200px" overflow="auto" className="left-side">
+          <CategoryList categoryList={categoryList} />
+        </ResizeHorizon>
+        <ResizeHorizon minWidth="100px" overflow="auto">
+          <ItemList itemList={itemList} />
+        </ResizeHorizon>
+      </Resize>
+    </CategoryIdProvider>
   )
 }

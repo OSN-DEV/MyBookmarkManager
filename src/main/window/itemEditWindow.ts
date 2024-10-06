@@ -2,6 +2,7 @@ import { app, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { ED } from '../../preload/EventDef'
 import { TItem } from 'src/@types/TItem'
+import { devLog } from '../../util/common'
 
 let showDevTool: boolean = false
 let itemEditWindow: BrowserWindow | null = null
@@ -9,9 +10,10 @@ let itemEditWindow: BrowserWindow | null = null
 /**
  * アイテム編集ウィンドウを作成
  * @param parent 親ウィンドウ
- * @param category カテゴリ情報
+ * @param categoryId カテゴリID
+ * @param item アイテム情報
  */
-export const createItemEditWindow = (parent: BrowserWindow, item: TItem | null): void => {
+export const createItemEditWindow = (parent: BrowserWindow, categoryId: number, item: TItem | null): void => {
   if (null != itemEditWindow && !itemEditWindow.isDestroyed()) {
     itemEditWindow.close()
   }
@@ -19,7 +21,7 @@ export const createItemEditWindow = (parent: BrowserWindow, item: TItem | null):
   itemEditWindow = new BrowserWindow({
     parent: parent!,
     width: 400,
-    height: 350,
+    height: 450,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
@@ -36,7 +38,7 @@ export const createItemEditWindow = (parent: BrowserWindow, item: TItem | null):
   itemEditWindow.on('ready-to-show', () => {
     console.log(`#### ready-to-show`)
     itemEditWindow?.show()
-    itemEditWindow?.webContents.send(ED.ItemEdit.Load, item)
+    itemEditWindow?.webContents.send(ED.ItemEdit.Load, categoryId, item)
 
     toggleDevTool()
   })

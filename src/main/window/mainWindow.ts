@@ -4,6 +4,7 @@ import { is } from '@electron-toolkit/utils'
 import { initDatabase } from '../database/database'
 import { ED } from '../../preload/EventDef'
 import * as CategoryTable from '../database/categoryTable'
+import * as ItemTable from '../database/itemTable'
 import icon from '../../../resources/icon.png'
 import { devLog } from '../../util/common'
 let showDevTool: boolean = false
@@ -106,6 +107,17 @@ export const sendRefreshCategoryList = async (): Promise<void> => {
   const categoryList = await CategoryTable.selectAll()
   mainWindow?.webContents.send(ED.CategoryList.Load, categoryList)
 }
+
+/**
+ * アイテムの更新
+ * @param categoryId: カテゴリID
+ */
+export const sendRefreshItemList = async (categoryId: number): Promise<void> => {
+  devLog('sendRefreshItemist')
+  const itemList = await ItemTable.selectAll(categoryId)
+  mainWindow?.webContents.send(ED.ItemList.Load, itemList)
+}
+
 
 /**
  * Devツールの表示切替

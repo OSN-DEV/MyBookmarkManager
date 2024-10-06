@@ -16,12 +16,12 @@ const Item = (props: ItemProps): JSX.Element => {
   }
 
   return (
-    <div className="item-list-item" onContextMenu={() => handleContextMenu(null)}>
+    <div className="item-list-item" onContextMenu={(e) => handleClickItem(e, null)}>
       <div>
-        <span onContextMenu={(e) => handleClickItem(e, item)}>■ {item.name}</span>
+        <span onContextMenu={(e) => handleClickItem(e, item)}>■ {item.title}</span>
       </div>
       <div>
-        <a href={item.url} target="_blank" rel="noopener noreferrer">
+        <a href={item.url} target="_blank" rel="noopener noreferrer" onContextMenu={(e) => handleClickItem(e, item)}>
           {item.url}
         </a>
       </div>

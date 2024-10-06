@@ -2,6 +2,7 @@ import { app, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { ED } from '../../preload/EventDef'
 import { TCategory } from '../../@types/TCategory'
+import { devLog } from '../../util/common'
 
 let showDevTool: boolean = false
 let categoryEditWindow: BrowserWindow | null = null
@@ -12,6 +13,7 @@ let categoryEditWindow: BrowserWindow | null = null
  * @param category カテゴリ情報
  */
 export const createCategoryEditWindow = (parent: BrowserWindow, category: TCategory | null): void => {
+  devLog(`createCategoryEditWindow`)
   if (null != categoryEditWindow && !categoryEditWindow.isDestroyed()) {
     categoryEditWindow.close()
   }
@@ -28,9 +30,9 @@ export const createCategoryEditWindow = (parent: BrowserWindow, category: TCateg
   categoryEditWindow.title = 'category'
   categoryEditWindow.setMenuBarVisibility(false)
   if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
-    categoryEditWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/category.html`)
+    categoryEditWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/categoryEdit.html`)
   } else {
-    categoryEditWindow.loadFile(join(__dirname, '../renderer/category.html'))
+    categoryEditWindow.loadFile(join(__dirname, '../renderer/categoryEdit.html'))
   }
 
   categoryEditWindow.on('ready-to-show', () => {
