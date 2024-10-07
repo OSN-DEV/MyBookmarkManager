@@ -12,7 +12,7 @@ export const getCreateTableSql = (): string => {
   return `
     CREATE TABLE item (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        categoryId INTEGER,
+        category_id INTEGER,
         title TEXT,
         sort INTEGER,
         url TEXT,
@@ -31,7 +31,7 @@ export const create = async (item: TItem): Promise<TItem | undefined> => {
   devLog(`itemTable.create: ${JSON.stringify(item)}`)
   try {
     let sql = `
-      insert into item(categoryId, title, url, explanation, note) values(?,?,?,?,?)
+      insert into item(category_id, title, url, explanation, note) values(?,?,?,?,?)
     `
     item.id = await insert(sql, [item.categoryId, item.title, item.url, item.explanation, item.note])
     devLog('###1')
@@ -67,7 +67,7 @@ export const update = async (item: TItem): Promise<TItem | undefined> => {
   try {
     const sql = `
       update item set
-        categoryId = ?
+        category_id = ?
        ,title = ?
        ,url = ?
        ,explanation = ?
@@ -92,7 +92,7 @@ export const selectAll = async (categoryId: number): Promise<TItem[]> => {
   try {
     const sql = `
       SELECT * FROM item
-       WHERE categoryId = ?
+       WHERE category_id = ?
         ORDER BY sort
     `
     return (await query(sql, [categoryId])) as TItem[]

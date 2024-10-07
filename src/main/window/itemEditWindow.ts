@@ -14,6 +14,7 @@ let itemEditWindow: BrowserWindow | null = null
  * @param item アイテム情報
  */
 export const createItemEditWindow = (parent: BrowserWindow, categoryId: number, item: TItem | null): void => {
+  devLog(`createItemEditWindow : ${categoryId} - ${JSON.stringify(item)}`)
   if (null != itemEditWindow && !itemEditWindow.isDestroyed()) {
     itemEditWindow.close()
   }
@@ -36,7 +37,7 @@ export const createItemEditWindow = (parent: BrowserWindow, categoryId: number, 
   }
 
   itemEditWindow.on('ready-to-show', () => {
-    console.log(`#### ready-to-show`)
+    console.log(`#### ready-to-show ${categoryId}`)
     itemEditWindow?.show()
     itemEditWindow?.webContents.send(ED.ItemEdit.Load, categoryId, item)
 

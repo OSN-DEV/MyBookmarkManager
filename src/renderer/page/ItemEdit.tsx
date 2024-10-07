@@ -12,6 +12,7 @@ export const ItemEdit = (): JSX.Element => {
   devLog(`ItemEdit`)
   const [item, setItem] = useState<TItem | null>(null)
   const [categoryId, setCategoryId] = useState<number>(0)
+
   // 入力項目への参照
   const refs = {
     title: useRef<HTMLInputElement>(null),
@@ -39,6 +40,7 @@ export const ItemEdit = (): JSX.Element => {
   window.itemApi.onLoad((_: IpcRendererEvent, categoryId: number, item: TItem | null) => {
     devLog(`window.itemApi.onLoad`)
     devLog(`categoryId: ${categoryId}`)
+    setCategoryId(categoryId)
     if (item == null || item.id == null) {
       devLog('window.itemApi.onLoad:create')
     } else {
@@ -47,8 +49,6 @@ export const ItemEdit = (): JSX.Element => {
       setValue(refs.url, item.url)
       setValue(refs.explanation, item.explanation)
       setValue(refs.note, item.note)
-
-      setCategoryId(categoryId)
       setItem(item)
     }
   })
@@ -57,7 +57,7 @@ export const ItemEdit = (): JSX.Element => {
    * OKボタンクリック
    */
   const handleOkClick = (): void => {
-    devLog(`handleOkClick: `)
+    devLog(`handleOkClick: ${categoryId}`)
     const newItem: TItem = item ? { ...item } : { ...initialItem }
     newItem.categoryId = categoryId
     newItem.title = getValue(refs.title)
