@@ -28,10 +28,11 @@ contextBridge.exposeInMainWorld('mainApi', {
 
   /**
    * Show context menu for item list
+   * @param categoryId - current category id
    * @param item - item infromation.
    * @returns void
    */
-  showItemListContextMenu: (item: TItem | null) => ipcRenderer.send(ED.ItemList.ContextMenu.Show, item),
+  showItemListContextMenu: (categoryId: number, item: TItem | null) => ipcRenderer.send(ED.ItemList.ContextMenu.Show, categoryId, item),
 
 
   // ping: () => ipcRenderer.send('ping'),

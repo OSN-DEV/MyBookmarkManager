@@ -3,9 +3,9 @@ import * as cm from '../util/common'
 import { RequestMode } from '../util/Constant'
 import { TItem } from 'src/@types/TItem'
 
-export const showContextMenu = (item: TItem | null, callback: (item: TItem | null, mode: RequestMode) => void): void => {
+export const showContextMenu = (categoryId: number, item: TItem | null, callback: (categoryId: number, item: TItem | null, mode: RequestMode) => void): void => {
   const isCreate = item === null
-  cm.devLog(`showContextMenu: ${item?.id}: ${item?.name}`)
+  cm.devLog(`showContextMenu: ${categoryId} - ${item?.id}: ${item?.title}`)
   let contextMenu: Menu | null = null
 
   contextMenu = Menu.buildFromTemplate([
@@ -13,14 +13,14 @@ export const showContextMenu = (item: TItem | null, callback: (item: TItem | nul
       label: 'Create',
       enabled: isCreate,
       click: (): void => {
-        callback(item, RequestMode.Create)
+        callback(categoryId, item, RequestMode.Create)
       }
     },
     {
       label: 'Edit',
       enabled: !isCreate,
       click: (): void => {
-        callback(item, RequestMode.Edit)
+        callback(categoryId, item, RequestMode.Edit)
       }
     },
     {

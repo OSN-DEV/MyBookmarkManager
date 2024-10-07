@@ -15,7 +15,6 @@ import { CategoryIdProvider } from '../context/CategoryIdContext'
 // export const CartegoryIdContext = createContext<CartegoryIdContextType | undefined>(undefined)
 
 export const BookmarkList = (): JSX.Element => {
-
   // register event from main process
   useEffect(() => {
     /**
@@ -25,6 +24,11 @@ export const BookmarkList = (): JSX.Element => {
     //   devLog('tmp')
     // })
   }, [])
+
+  const [currentCategoryId, setCurrentCategoryId] = useState<number>(0)
+  const handleCurrentCategoryIdChanged = (categoryId: number) => {
+    setCurrentCategoryId(categoryId)
+  }
 
   const [categoryList, setCategoryList] = useState<TCategory[]>([])
   /**
@@ -110,7 +114,7 @@ export const BookmarkList = (): JSX.Element => {
     <CategoryIdProvider>
       <Resize handleWidth="3px" handleColor="#FF0000">
         <ResizeHorizon minWidth="200px" width="200px" overflow="auto" className="left-side">
-          <CategoryList categoryList={categoryList} />
+          <CategoryList categoryList={categoryList} currentCategoryIdChanged={handleCurrentCategoryIdChanged} />
         </ResizeHorizon>
         <ResizeHorizon minWidth="100px" overflow="auto">
           <ItemList itemList={itemList} />

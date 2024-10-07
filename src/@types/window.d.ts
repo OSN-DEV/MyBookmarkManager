@@ -32,9 +32,10 @@ export interface IMainApi {
 
   /**
    * アイテム コンテキストメニュー表示
+   * @param categoryId カテゴリID
    * @param item アイテム情報
    */
-  showItemListContextMenu: (item: TItem | null) => void
+  showItemListContextMenu: (categoryId: number, item: TItem | null) => void
 
 
 
@@ -100,6 +101,7 @@ export interface IItemApi {
 
   /**
    * アイテム更新
+   * @param categoryId カテゴリID
    * @param item アイテム情報
    * @return アイテム情報(IDを設定)
    */

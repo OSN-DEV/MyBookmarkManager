@@ -12,12 +12,12 @@ const ItemList = (props: ItemListProps): JSX.Element => {
   const { id: categoryId } = useCategoryIdContext()
 
   const handleContextMenu = (item: TItem | null): void => {
-    console.log(`handleContextMenu: ${item}`)
+    console.log(`handleContextMenu: ${categoryId} - ${item}`)
     if (categoryId <= 0) {
       devLog(`category is not selected`)
       return
     }
-    window.mainApi.showItemListContextMenu(item)
+    window.mainApi.showItemListContextMenu(categoryId, item)
   }
 
   return (

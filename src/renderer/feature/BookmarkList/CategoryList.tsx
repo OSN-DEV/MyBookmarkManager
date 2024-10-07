@@ -4,19 +4,22 @@ import { useCategoryIdContext } from '../../../renderer/context/CategoryIdContex
 
 type CategoryListProps = {
   categoryList: TCategory[]
+  currentCategoryIdChanged: (categoryId: number) => void
 }
 const CategoryList = (props: CategoryListProps): JSX.Element => {
-  const { categoryList } = props
-  const {id: currentId, setId} = useCategoryIdContext()
+  const { categoryList, currentCategoryIdChanged } = props
+  const { id: currentId, setId } = useCategoryIdContext()
 
-  ///
-  /// カテゴリ選択イベント
-  ///
+  /**
+   * カテゴリ選択
+   * @param categoryId カテゴリID
+   */
   const handleClick = (categoryId: number): void => {
     if (currentId == categoryId) {
       return
     }
     setId(categoryId)
+    currentCategoryIdChanged(categoryId)
   }
 
   const handleContextMenu = (category: TCategory | null): void => {

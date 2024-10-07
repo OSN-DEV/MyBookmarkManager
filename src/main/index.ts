@@ -48,8 +48,8 @@ const registerEvent = async (): Promise<void> => {
     CL.showContextMenu(category, categoryContextMenuCallback)
   })
   // Item List
-  ipcMain.on(ED.ItemList.ContextMenu.Show, (_: IpcMainEvent, item: TItem | null) => {
-    IL.showContextMenu(item, itemContextMenuCallback)
+  ipcMain.on(ED.ItemList.ContextMenu.Show, (_: IpcMainEvent, categoryId: number, item: TItem | null) => {
+    IL.showContextMenu(categoryId, item, itemContextMenuCallback)
   })
 
   // Category Edit
@@ -58,8 +58,8 @@ const registerEvent = async (): Promise<void> => {
   ipcMain.on(ED.CategoryEdit.Cancel, closeCategoryEditWindow)
 
   // Item Edit
-  ipcMain.handle(ED.ItemEdit.Create, (_, categoryId:number, item: TItem) => handleItemCreate(categoryId, item))
-  ipcMain.handle(ED.ItemEdit.Update, (_, categoryId:number, item: TItem) => handleItemUpdate(categoryId, item))
+  ipcMain.handle(ED.ItemEdit.Create, (_, item: TItem) => handleItemCreate(item))
+  ipcMain.handle(ED.ItemEdit.Update, (_, item: TItem) => handleItemUpdate(item))
   ipcMain.on(ED.ItemEdit.Cancel, closeItemEditWindow)
 
   await createWindow()
@@ -92,10 +92,10 @@ const categoryContextMenuCallback = (category: TCategory | null, mode: RequestMo
 /**
  * コンテキストメニュー コールバック
  */
-const itemContextMenuCallback = (item: TItem | null, mode: RequestMode): void => {
-  devLog(`itemContextMenuCallback: ${item?.id}, ${mode}`)
+const itemContextMenuCallback = (categoryId: number, item: TItem | null, mode: RequestMode): void => {
+  devLog(`itemContextMenuCallback: ${categoryId} - ${item?.id} - ${mode}`)
   console.log(item)
-  createItemEditWindow(getmainWindow()!, item)
+  createItemEditWindow(getmainWindow()!, categoryId, item)
 }
 
 // ------------------------------------------------------------------
@@ -130,20 +130,18 @@ const handleCategoryUpdate = (category: TCategory): void => {
  * アイテム作成
  * @params item アイテム情報
  */
-const handleItemCreate = (categoryId: number, item: TItem): void => {
-  devLog(`handleCategoryCreate`)
+const handleItemCreate = (item: TItem): void => {
+  devLog(`handleCategoryCreate:${JSON.stringify(item)}`)
   itemTable.create(item)
   closeItemEditWindow()
-  sendRefreshItemList(categoryId)
 }
 
 /*
  * アイテム更新
  * @params item アイテム情報
  */
-const handleItemUpdate = (categoryId: number, item: TItem): void => {
+const handleItemUpdate = (item: TItem): void => {
   devLog(`handleItemUpdate`)
   itemTable.update(item)
   closeItemEditWindow()
-  sendRefreshItemList(categoryId)
 }
