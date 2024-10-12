@@ -15,6 +15,7 @@ import { CategoryIdProvider } from '../context/CategoryIdContext'
 // export const CartegoryIdContext = createContext<CartegoryIdContextType | undefined>(undefined)
 
 export const BookmarkList = (): JSX.Element => {
+  devLog('BookmarkList')
   // register event from main process
   useEffect(() => {
     /**
@@ -26,18 +27,30 @@ export const BookmarkList = (): JSX.Element => {
   }, [])
 
   const [currentCategoryId, setCurrentCategoryId] = useState<number>(0)
-  const handleCurrentCategoryIdChanged = (categoryId: number) => {
+
+  const handleCurrentCategoryIdChanged = (categoryId: number): void => {
+    devLog(`handleCurrentCategoryIdChanged`)
     setCurrentCategoryId(categoryId)
+    window.mainApi.requestItemList(categoryId)
   }
 
   const [categoryList, setCategoryList] = useState<TCategory[]>([])
+  const [itemList, setItemList] = useState<TItem[]>([])
+
   /**
    * ロードイベント
    */
-  window.mainApi.onCategoryListLoad((_: IpcRendererEvent, categoryList: TCategory[]) => {
-    devLog(`window.mainApi.onCategoryListLoad`)
-    setCategoryList(categoryList)
-  })
+  useEffect( ()=> {
+    window.mainApi.onCategoryListLoad((_: IpcRendererEvent, categoryList: TCategory[]) => {
+      devLog(`window.mainApi.onCategoryListLoad`)
+      setCategoryList(categoryList)
+    })
+
+    window.mainApi.onItemListLoad((_: IpcRendererEvent, itemList: TItem[]) => {
+      devLog(`window.mainApi.onItemListLoad`)
+      setItemList(itemList)
+    })
+  }, [])
 
   // const categoryList: TCategory[] = [
   //   { id: 1, name: 'c1', sort: 1 },
@@ -48,67 +61,67 @@ export const BookmarkList = (): JSX.Element => {
   //   { id: 6, name: 'c6', sort: 2 }
   // ]
 
-  const itemList: TItem[] = [
-    { categoryId: 1, id: 1, title: 'Google', sort: 1, url: 'https://www.google.co.jp', explanation: 'ぐぐるとは', note: '' },
-    { categoryId: 1, id: 2, title: 'Youtube', sort: 1, url: 'httsp:www.youtube.com/', explanation: 'ぐぐるとは', note: '' },
-    {
-      categoryId: 1,
-      id: 3,
-      title: 'Zenn',
-      sort: 1,
-      url: 'https://zenn.dev/',
-      explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所',
-      note: ''
-    },
-    {
-      categoryId: 1,
-      itemId: 4,
-      itemName: 'Zenn',
-      sort: 1,
-      url: 'https://zenn.dev/',
-      explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
-    },
-    {
-      categoryId: 1,
-      itemId: 5,
-      itemName: 'Zenn',
-      sort: 1,
-      url: 'https://zenn.dev/',
-      explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
-    },
-    {
-      categoryId: 1,
-      itemId: 9,
-      itemName: 'Zenn',
-      sort: 1,
-      url: 'https://zenn.dev/',
-      explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
-    },
-    {
-      categoryId: 1,
-      itemId: 10,
-      itemName: 'Zenn',
-      sort: 1,
-      url: 'https://zenn.dev/',
-      explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
-    },
-    {
-      categoryId: 1,
-      itemId: 11,
-      itemName: 'Zenn',
-      sort: 1,
-      url: 'https://zenn.dev/',
-      explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
-    },
-    {
-      categoryId: 1,
-      itemId: 12,
-      itemName: 'Zenn',
-      sort: 1,
-      url: 'https://zenn.dev/',
-      explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
-    }
-  ]
+  // const itemList: TItem[] = [
+  //   { categoryId: 1, id: 1, title: 'Google', sort: 1, url: 'https://www.google.co.jp', explanation: 'ぐぐるとは', note: '' },
+  //   { categoryId: 1, id: 2, title: 'Youtube', sort: 1, url: 'httsp:www.youtube.com/', explanation: 'ぐぐるとは', note: '' },
+  //   {
+  //     categoryId: 1,
+  //     id: 3,
+  //     title: 'Zenn',
+  //     sort: 1,
+  //     url: 'https://zenn.dev/',
+  //     explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所',
+  //     note: ''
+  //   },
+  //   {
+  //     categoryId: 1,
+  //     itemId: 4,
+  //     itemName: 'Zenn',
+  //     sort: 1,
+  //     url: 'https://zenn.dev/',
+  //     explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
+  //   },
+  //   {
+  //     categoryId: 1,
+  //     itemId: 5,
+  //     itemName: 'Zenn',
+  //     sort: 1,
+  //     url: 'https://zenn.dev/',
+  //     explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
+  //   },
+  //   {
+  //     categoryId: 1,
+  //     itemId: 9,
+  //     itemName: 'Zenn',
+  //     sort: 1,
+  //     url: 'https://zenn.dev/',
+  //     explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
+  //   },
+  //   {
+  //     categoryId: 1,
+  //     itemId: 10,
+  //     itemName: 'Zenn',
+  //     sort: 1,
+  //     url: 'https://zenn.dev/',
+  //     explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
+  //   },
+  //   {
+  //     categoryId: 1,
+  //     itemId: 11,
+  //     itemName: 'Zenn',
+  //     sort: 1,
+  //     url: 'https://zenn.dev/',
+  //     explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
+  //   },
+  //   {
+  //     categoryId: 1,
+  //     itemId: 12,
+  //     itemName: 'Zenn',
+  //     sort: 1,
+  //     url: 'https://zenn.dev/',
+  //     explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
+  //   }
+  // ]
 
   return (
     <CategoryIdProvider>

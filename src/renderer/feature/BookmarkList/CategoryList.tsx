@@ -1,6 +1,7 @@
 import { TCategory } from '../../../@types/TCategory'
 import Category from './Category'
 import { useCategoryIdContext } from '../../../renderer/context/CategoryIdContext'
+import { devLog } from '../../../util/common'
 
 type CategoryListProps = {
   categoryList: TCategory[]
@@ -15,7 +16,9 @@ const CategoryList = (props: CategoryListProps): JSX.Element => {
    * @param categoryId カテゴリID
    */
   const handleClick = (categoryId: number): void => {
+    devLog(`handleClick: categoryId=${categoryId}`)
     if (currentId == categoryId) {
+      devLog(`same category id`)
       return
     }
     setId(categoryId)

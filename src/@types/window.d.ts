@@ -37,6 +37,21 @@ export interface IMainApi {
    */
   showItemListContextMenu: (categoryId: number, item: TItem | null) => void
 
+  /**
+   * アイテム一覧 取得要求
+   */
+  requestItemList: (categoryId: number) => void
+
+  /**
+   * アイテムリスト一覧取得イベント
+   * @param callback アイテム情報
+   * @param callback.event IPCメッセージイベント
+   * @param callback.itemList アイテム一覧
+   * @summary カテゴリ選択時に発火
+   */
+  onItemListLoad: (callback: (event: IpcRendererEvent, itemList: TItem[]) => void) => void
+
+
 
 
   onCategoryItemCreateReqeust: (callback: (event: Electron.IpcMessageEvent) => void) => void

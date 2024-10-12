@@ -43,14 +43,17 @@ app.whenReady().then(async () => {
  * イベント登録
  */
 const registerEvent = async (): Promise<void> => {
+  devLog(`registerEvent`)
   // Category List
   ipcMain.on(ED.CategoryList.ContextMenu.Show, (_: IpcMainEvent, category: TCategory | null) => {
     CL.showContextMenu(category, categoryContextMenuCallback)
   })
+
   // Item List
   ipcMain.on(ED.ItemList.ContextMenu.Show, (_: IpcMainEvent, categoryId: number, item: TItem | null) => {
     IL.showContextMenu(categoryId, item, itemContextMenuCallback)
   })
+  ipcMain.handle(ED.ItemList.Request, (_, categoryId: number) => handleItemListRequest(categoryId))
 
   // Category Edit
   ipcMain.handle(ED.CategoryEdit.Create, (_, category: TCategory) => handleCategoryCreate(category))
@@ -96,6 +99,14 @@ const itemContextMenuCallback = (categoryId: number, item: TItem | null, mode: R
   devLog(`itemContextMenuCallback: ${categoryId} - ${item?.id} - ${mode}`)
   console.log(item)
   createItemEditWindow(getmainWindow()!, categoryId, item)
+}
+
+// ------------------------------------------------------------------
+// アイテムリスト
+// ------------------------------------------------------------------
+const handleItemListRequest = (categoryId: number): void => {
+  devLog(`handleItemListRequest: categoryId:${categoryId}`)
+  sendRefreshItemList(categoryId)
 }
 
 // ------------------------------------------------------------------
