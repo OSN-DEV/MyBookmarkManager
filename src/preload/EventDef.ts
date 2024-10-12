@@ -36,6 +36,8 @@ export const ED = {
   ItemList: {
     /** アイテムリストロード */
     Load: 'ed.item-list.load',
+    /** アイテムリスト取得要求 */
+    Request: 'ed.item-list.request',
     /** コンテキストメニュー */
     ContextMenu: {
       /**
@@ -46,7 +48,7 @@ export const ED = {
       /**
        * メニュー選択
        */
-      MenuSelected: 'ed.item-list.context-menu.menu-selected'
+      MenuSelected: 'ed.item-list.context-menu.menu-selected',
     }
   },
 
