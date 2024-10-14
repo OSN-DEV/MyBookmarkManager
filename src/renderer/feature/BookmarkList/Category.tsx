@@ -13,10 +13,24 @@ const Category = (props: CategoryProps): JSX.Element => {
   if (isSelected) {
     console.log('selected')
   }
+
+  /**
+   * コンテキストメニュー表示イベント
+   */
   const handleContextmenu = (e: React.MouseEvent): void => {
     e.stopPropagation()
     onContextMenu()
   }
+
+
+
+
+  // const styleList: string[] = ['text-gray-500', 'text-[14pt]', 'p-1', styles ?? '']
+  // return (
+  //   <>
+  //     <button type="button" onClick={onClick} className={styleList.join(' ').trim()}>
+
+
   return (
     <div className="category-list-category" onClick={() => handleClick(id)} onContextMenu={handleContextmenu}>
       {name}

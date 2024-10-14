@@ -9,8 +9,8 @@ type ItemProps = {
 const Item = (props: ItemProps): JSX.Element => {
   const { item, handleContextMenu } = props
 
-  const handleClickItem = (e: React.MouseEvent<HTMLSpanElement>, item: TItem): void => {
-    devLog(`handleClickItem`)
+  const handleClickItem = (e: React.MouseEvent<HTMLSpanElement>, item: TItem | null): void => {
+    devLog(`Item.handleClickItem`)
     e.stopPropagation()
     handleContextMenu(item)
   }

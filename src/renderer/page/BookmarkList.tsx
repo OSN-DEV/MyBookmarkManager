@@ -52,6 +52,20 @@ export const BookmarkList = (): JSX.Element => {
     })
   }, [])
 
+  const handleClickItem = (e: React.MouseEvent<HTMLSpanElement>, item: TItem | null): void => {
+    handleItemContextMenu(null)
+  }
+
+  const handleItemContextMenu = (item: TItem | null): void => {
+    console.log(`handleContextMenu: ${currentCategoryId}`)
+    if (currentCategoryId <= 0) {
+      devLog(`category is not selected`)
+      return
+    }
+    window.mainApi.showItemListContextMenu(currentCategoryId, item)
+  }
+
+
   // const categoryList: TCategory[] = [
   //   { id: 1, name: 'c1', sort: 1 },
   //   { id: 2, name: 'c2', sort: 2 },
@@ -130,7 +144,9 @@ export const BookmarkList = (): JSX.Element => {
           <CategoryList categoryList={categoryList} currentCategoryIdChanged={handleCurrentCategoryIdChanged} />
         </ResizeHorizon>
         <ResizeHorizon minWidth="100px" overflow="auto">
-          <ItemList itemList={itemList} />
+          <div className="h-full" onContextMenu={(e) => handleClickItem(e, null)}>
+            <ItemList itemList={itemList} handleContextMenu={() => handleItemContextMenu(null)}/>
+          </div>
         </ResizeHorizon>
       </Resize>
     </CategoryIdProvider>
