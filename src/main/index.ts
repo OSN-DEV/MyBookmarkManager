@@ -118,9 +118,7 @@ const handleItemListRequest = (categoryId: number): void => {
  */
 const handleCategoryCreate = (category: TCategory): void => {
   devLog(`handleCategoryCreate`)
-  categoryTable.create(category)
-  closeCategoryEditWindow()
-  sendRefreshCategoryList()
+  categoryUpdate(category, true)
 }
 
 /*
@@ -129,7 +127,20 @@ const handleCategoryCreate = (category: TCategory): void => {
  */
 const handleCategoryUpdate = (category: TCategory): void => {
   devLog(`handleCategoryUpdate`)
-  categoryTable.update(category)
+  categoryUpdate(category, false)
+}
+
+/**
+ * カテゴリ更新(統合処理)
+ * @param category カテゴリ情報
+ * @param isNew true:新規、false:更新
+ */
+const categoryUpdate = (category: TCategory, isNew: boolean): void => {
+  if (isNew) {
+    categoryTable.create(category)
+  } else {
+    categoryTable.update(category)
+  }
   closeCategoryEditWindow()
   sendRefreshCategoryList()
 }
@@ -143,8 +154,7 @@ const handleCategoryUpdate = (category: TCategory): void => {
  */
 const handleItemCreate = (item: TItem): void => {
   devLog(`handleCategoryCreate:${JSON.stringify(item)}`)
-  itemTable.create(item)
-  closeItemEditWindow()
+  itemUpdate(item, true)
 }
 
 /*
@@ -153,6 +163,20 @@ const handleItemCreate = (item: TItem): void => {
  */
 const handleItemUpdate = (item: TItem): void => {
   devLog(`handleItemUpdate`)
-  itemTable.update(item)
+  itemUpdate(item, false)
+}
+
+/**
+ * カテゴリ更新(統合処理)
+ * @param category カテゴリ情報
+ * @param isNew true:新規、false:更新
+ */
+const itemUpdate = (item: TItem, isNew: boolean): void => {
+  if (isNew) {
+    itemTable.create(item)
+  } else {
+    itemTable.update(item)
+  }
   closeItemEditWindow()
+  sendRefreshItemList(item.categoryId)
 }
