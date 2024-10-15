@@ -34,12 +34,10 @@ export const create = async (item: TItem): Promise<TItem | undefined> => {
       insert into item(category_id, title, url, explanation, note) values(?,?,?,?,?)
     `
     item.id = await insert(sql, [item.categoryId, item.title, item.url, item.explanation, item.note])
-    devLog('###1')
     sql = `
       select max(sort) as max_sort from item
     `
     const rows = (await query(sql)) as { max_sort: number }[]
-    devLog('###2')
     item.sort = rows[0].max_sort + 1
 
     sql = `
@@ -48,7 +46,6 @@ export const create = async (item: TItem): Promise<TItem | undefined> => {
       where id=?
     `
     modify(sql, [item.sort, item.id])
-    devLog('###3')
 
     return item
   } catch (error) {

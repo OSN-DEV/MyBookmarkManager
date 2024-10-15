@@ -45,12 +45,14 @@ export const BookmarkList = (): JSX.Element => {
       devLog(`window.mainApi.onCategoryListLoad`)
       setCategoryList(categoryList)
     })
+  }, [categoryList])
 
+  useEffect( ()=> {
     window.mainApi.onItemListLoad((_: IpcRendererEvent, itemList: TItem[]) => {
       devLog(`window.mainApi.onItemListLoad`)
       setItemList(itemList)
     })
-  }, [])
+  }, [itemList])
 
   const handleClickItem = (e: React.MouseEvent<HTMLSpanElement>, item: TItem | null): void => {
     handleItemContextMenu(null)
