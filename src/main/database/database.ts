@@ -83,6 +83,54 @@ export const insert = async (sql: string, params: TSqlParam[] = []): Promise<num
 }
 
 /**
+ * トランザクションを開始
+ * @returns なし
+ */
+export const beginTrans = async (): Promise<void> => {
+  return new Promise<void>((resolve, reject) => {
+    db.run("BEGIN", function (err) {
+      if (err) {
+        reject(err)
+      } else {
+        resolve()
+      }
+    })
+  })
+}
+
+/**
+ * コミット
+ * @returns なし
+ */
+export const commitTrans = async (): Promise<void> => {
+  return new Promise<void>((resolve, reject) => {
+    db.run("BEGIN", function (err) {
+      if (err) {
+        reject(err)
+      } else {
+        resolve()
+      }
+    })
+  })
+}
+
+/**
+ * ロールバック
+ * @returns なし
+ */
+export const rollbackTrans = async (): Promise<void> => {
+  return new Promise<void>((resolve, reject) => {
+    db.run("ROLLBACK", function (err) {
+      if (err) {
+        reject(err)
+      } else {
+        resolve()
+      }
+    })
+  })
+}
+
+/**
  * データベースのインスタンスを取得
  * @returns データベースのインスタンス
  */

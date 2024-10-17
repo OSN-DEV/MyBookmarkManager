@@ -135,14 +135,14 @@ const handleCategoryUpdate = (category: TCategory): void => {
  * @param category カテゴリ情報
  * @param isNew true:新規、false:更新
  */
-const categoryUpdate = (category: TCategory, isNew: boolean): void => {
+const categoryUpdate = async(category: TCategory, isNew: boolean): Promise<void> => {
   if (isNew) {
-    categoryTable.create(category)
+    await categoryTable.create(category)
   } else {
-    categoryTable.update(category)
+    await categoryTable.update(category)
   }
   closeCategoryEditWindow()
-  sendRefreshCategoryList()
+  await sendRefreshCategoryList()
 }
 
 // ------------------------------------------------------------------
@@ -171,12 +171,12 @@ const handleItemUpdate = (item: TItem): void => {
  * @param category カテゴリ情報
  * @param isNew true:新規、false:更新
  */
-const itemUpdate = (item: TItem, isNew: boolean): void => {
+const itemUpdate = async(item: TItem, isNew: boolean): Promise<void> => {
   if (isNew) {
-    itemTable.create(item)
+    await itemTable.create(item)
   } else {
-    itemTable.update(item)
+    await itemTable.update(item)
   }
   closeItemEditWindow()
-  sendRefreshItemList(item.categoryId)
+  await sendRefreshItemList(item.categoryId)
 }
