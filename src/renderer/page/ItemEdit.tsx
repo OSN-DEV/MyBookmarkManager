@@ -40,6 +40,9 @@ export const ItemEdit = (): JSX.Element => {
   window.itemApi.onLoad((_: IpcRendererEvent, categoryId: number, item: TItem | null) => {
     devLog(`window.itemApi.onLoad`)
     devLog(`categoryId: ${categoryId}`)
+    if (item != null) {
+      devLog(`item: ${JSON.stringify(item)}`)
+    }
     setCategoryId(categoryId)
     if (item == null || item.id == null) {
       devLog('window.itemApi.onLoad:create')
@@ -58,13 +61,18 @@ export const ItemEdit = (): JSX.Element => {
    */
   const handleOkClick = (): void => {
     devLog(`handleOkClick: ${categoryId}`)
+    const isNew = (item == null)
     const newItem: TItem = item ? { ...item } : { ...initialItem }
     newItem.categoryId = categoryId
     newItem.title = getValue(refs.title)
     newItem.url = getValue(refs.url)
     newItem.explanation = getValue(refs.explanation)
     newItem.note = getValue(refs.note)
-    window.itemApi.create(newItem)
+    if (isNew) {
+      window.itemApi.create(newItem)
+    } else {
+      window.itemApi.update(newItem)
+    }
   }
 
   /**

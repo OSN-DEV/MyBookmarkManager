@@ -59,7 +59,7 @@ export const BookmarkList = (): JSX.Element => {
   }
 
   const handleItemContextMenu = (item: TItem | null): void => {
-    console.log(`handleContextMenu: ${currentCategoryId}`)
+    console.log(`handleContextMenu: ${currentCategoryId}-${item == null ? '' : JSON.stringify(item)}`)
     if (currentCategoryId <= 0) {
       devLog(`category is not selected`)
       return
@@ -147,7 +147,7 @@ export const BookmarkList = (): JSX.Element => {
         </ResizeHorizon>
         <ResizeHorizon minWidth="100px" overflow="auto">
           <div className="h-full" onContextMenu={(e) => handleClickItem(e, null)}>
-            <ItemList itemList={itemList} handleContextMenu={() => handleItemContextMenu(null)}/>
+            <ItemList itemList={itemList} handleContextMenu={handleItemContextMenu}/>
           </div>
         </ResizeHorizon>
       </Resize>
