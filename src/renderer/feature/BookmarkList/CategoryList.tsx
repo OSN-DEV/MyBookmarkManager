@@ -26,7 +26,7 @@ const CategoryList = (props: CategoryListProps): JSX.Element => {
   }
 
   const handleContextMenu = (category: TCategory | null): void => {
-    console.log(`handleContextMenu: ${category}`)
+    console.log(`handleContextMenu: ${category == null ? '' : JSON.stringify(category)}`)
     window.mainApi.showCategoryListContextMenu(category)
   }
 

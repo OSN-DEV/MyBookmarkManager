@@ -51,6 +51,7 @@ const registerEvent = async (): Promise<void> => {
 
   // Item List
   ipcMain.on(ED.ItemList.ContextMenu.Show, (_: IpcMainEvent, categoryId: number, item: TItem | null) => {
+    devLog(`ED.ItemList.ContextMenu.Show: categoryId=${categoryId} item=${JSON.stringify(item == null? '{}': item)}`)
     IL.showContextMenu(categoryId, item, itemContextMenuCallback)
   })
   ipcMain.handle(ED.ItemList.Request, (_, categoryId: number) => handleItemListRequest(categoryId))
