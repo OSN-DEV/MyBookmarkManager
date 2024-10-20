@@ -38,6 +38,8 @@ export const ED = {
     Load: 'ed.item-list.load',
     /** アイテムリスト取得要求 */
     Request: 'ed.item-list.request',
+    /** アイテム起動 */
+    LaunchItem: 'ed.item-list.launch-item',
     /** コンテキストメニュー */
     ContextMenu: {
       /**

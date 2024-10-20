@@ -38,6 +38,13 @@ export interface IMainApi {
   showItemListContextMenu: (categoryId: number, item: TItem | null) => void
 
   /**
+   * Launch item with relative app
+   * @param path - launch item path
+   * @returns void
+   */
+  launchItem: (path: string) => void
+
+  /**
    * アイテム一覧 取得要求
    */
   requestItemList: (categoryId: number) => void
@@ -50,16 +57,6 @@ export interface IMainApi {
    * @summary カテゴリ選択時に発火
    */
   onItemListLoad: (callback: (event: IpcRendererEvent, itemList: TItem[]) => void) => void
-
-
-
-
-  onCategoryItemCreateReqeust: (callback: (event: Electron.IpcMessageEvent) => void) => void
-  ping: () => void
-  setTitle: (title: string) => void
-  openFile: () => Promise<string>
-  counterValue: (value: number) => void
-  onUpdateCounter: (callback: (event: Electron.IpcMessageEvent, value: number) => void) => void
 }
 
 /**
