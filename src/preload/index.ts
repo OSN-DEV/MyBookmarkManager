@@ -2,7 +2,6 @@ import { IpcRendererEvent, contextBridge, ipcRenderer } from 'electron'
 import { ED } from './EventDef'
 import { TCategory } from '../@types/TCategory'
 import { TItem } from 'src/@types/TItem'
-import { warn } from 'console'
 
 /**
  * メインウィンドウ
@@ -36,7 +35,12 @@ contextBridge.exposeInMainWorld('mainApi', {
    */
   showItemListContextMenu: (categoryId: number, item: TItem | null) => ipcRenderer.send(ED.ItemList.ContextMenu.Show, categoryId, item),
 
-
+  /**
+   * Launch item with relative app
+   * @param path - launch item path
+   * @returns void
+   */
+  launchItem: (path: string) => ipcRenderer.send(ED.ItemList.LaunchItem, path),
 
   /**
    * アイテム一覧 取得要求
@@ -52,45 +56,6 @@ contextBridge.exposeInMainWorld('mainApi', {
    */
   onItemListLoad: (callback: (event: IpcRendererEvent, itemList: TItem[]) => void) => {
     ipcRenderer.on(ED.ItemList.Load, (ev: IpcRendererEvent, itemList: TItem[]) => callback(ev, itemList))
-  },
-
-
-
-  // ping: () => ipcRenderer.send('ping'),
-  ping: () => ipcRenderer.send('ping'),
-  setTitle: (title: string) => ipcRenderer.send('set-title', title),
-  openFile: () => ipcRenderer.invoke('dialog:openFile'),
-  counterValue: (value: number) => ipcRenderer.send('counter-value', value),
-  onUpdateCounter: (callback: (event: IpcRendererEvent, value: number) => void) => {
-    ipcRenderer.on('update-counter', (ev: IpcRendererEvent, value: number) => callback(ev, value))
-  },
-
-
-  /**
-   * Create category item request
-   * @param callback - callback
-   * @return void
-   */
-  onCategoryItemCreateReqeust: (callback: (event: IpcRendererEvent) => void) => {
-    ipcRenderer.on(ED.CategoryList.ContextMenu.CreateRequest, (ev: IpcRendererEvent) => callback(ev))
-  },
-
-  /**
-   * Edit category item request
-   * @param callback - callback
-   * @return void
-   */
-  onCategoryItemEditReqeust: (callback: (event: IpcRendererEvent, categoryId: number) => void) => {
-    ipcRenderer.on(ED.CategoryList.ContextMenu.EditRequest, (ev: IpcRendererEvent, categoryId: number) => callback(ev, categoryId))
-  },
-
-  /**
-   * Delete category item request
-   * @param callback - callback
-   * @return void
-   */
-  onCategoryItemDeleteReqeust: (callback: (event: IpcRendererEvent, categoryId: number) => void) => {
-    ipcRenderer.on(ED.CategoryList.ContextMenu.EditRequest, (ev: IpcRendererEvent, categoryId: number) => callback(ev, categoryId))
   }
 })
 

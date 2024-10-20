@@ -16,16 +16,6 @@ import { CategoryIdProvider } from '../context/CategoryIdContext'
 
 export const BookmarkList = (): JSX.Element => {
   devLog('BookmarkList')
-  // register event from main process
-  useEffect(() => {
-    /**
-     * Create category list item request
-     */
-    // window.mainApi?.onCategoryItemCreateReqeust((_: IpcRendererEvent) => {
-    //   devLog('tmp')
-    // })
-  }, [])
-
   const [currentCategoryId, setCurrentCategoryId] = useState<number>(0)
 
   const handleCurrentCategoryIdChanged = (categoryId: number): void => {

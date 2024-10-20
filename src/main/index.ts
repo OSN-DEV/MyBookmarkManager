@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron'
+import { app, BrowserWindow, ipcMain, IpcMainEvent, shell } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import * as CL from './categoryList'
 import * as IL from './itemList'
@@ -55,6 +55,7 @@ const registerEvent = async (): Promise<void> => {
     IL.showContextMenu(categoryId, item, itemContextMenuCallback)
   })
   ipcMain.handle(ED.ItemList.Request, (_, categoryId: number) => handleItemListRequest(categoryId))
+  ipcMain.on(ED.ItemList.LaunchItem, (_, path: string) => handleLaunchItem(path))
 
   // Category Edit
   ipcMain.handle(ED.CategoryEdit.Create, (_, category: TCategory) => handleCategoryCreate(category))
@@ -108,6 +109,11 @@ const itemContextMenuCallback = (categoryId: number, item: TItem | null, mode: R
 const handleItemListRequest = (categoryId: number): void => {
   devLog(`handleItemListRequest: categoryId:${categoryId}`)
   sendRefreshItemList(categoryId)
+}
+
+const handleLaunchItem = (path: string): void => {
+  devLog(`handleLaunchItem: ${path}`)
+  shell.openExternal(path)
 }
 
 // ------------------------------------------------------------------
