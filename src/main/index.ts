@@ -97,10 +97,18 @@ const categoryContextMenuCallback = (category: TCategory | null, mode: RequestMo
 /**
  * コンテキストメニュー コールバック
  */
-const itemContextMenuCallback = (categoryId: number, item: TItem | null, mode: RequestMode): void => {
+const itemContextMenuCallback = async (categoryId: number, item: TItem | null, mode: RequestMode): Promise<void> => {
   devLog(`itemContextMenuCallback: ${categoryId} - ${item?.id} - ${mode}`)
   console.log(item)
-  createItemEditWindow(getmainWindow()!, categoryId, item)
+  switch (mode) {
+    case RequestMode.Create:
+    case RequestMode.Edit:
+      createItemEditWindow(getmainWindow()!, categoryId, item)
+      break
+    case RequestMode.Delete:
+      await itemTable.deleteById(item?.id ?? -1)
+      sendRefreshItemList(categoryId)
+  }
 }
 
 // ------------------------------------------------------------------

@@ -79,6 +79,20 @@ export const update = async (item: TItem): Promise<TItem | undefined> => {
   }
 }
 
+export const deleteById = async (id: number): Promise<void> => {
+  devLog(`itemTable.delete`)
+  try {
+    const sql = `
+      delete from  item
+      where id = ?
+    `
+    modify(sql, [id])
+  } catch (error) {
+    console.error('Error query database:', error)
+    return undefined
+  }
+}
+
 /**
  * アイテム情報の一覧取得
  * @param categoryId: カテゴリID
