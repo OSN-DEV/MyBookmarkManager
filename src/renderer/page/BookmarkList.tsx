@@ -30,21 +30,21 @@ export const BookmarkList = (): JSX.Element => {
   /**
    * ロードイベント
    */
-  useEffect( ()=> {
+  useEffect(() => {
     window.mainApi.onCategoryListLoad((_: IpcRendererEvent, categoryList: TCategory[]) => {
       devLog(`window.mainApi.onCategoryListLoad`)
       setCategoryList(categoryList)
     })
   }, [categoryList])
 
-  useEffect( ()=> {
+  useEffect(() => {
     window.mainApi.onItemListLoad((_: IpcRendererEvent, itemList: TItem[]) => {
       devLog(`window.mainApi.onItemListLoad`)
       setItemList(itemList)
     })
   }, [itemList])
 
-  const handleClickItem = (e: React.MouseEvent<HTMLSpanElement>, item: TItem | null): void => {
+  const handleClickItem = (): void => {
     handleItemContextMenu(null)
   }
 
@@ -57,78 +57,6 @@ export const BookmarkList = (): JSX.Element => {
     window.mainApi.showItemListContextMenu(currentCategoryId, item)
   }
 
-
-  // const categoryList: TCategory[] = [
-  //   { id: 1, name: 'c1', sort: 1 },
-  //   { id: 2, name: 'c2', sort: 2 },
-  //   { id: 3, name: 'c3', sort: 2 },
-  //   { id: 4, name: 'c4', sort: 2 },
-  //   { id: 5, name: 'c5', sort: 2 },
-  //   { id: 6, name: 'c6', sort: 2 }
-  // ]
-
-  // const itemList: TItem[] = [
-  //   { categoryId: 1, id: 1, title: 'Google', sort: 1, url: 'https://www.google.co.jp', explanation: 'ぐぐるとは', note: '' },
-  //   { categoryId: 1, id: 2, title: 'Youtube', sort: 1, url: 'httsp:www.youtube.com/', explanation: 'ぐぐるとは', note: '' },
-  //   {
-  //     categoryId: 1,
-  //     id: 3,
-  //     title: 'Zenn',
-  //     sort: 1,
-  //     url: 'https://zenn.dev/',
-  //     explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所',
-  //     note: ''
-  //   },
-  //   {
-  //     categoryId: 1,
-  //     itemId: 4,
-  //     itemName: 'Zenn',
-  //     sort: 1,
-  //     url: 'https://zenn.dev/',
-  //     explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
-  //   },
-  //   {
-  //     categoryId: 1,
-  //     itemId: 5,
-  //     itemName: 'Zenn',
-  //     sort: 1,
-  //     url: 'https://zenn.dev/',
-  //     explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
-  //   },
-  //   {
-  //     categoryId: 1,
-  //     itemId: 9,
-  //     itemName: 'Zenn',
-  //     sort: 1,
-  //     url: 'https://zenn.dev/',
-  //     explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
-  //   },
-  //   {
-  //     categoryId: 1,
-  //     itemId: 10,
-  //     itemName: 'Zenn',
-  //     sort: 1,
-  //     url: 'https://zenn.dev/',
-  //     explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
-  //   },
-  //   {
-  //     categoryId: 1,
-  //     itemId: 11,
-  //     itemName: 'Zenn',
-  //     sort: 1,
-  //     url: 'https://zenn.dev/',
-  //     explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
-  //   },
-  //   {
-  //     categoryId: 1,
-  //     itemId: 12,
-  //     itemName: 'Zenn',
-  //     sort: 1,
-  //     url: 'https://zenn.dev/',
-  //     explanation: 'Zennはエンジニアが技術・開発について知見をシェアする場所'
-  //   }
-  // ]
-
   return (
     <CategoryIdProvider>
       <Resize handleWidth="3px" handleColor="#FF0000">
@@ -136,8 +64,8 @@ export const BookmarkList = (): JSX.Element => {
           <CategoryList categoryList={categoryList} currentCategoryIdChanged={handleCurrentCategoryIdChanged} />
         </ResizeHorizon>
         <ResizeHorizon minWidth="100px" overflow="auto">
-          <div className="h-full" onContextMenu={(e) => handleClickItem(e, null)}>
-            <ItemList itemList={itemList} handleContextMenu={handleItemContextMenu}/>
+          <div className="h-full" onContextMenu={handleClickItem}>
+            <ItemList itemList={itemList} handleContextMenu={handleItemContextMenu} />
           </div>
         </ResizeHorizon>
       </Resize>
