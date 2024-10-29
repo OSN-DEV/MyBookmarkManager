@@ -27,7 +27,7 @@ export const showContextMenu = (category: TCategory | null, callback: (category:
       label: 'Delete',
       enabled: !isCreate,
       click: (): void => {
-        // handleDeleteClick(window, categoryId)
+        callback(category, RequestMode.Delete)
       }
     }
   ])

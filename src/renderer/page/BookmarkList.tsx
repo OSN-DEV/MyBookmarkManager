@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Resize, ResizeHorizon } from 'react-resize-layout'
 import CategoryList from '../feature/BookmarkList/CategoryList'
 import ItemList from '../feature/BookmarkList/ItemList'
@@ -8,11 +8,6 @@ import { IpcRendererEvent } from 'electron'
 import { devLog } from '../../util/common'
 import { CategoryIdProvider } from '../context/CategoryIdContext'
 
-// interface CartegoryIdContextType {
-//   currentCategoryId: number;
-//   setCurrentCategoryId: React.Dispatch<React.SetStateAction<number>>;
-// }
-// export const CartegoryIdContext = createContext<CartegoryIdContextType | undefined>(undefined)
 
 export const BookmarkList = (): JSX.Element => {
   devLog('BookmarkList')
@@ -31,18 +26,34 @@ export const BookmarkList = (): JSX.Element => {
    * ロードイベント
    */
   useEffect(() => {
+    window.mainApi.onCategoryDelete((_: IpcRendererEvent, categoryId: number) => {
+      const newCategoryList = categoryList.filter((m) => m.id != categoryId)
+      setCategoryList(newCategoryList)
+      setCurrentCategoryId(-1)
+    })
+  }, [])
+
+  /**
+   * ロードイベント
+   */
+  useEffect(() => {
     window.mainApi.onCategoryListLoad((_: IpcRendererEvent, categoryList: TCategory[]) => {
       devLog(`window.mainApi.onCategoryListLoad`)
+      devLog(JSON.stringify(categoryList))
       setCategoryList(categoryList)
     })
   }, [categoryList])
 
-  useEffect(() => {
-    window.mainApi.onItemListLoad((_: IpcRendererEvent, itemList: TItem[]) => {
-      devLog(`window.mainApi.onItemListLoad`)
-      setItemList(itemList)
-    })
-  }, [itemList])
+
+  // アイテム取得のリスナー登録
+  const itemLoadListener = (_: IpcRendererEvent, itemList: TItem[]) => {
+    devLog(`window.mainApi.onItemListLoad`)
+    setItemList(itemList)
+  }
+  window.mainApi.removeListener(itemLoadListener)
+  window.mainApi.onItemListLoad(itemLoadListener)
+
+
 
   const handleClickItem = (): void => {
     handleItemContextMenu(null)

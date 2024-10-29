@@ -3,6 +3,12 @@ import { ED } from './EventDef'
 import { TCategory } from '../@types/TCategory'
 import { TItem } from 'src/@types/TItem'
 
+
+/** アイテム一覧取得イベントのリスナー */
+let itemListLoadListener: ((event: IpcRendererEvent, itemList: TItem[]) => void) | undefined
+/** カテゴリ一覧取得イベントのリスナー */
+let categoryListLoadListener: ((event: IpcRendererEvent, categoryList: TCategory[]) => void) | undefined
+
 /**
  * メインウィンドウ
  */
@@ -24,7 +30,18 @@ contextBridge.exposeInMainWorld('mainApi', {
    */
   onCategoryListLoad: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => {
     // ipcRenderer.on(ED.CategoryList.Load, (ev: IpcRendererEvent, categoryList: TCategory[]) => callback(ev, categoryList))
-    ipcRenderer.once(ED.CategoryList.Load, (ev: IpcRendererEvent, categoryList: TCategory[]) => callback(ev, categoryList))
+    ipcRenderer.on(ED.CategoryList.Load, (ev: IpcRendererEvent, categoryList: TCategory[]) => callback(ev, categoryList))
+  },
+
+  /**
+   * カテゴリ削除イベント
+   * @param callback カテゴリ情報
+   * @param callback.event IPCメッセージイベント
+   * @param callback.categoryId カテゴリ削除
+   * @summary カテゴリ削除時に発火
+   */
+  onCategoryDelete: (callback: (event: IpcRendererEvent, categoryId: number) => void) => {
+    ipcRenderer.on(ED.CategoryList.Delete, (ev: IpcRendererEvent, categoryId: number) => callback(ev, categoryId))
   },
 
   /**
@@ -54,9 +71,26 @@ contextBridge.exposeInMainWorld('mainApi', {
    * @param callback.itemList アイテム一覧
    * @summary カテゴリ選択時に発火
    */
-  onItemListLoad: (callback: (event: IpcRendererEvent, itemList: TItem[]) => void) => {
-    ipcRenderer.on(ED.ItemList.Load, (ev: IpcRendererEvent, itemList: TItem[]) => callback(ev, itemList))
+  // onItemListLoad: (callback: (event: IpcRendererEvent, itemList: TItem[]) => void) => {
+  //   ipcRenderer.on(ED.ItemList.Load, (ev: IpcRendererEvent, itemList: TItem[]) => callback(ev, itemList))
+  // },
+  onItemListLoad: (callback: (event: IpcRendererEvent, itemList: TItem[]) => void): void => {
+      itemListLoadListener = (_, message) => callback(_, message);
+      ipcRenderer.on(ED.ItemList.Load, itemListLoadListener);
+  },
+  /**
+   * アイテムリスト一覧取得のリスナー削除
+   */
+  // removeListner:(callback: (event: IpcRendererEvent, itemList: TItem[]) => void) => {
+  //   ipcRenderer.removeListener(ED.ItemList.Load, callback)
+  // },
+  removeListener: () => {
+    if (itemListLoadListener) {
+      ipcRenderer.removeListener(ED.ItemList.Load, itemListLoadListener);
+      itemListLoadListener = undefined; // リスナーの参照をリセット
+    }
   }
+
 })
 
 /**

@@ -31,6 +31,15 @@ export interface IMainApi {
   onCategoryListLoad: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => void
 
   /**
+   * カテゴリ削除イベント
+   * @param callback カテゴリ情報
+   * @param callback.event IPCメッセージイベント
+   * @param callback.categoryId 削除されたカテゴリID
+   * @summary カテゴリ削除時に発生
+   */
+  onCategoryDelete: (callback: (event: IpcRendererEvent, categoryId: number) => void) => void
+
+  /**
    * アイテム コンテキストメニュー表示
    * @param categoryId カテゴリID
    * @param item アイテム情報
@@ -57,6 +66,7 @@ export interface IMainApi {
    * @summary カテゴリ選択時に発火
    */
   onItemListLoad: (callback: (event: IpcRendererEvent, itemList: TItem[]) => void) => void
+  removeListener: (callback: (event: IpcRendererEvent, itemList: TItem[]) => void) => void
 }
 
 /**
