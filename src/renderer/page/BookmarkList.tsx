@@ -25,28 +25,38 @@ export const BookmarkList = (): JSX.Element => {
   /**
    * ロードイベント
    */
-  useEffect(() => {
-    window.mainApi.onCategoryDelete((_: IpcRendererEvent, categoryId: number) => {
+  // useEffect(() => {
+  //   window.mainApi.onCategoryDelete((_: IpcRendererEvent, categoryId: number) => {
+  //     const newCategoryList = categoryList.filter((m) => m.id != categoryId)
+  //     setCategoryList(newCategoryList)
+  //     setCurrentCategoryId(-1)
+  //   })
+  // }, [])
+
+    const categoryDeleteListner = (_: IpcRendererEvent, categoryId: number) => {
       const newCategoryList = categoryList.filter((m) => m.id != categoryId)
       setCategoryList(newCategoryList)
       setCurrentCategoryId(-1)
-    })
-  }, [])
+    }
+    window.mainApi.removeCategoryDeleteListener(categoryDeleteListner)
+    window.mainApi.onCategoryDelete(categoryDeleteListner)
 
   /**
    * ロードイベント
    */
-  useEffect(() => {
-    window.mainApi.onCategoryListLoad((_: IpcRendererEvent, categoryList: TCategory[]) => {
-      devLog(`window.mainApi.onCategoryListLoad`)
-      devLog(JSON.stringify(categoryList))
-      setCategoryList(categoryList)
-    })
-  }, [categoryList])
+  // useEffect(() => {
+  const categoryListLodaListener  = (_: IpcRendererEvent, categoryList: TCategory[]): void => {
+    devLog(`window.mainApi.onCategoryListLoad`)
+    devLog(JSON.stringify(categoryList))
+    setCategoryList(categoryList)
+  }
+  window.mainApi.removeCategoryListLoadListener(categoryListLodaListener)
+  window.mainApi.onCategoryListLoad(categoryListLodaListener)
+  // }, [categoryList])
 
 
   // アイテム取得のリスナー登録
-  const itemLoadListener = (_: IpcRendererEvent, itemList: TItem[]) => {
+  const itemLoadListener = (_: IpcRendererEvent, itemList: TItem[]): void => {
     devLog(`window.mainApi.onItemListLoad`)
     setItemList(itemList)
   }

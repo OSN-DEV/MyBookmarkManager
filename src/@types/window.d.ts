@@ -29,6 +29,7 @@ export interface IMainApi {
    * @summary アプリ起動時、カテゴリ情報変更時に発生
    */
   onCategoryListLoad: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => void
+  removeCategoryListLoadListener: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => void
 
   /**
    * カテゴリ削除イベント
@@ -38,6 +39,7 @@ export interface IMainApi {
    * @summary カテゴリ削除時に発生
    */
   onCategoryDelete: (callback: (event: IpcRendererEvent, categoryId: number) => void) => void
+  removeCategoryDeleteListener: (callback: (event: IpcRendererEvent, categoryId: number) => void) => void
 
   /**
    * アイテム コンテキストメニュー表示

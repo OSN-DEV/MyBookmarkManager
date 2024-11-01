@@ -9,6 +9,8 @@ let itemListLoadListener: ((event: IpcRendererEvent, itemList: TItem[]) => void)
 /** カテゴリ一覧取得イベントのリスナー */
 let categoryListLoadListener: ((event: IpcRendererEvent, categoryList: TCategory[]) => void) | undefined
 
+let categoryDeleteListener: ((event: IpcRendererEvent, categoryId: number) => void) | undefined
+
 /**
  * メインウィンドウ
  */
@@ -30,7 +32,15 @@ contextBridge.exposeInMainWorld('mainApi', {
    */
   onCategoryListLoad: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => {
     // ipcRenderer.on(ED.CategoryList.Load, (ev: IpcRendererEvent, categoryList: TCategory[]) => callback(ev, categoryList))
-    ipcRenderer.on(ED.CategoryList.Load, (ev: IpcRendererEvent, categoryList: TCategory[]) => callback(ev, categoryList))
+    // ipcRenderer.on(ED.CategoryList.Load, (ev: IpcRendererEvent, categoryList: TCategory[]) => callback(ev, categoryList))
+    categoryListLoadListener = (_, categoryList): void => callback(_, categoryList)
+    ipcRenderer.on(ED.CategoryList.Load, categoryListLoadListener)
+  },
+  removeCategoryListLoadListener: () => {
+    if (categoryListLoadListener) {
+      ipcRenderer.removeListener(ED.CategoryList.Load, categoryListLoadListener)
+      categoryListLoadListener = undefined
+    }
   },
 
   /**
@@ -41,13 +51,21 @@ contextBridge.exposeInMainWorld('mainApi', {
    * @summary カテゴリ削除時に発火
    */
   onCategoryDelete: (callback: (event: IpcRendererEvent, categoryId: number) => void) => {
-    ipcRenderer.on(ED.CategoryList.Delete, (ev: IpcRendererEvent, categoryId: number) => callback(ev, categoryId))
+    // ipcRenderer.on(ED.CategoryList.Delete, (ev: IpcRendererEvent, categoryId: number) => callback(ev, categoryId))
+    categoryDeleteListener = (_, categoryId):void => callback(_, categoryId)
+    ipcRenderer.on(ED.CategoryList.Delete, categoryDeleteListener)
+  },
+  removeCategoryDeleteListener: () => {
+    if (categoryDeleteListener) {
+      ipcRenderer.removeListener(ED.CategoryList.Delete, categoryDeleteListener)
+      categoryDeleteListener = undefined
+    }
   },
 
   /**
    * Show context menu for item list
    * @param categoryId - current category id
-   * @param item - item infromation.
+   * @param item - item infromatkjjjjion.
    * @returns void
    */
   showItemListContextMenu: (categoryId: number, item: TItem | null) => ipcRenderer.send(ED.ItemList.ContextMenu.Show, categoryId, item),
