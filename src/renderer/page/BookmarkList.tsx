@@ -23,48 +23,38 @@ export const BookmarkList = (): JSX.Element => {
   const [itemList, setItemList] = useState<TItem[]>([])
 
   /**
-   * ロードイベント
+   * カテゴリ削除イベント
    */
-  // useEffect(() => {
-  //   window.mainApi.onCategoryDelete((_: IpcRendererEvent, categoryId: number) => {
-  //     const newCategoryList = categoryList.filter((m) => m.id != categoryId)
-  //     setCategoryList(newCategoryList)
-  //     setCurrentCategoryId(-1)
-  //   })
-  // }, [])
-
-    const categoryDeleteListner = (_: IpcRendererEvent, categoryId: number) => {
-      const newCategoryList = categoryList.filter((m) => m.id != categoryId)
-      setCategoryList(newCategoryList)
-      setCurrentCategoryId(-1)
-    }
-    window.mainApi.removeCategoryDeleteListener(categoryDeleteListner)
-    window.mainApi.onCategoryDelete(categoryDeleteListner)
+  const categoryDeleteListner = (_: IpcRendererEvent, categoryId: number): void => {
+    const newCategoryList = categoryList.filter((m) => m.id != categoryId)
+    setCategoryList(newCategoryList)
+    setCurrentCategoryId(-1)
+  }
+  window.mainApi.removeCategoryDeleteListener(categoryDeleteListner)
+  window.mainApi.onCategoryDelete(categoryDeleteListner)
 
   /**
-   * ロードイベント
+   * カテゴリ一覧ロード
    */
-  // useEffect(() => {
-  const categoryListLodaListener  = (_: IpcRendererEvent, categoryList: TCategory[]): void => {
+  const categoryListLodaListener = (_: IpcRendererEvent, categoryList: TCategory[]): void => {
     devLog(`window.mainApi.onCategoryListLoad`)
     devLog(JSON.stringify(categoryList))
     setCategoryList(categoryList)
   }
   window.mainApi.removeCategoryListLoadListener(categoryListLodaListener)
   window.mainApi.onCategoryListLoad(categoryListLodaListener)
-  // }, [categoryList])
 
-
-  // アイテム取得のリスナー登録
+  // アイテム一覧ロード
   const itemLoadListener = (_: IpcRendererEvent, itemList: TItem[]): void => {
     devLog(`window.mainApi.onItemListLoad`)
     setItemList(itemList)
   }
-  window.mainApi.removeListener(itemLoadListener)
+  window.mainApi.removeItemListLoadListener(itemLoadListener)
   window.mainApi.onItemListLoad(itemLoadListener)
 
-
-
+  /**
+   * アイテム表示領域外のコンテキストメニュー
+   */
   const handleClickItem = (): void => {
     handleItemContextMenu(null)
   }

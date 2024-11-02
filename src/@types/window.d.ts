@@ -11,6 +11,13 @@ declare global {
   }
 }
 
+/** カテゴリ一覧ロード コールバックの型*/
+export type TCategoryListLoad = (event: IpcRendererEvent, categoryList: TCategory[]) => void
+/** カテゴリ削除 k－るバックの方 */
+export type TCategoryDelete = (event: IpcRendererEvent, categoryId: number) => void
+/** アイテム一覧ロード コールバックの型 */
+export type TItemListLoad = (event: IpcRendererEvent, itemList: TItem[]) => void
+
 /**
  * メインウィンドウ
  */
@@ -28,8 +35,14 @@ export interface IMainApi {
    * @param callback.categoryList カテゴリ一覧
    * @summary アプリ起動時、カテゴリ情報変更時に発生
    */
-  onCategoryListLoad: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => void
-  removeCategoryListLoadListener: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => void
+  // onCategoryListLoad: (callback: (event: IpcRendererEvent, categoryList: TCategory[]) => void) => void
+  onCategoryListLoad: (callback: TCategoryListLoad) => void
+
+  /**
+   * カテゴリリスト一覧取得リスナー削除
+   * @param callback リスナー
+   */
+  removeCategoryListLoadListener: (callback: TCategoryListLoad) => void
 
   /**
    * カテゴリ削除イベント
@@ -38,8 +51,13 @@ export interface IMainApi {
    * @param callback.categoryId 削除されたカテゴリID
    * @summary カテゴリ削除時に発生
    */
-  onCategoryDelete: (callback: (event: IpcRendererEvent, categoryId: number) => void) => void
-  removeCategoryDeleteListener: (callback: (event: IpcRendererEvent, categoryId: number) => void) => void
+  onCategoryDelete: (callback: TCategoryDelete) => void
+
+  /**
+   * カテゴリ削除リスナー削除
+   * callback リスナー
+   */
+  removeCategoryDeleteListener: (callback: TCategoryDelete) => void
 
   /**
    * アイテム コンテキストメニュー表示
@@ -61,14 +79,20 @@ export interface IMainApi {
   requestItemList: (categoryId: number) => void
 
   /**
-   * アイテムリスト一覧取得イベント
+   * アイテム一覧取得イベント
    * @param callback アイテム情報
    * @param callback.event IPCメッセージイベント
    * @param callback.itemList アイテム一覧
    * @summary カテゴリ選択時に発火
    */
-  onItemListLoad: (callback: (event: IpcRendererEvent, itemList: TItem[]) => void) => void
-  removeListener: (callback: (event: IpcRendererEvent, itemList: TItem[]) => void) => void
+  // onItemListLoad: (callback: (event: IpcRendererEvent, itemList: TItem[]) => void) => void
+  onItemListLoad: (callback: TItemListLoad) => void
+
+  /**
+   * アイテム一覧取得イベントリスナー削除
+   * @param callback リスナー
+   */
+  removeItemListLoadListener: (callback: TItemListLoad) => void
 }
 
 /**
