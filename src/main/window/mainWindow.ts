@@ -109,6 +109,14 @@ export const sendRefreshCategoryList = async (): Promise<void> => {
 }
 
 /**
+ * カテゴリストID削除
+ */
+export const sendCategoryDelete= async (categoryId: number): Promise<void> => {
+  devLog('sendCateogryDelete')
+  mainWindow?.webContents.send(ED.CategoryList.Delete, categoryId)
+}
+
+/**
  * アイテムの更新
  * @param categoryId: カテゴリID
  */
@@ -117,7 +125,6 @@ export const sendRefreshItemList = async (categoryId: number): Promise<void> => 
   const itemList = await ItemTable.selectAll(categoryId)
   mainWindow?.webContents.send(ED.ItemList.Load, itemList)
 }
-
 
 /**
  * Devツールの表示切替

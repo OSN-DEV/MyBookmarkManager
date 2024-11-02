@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Resize, ResizeHorizon } from 'react-resize-layout'
 import CategoryList from '../feature/BookmarkList/CategoryList'
 import ItemList from '../feature/BookmarkList/ItemList'
@@ -8,11 +8,6 @@ import { IpcRendererEvent } from 'electron'
 import { devLog } from '../../util/common'
 import { CategoryIdProvider } from '../context/CategoryIdContext'
 
-// interface CartegoryIdContextType {
-//   currentCategoryId: number;
-//   setCurrentCategoryId: React.Dispatch<React.SetStateAction<number>>;
-// }
-// export const CartegoryIdContext = createContext<CartegoryIdContextType | undefined>(undefined)
 
 export const BookmarkList = (): JSX.Element => {
   devLog('BookmarkList')
@@ -28,22 +23,38 @@ export const BookmarkList = (): JSX.Element => {
   const [itemList, setItemList] = useState<TItem[]>([])
 
   /**
-   * ロードイベント
+   * カテゴリ削除イベント
    */
-  useEffect(() => {
-    window.mainApi.onCategoryListLoad((_: IpcRendererEvent, categoryList: TCategory[]) => {
-      devLog(`window.mainApi.onCategoryListLoad`)
-      setCategoryList(categoryList)
-    })
-  }, [categoryList])
+  const categoryDeleteListner = (_: IpcRendererEvent, categoryId: number): void => {
+    const newCategoryList = categoryList.filter((m) => m.id != categoryId)
+    setCategoryList(newCategoryList)
+    setCurrentCategoryId(-1)
+  }
+  window.mainApi.removeCategoryDeleteListener(categoryDeleteListner)
+  window.mainApi.onCategoryDelete(categoryDeleteListner)
 
-  useEffect(() => {
-    window.mainApi.onItemListLoad((_: IpcRendererEvent, itemList: TItem[]) => {
-      devLog(`window.mainApi.onItemListLoad`)
-      setItemList(itemList)
-    })
-  }, [itemList])
+  /**
+   * カテゴリ一覧ロード
+   */
+  const categoryListLodaListener = (_: IpcRendererEvent, categoryList: TCategory[]): void => {
+    devLog(`window.mainApi.onCategoryListLoad`)
+    devLog(JSON.stringify(categoryList))
+    setCategoryList(categoryList)
+  }
+  window.mainApi.removeCategoryListLoadListener(categoryListLodaListener)
+  window.mainApi.onCategoryListLoad(categoryListLodaListener)
 
+  // アイテム一覧ロード
+  const itemLoadListener = (_: IpcRendererEvent, itemList: TItem[]): void => {
+    devLog(`window.mainApi.onItemListLoad`)
+    setItemList(itemList)
+  }
+  window.mainApi.removeItemListLoadListener(itemLoadListener)
+  window.mainApi.onItemListLoad(itemLoadListener)
+
+  /**
+   * アイテム表示領域外のコンテキストメニュー
+   */
   const handleClickItem = (): void => {
     handleItemContextMenu(null)
   }

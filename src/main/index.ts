@@ -11,7 +11,7 @@ import { initDatabase } from './database/database'
 import * as categoryTable from './database/categoryTable'
 import * as itemTable from './database/itemTable'
 import { closeCategoryEditWindow, createCategoryEditWindow } from './window/categoryEditWindow'
-import { createWindow, getmainWindow, sendRefreshCategoryList, sendRefreshItemList } from './window/mainWindow'
+import { createWindow, getmainWindow, sendCategoryDelete, sendRefreshCategoryList, sendRefreshItemList } from './window/mainWindow'
 import { TItem } from 'src/@types/TItem'
 import { closeItemEditWindow, createItemEditWindow } from './window/itemEditWindow'
 
@@ -88,10 +88,22 @@ const registerEvent = async (): Promise<void> => {
 /**
  * コンテキストメニュー コールバック
  */
-const categoryContextMenuCallback = (category: TCategory | null, mode: RequestMode): void => {
+const categoryContextMenuCallback = async (category: TCategory | null, mode: RequestMode): void => {
   devLog(`categoryContextMenuCallback: ${category?.id}, ${mode}`)
-  console.log(category)
-  createCategoryEditWindow(getmainWindow()!, category)
+  const id = category?.id ?? -1
+
+  switch(mode) {
+    case RequestMode.Create:
+    case RequestMode.Edit:
+      createCategoryEditWindow(getmainWindow()!, category)
+      break
+    case RequestMode.Delete:
+      await categoryTable.deleteByCategoryId(id)
+      await itemTable.deleteByCategoryId(id)
+      sendCategoryDelete(id)
+      // sendRefreshCategoryList()
+      // sendRefreshItemList(-1)
+  }
 }
 
 /**

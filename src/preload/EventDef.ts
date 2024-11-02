@@ -8,6 +8,8 @@ export const ED = {
   CategoryList: {
     /** カテゴリリストロード */
     Load: 'ed.category-list.load',
+    /** カテゴリ削除 */
+    Delete: 'ed.category-list.delete',
     /** コンテキストメニュー */
     ContextMenu: {
       /**

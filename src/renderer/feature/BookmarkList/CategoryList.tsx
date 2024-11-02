@@ -8,6 +8,7 @@ type CategoryListProps = {
   currentCategoryIdChanged: (categoryId: number) => void
 }
 const CategoryList = (props: CategoryListProps): JSX.Element => {
+  devLog(`CategoryList enter`)
   const { categoryList, currentCategoryIdChanged } = props
   const { id: currentId, setId } = useCategoryIdContext()
 

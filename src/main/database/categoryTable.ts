@@ -70,6 +70,24 @@ export const update = async (category: TCategory): Promise<TCategory | undefined
 }
 
 /**
+ * カテゴリIDをキーとして削除
+ * @param id カテゴリID
+ */
+export const deleteByCategoryId = async (id: number): Promise<void> => {
+  devLog(`deleteByCategoryId`)
+  try {
+    const sql = `
+      delete from category
+      where id = ?
+    `
+    modify(sql, [id])
+  } catch (error) {
+    console.error('Error query database:', error)
+    return undefined
+  }
+}
+
+/**
  * カテゴリ情報の一覧取得
  * @returns カテゴリ情報
  */

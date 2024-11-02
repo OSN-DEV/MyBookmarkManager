@@ -41,7 +41,7 @@ export const createItemEditWindow = (parent: BrowserWindow, categoryId: number, 
     itemEditWindow?.show()
     itemEditWindow?.webContents.send(ED.ItemEdit.Load, categoryId, item)
 
-    toggleDevTool()
+    // toggleDevTool()
   })
 }
 

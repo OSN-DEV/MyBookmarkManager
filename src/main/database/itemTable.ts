@@ -79,12 +79,34 @@ export const update = async (item: TItem): Promise<TItem | undefined> => {
   }
 }
 
+/**
+ * アイテムIDをキーとして削除
+ * @param id アイテムID
+ */
 export const deleteById = async (id: number): Promise<void> => {
   devLog(`itemTable.delete`)
   try {
     const sql = `
       delete from  item
       where id = ?
+    `
+    modify(sql, [id])
+  } catch (error) {
+    console.error('Error query database:', error)
+    return undefined
+  }
+}
+
+/**
+ * カテゴリIDをキーとして削除
+ * @param id カテゴリID
+ */
+export const deleteByCategoryId = async (id: number): Promise<void> => {
+  devLog(`itemTable.delete`)
+  try {
+    const sql = `
+      delete from  item
+      where category_id = ?
     `
     modify(sql, [id])
   } catch (error) {
