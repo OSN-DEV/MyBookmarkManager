@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { Resize, ResizeHorizon } from 'react-resize-layout'
 import CategoryList from '../feature/BookmarkList/CategoryList'
 import ItemList from '../feature/BookmarkList/ItemList'
@@ -8,19 +8,21 @@ import { IpcRendererEvent } from 'electron'
 import { devLog } from '../../util/common'
 import { CategoryIdProvider } from '../context/CategoryIdContext'
 
-
 export const BookmarkList = (): JSX.Element => {
   devLog('BookmarkList')
   const [currentCategoryId, setCurrentCategoryId] = useState<number>(0)
+  const [categoryList, setCategoryList] = useState<TCategory[]>([])
+  const [itemList, setItemList] = useState<TItem[]>([])
 
+  /**
+   * カテゴリ変更処理
+   * @param categoryId カテゴリID
+   */
   const handleCurrentCategoryIdChanged = (categoryId: number): void => {
-    devLog(`handleCurrentCategoryIdChanged`)
+    devLog(`handleCurrentCategoryIdChanged: ${categoryId}`)
     setCurrentCategoryId(categoryId)
     window.mainApi.requestItemList(categoryId)
   }
-
-  const [categoryList, setCategoryList] = useState<TCategory[]>([])
-  const [itemList, setItemList] = useState<TItem[]>([])
 
   /**
    * カテゴリ削除イベント

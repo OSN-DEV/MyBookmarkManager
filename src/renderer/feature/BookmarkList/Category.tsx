@@ -24,16 +24,21 @@ const Category = (props: CategoryProps): JSX.Element => {
 
 
 
+  const styles = isSelected
+    ? 'cursor-auto font-bold underline'
+    : 'cursor-pointer font-normal'
 
   // const styleList: string[] = ['text-gray-500', 'text-[14pt]', 'p-1', styles ?? '']
   // return (
   //   <>
   //     <button type="button" onClick={onClick} className={styleList.join(' ').trim()}>
-
+  // const styles = [
+  //   isSelected ? 'font-bold' : ''
+  // ]
 
   return (
     <div className="category-list-category" onClick={() => handleClick(id)} onContextMenu={handleContextmenu}>
-      {name}
+      <span className={styles}>{name}</span>
     </div>
   )
 }
