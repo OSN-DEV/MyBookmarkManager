@@ -52,7 +52,7 @@ export const ED = {
       /**
        * メニュー選択
        */
-      MenuSelected: 'ed.item-list.context-menu.menu-selected',
+      MenuSelected: 'ed.item-list.context-menu.menu-selected'
     }
   },
 
@@ -64,6 +64,8 @@ export const ED = {
     Create: `${Prefix.CategoriEdit}.create`,
     /** データ更新 */
     Update: `${Prefix.CategoriEdit}.update`,
+    /** ソート順更新 */
+    UpdateOrder: `${Prefix.CategoriEdit}.update-order`,
     /** キャンセル */
     // Cancel: 'ed.category-edit.cancel'
     Cancel: `${Prefix.CategoriEdit}.cancel`

@@ -122,6 +122,13 @@ export interface ICategoryApi {
   update: (category: TCategory) => Promise<TCategory>
 
   /**
+   * カテゴリのオーダーを更新
+   * @param category カテゴリ情報
+   * @return カテゴリ情報(IDを設定)
+   */
+  updateOrder: (categoryList: TCategory[]) => Promise<TCategory[]>
+
+  /**
    * キャンセル
    */
   cancel: () => void

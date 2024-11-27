@@ -61,7 +61,7 @@ export const ItemEdit = (): JSX.Element => {
    */
   const handleOkClick = (): void => {
     devLog(`handleOkClick: ${categoryId}`)
-    const isNew = (item == null)
+    const isNew = item == null
     const newItem: TItem = item ? { ...item } : { ...initialItem }
     newItem.categoryId = categoryId
     newItem.title = getValue(refs.title)

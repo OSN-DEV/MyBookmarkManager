@@ -88,7 +88,7 @@ export const insert = async (sql: string, params: TSqlParam[] = []): Promise<num
  */
 export const beginTrans = async (): Promise<void> => {
   return new Promise<void>((resolve, reject) => {
-    db.run("BEGIN", function (err) {
+    db.run('BEGIN', function (err) {
       if (err) {
         reject(err)
       } else {
@@ -104,7 +104,7 @@ export const beginTrans = async (): Promise<void> => {
  */
 export const commitTrans = async (): Promise<void> => {
   return new Promise<void>((resolve, reject) => {
-    db.run("BEGIN", function (err) {
+    db.run('BEGIN', function (err) {
       if (err) {
         reject(err)
       } else {
@@ -120,7 +120,7 @@ export const commitTrans = async (): Promise<void> => {
  */
 export const rollbackTrans = async (): Promise<void> => {
   return new Promise<void>((resolve, reject) => {
-    db.run("ROLLBACK", function (err) {
+    db.run('ROLLBACK', function (err) {
       if (err) {
         reject(err)
       } else {

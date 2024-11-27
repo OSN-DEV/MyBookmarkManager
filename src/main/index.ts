@@ -51,7 +51,7 @@ const registerEvent = async (): Promise<void> => {
 
   // Item List
   ipcMain.on(ED.ItemList.ContextMenu.Show, (_: IpcMainEvent, categoryId: number, item: TItem | null) => {
-    devLog(`ED.ItemList.ContextMenu.Show: categoryId=${categoryId} item=${JSON.stringify(item == null? '{}': item)}`)
+    devLog(`ED.ItemList.ContextMenu.Show: categoryId=${categoryId} item=${JSON.stringify(item == null ? '{}' : item)}`)
     IL.showContextMenu(categoryId, item, itemContextMenuCallback)
   })
   ipcMain.handle(ED.ItemList.Request, (_, categoryId: number) => handleItemListRequest(categoryId))
@@ -60,6 +60,7 @@ const registerEvent = async (): Promise<void> => {
   // Category Edit
   ipcMain.handle(ED.CategoryEdit.Create, (_, category: TCategory) => handleCategoryCreate(category))
   ipcMain.handle(ED.CategoryEdit.Update, (_, category: TCategory) => handleCategoryUpdate(category))
+  ipcMain.handle(ED.CategoryEdit.UpdateOrder, (_, categoryList:TCategory[]) => handleCategoryUpdateOrder(categoryList))
   ipcMain.on(ED.CategoryEdit.Cancel, closeCategoryEditWindow)
 
   // Item Edit
@@ -92,7 +93,7 @@ const categoryContextMenuCallback = async (category: TCategory | null, mode: Req
   devLog(`categoryContextMenuCallback: ${category?.id}, ${mode}`)
   const id = category?.id ?? -1
 
-  switch(mode) {
+  switch (mode) {
     case RequestMode.Create:
     case RequestMode.Edit:
       createCategoryEditWindow(getmainWindow()!, category)
@@ -101,8 +102,8 @@ const categoryContextMenuCallback = async (category: TCategory | null, mode: Req
       await categoryTable.deleteByCategoryId(id)
       await itemTable.deleteByCategoryId(id)
       sendCategoryDelete(id)
-      // sendRefreshCategoryList()
-      // sendRefreshItemList(-1)
+    // sendRefreshCategoryList()
+    // sendRefreshItemList(-1)
   }
 }
 
@@ -157,12 +158,21 @@ const handleCategoryUpdate = (category: TCategory): void => {
   categoryUpdate(category, false)
 }
 
+/*
+ * カテゴリのソートキーを更新
+ * @params category カテゴリ情報
+ */
+const handleCategoryUpdateOrder = (categoryList: TCategory[]): void => {
+  devLog(`handleCategoryUpdateOrder`)
+  // categoryUpdate(category, false)
+}
+
 /**
  * カテゴリ更新(統合処理)
  * @param category カテゴリ情報
  * @param isNew true:新規、false:更新
  */
-const categoryUpdate = async(category: TCategory, isNew: boolean): Promise<void> => {
+const categoryUpdate = async (category: TCategory, isNew: boolean): Promise<void> => {
   if (isNew) {
     await categoryTable.create(category)
   } else {
@@ -198,7 +208,7 @@ const handleItemUpdate = (item: TItem): void => {
  * @param category カテゴリ情報
  * @param isNew true:新規、false:更新
  */
-const itemUpdate = async(item: TItem, isNew: boolean): Promise<void> => {
+const itemUpdate = async (item: TItem, isNew: boolean): Promise<void> => {
   if (isNew) {
     await itemTable.create(item)
   } else {

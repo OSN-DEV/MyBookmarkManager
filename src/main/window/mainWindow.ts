@@ -111,7 +111,7 @@ export const sendRefreshCategoryList = async (): Promise<void> => {
 /**
  * カテゴリストID削除
  */
-export const sendCategoryDelete= async (categoryId: number): Promise<void> => {
+export const sendCategoryDelete = async (categoryId: number): Promise<void> => {
   devLog('sendCateogryDelete')
   mainWindow?.webContents.send(ED.CategoryList.Delete, categoryId)
 }

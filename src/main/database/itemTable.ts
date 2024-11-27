@@ -134,4 +134,3 @@ export const selectAll = async (categoryId: number): Promise<TItem[]> => {
     return []
   }
 }
-

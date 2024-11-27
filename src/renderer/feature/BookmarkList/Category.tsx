@@ -1,18 +1,36 @@
-import React from 'react'
+import React, { forwardRef, useEffect, useRef } from 'react'
+import { devLog } from '../../../util/common'
 
 type CategoryProps = {
   id: number
   isSelected: boolean
   name: string
+  setElement: (elm: HTMLElement | null) => void
   handleClick: (id: number) => void
+  handleDragStart: (ev: React.DragEvent<HTMLDivElement>) => void
+  handleDragEnd: (ev: React.DragEvent<HTMLDivElement>) => void
+  handleDragOver: (ev: React.DragEvent<HTMLDivElement>) => void
+  handleDragEnter: (ev: React.DragEvent<HTMLDivElement>) => void
+  handleDragLeave: (ev: React.DragEvent<HTMLDivElement>) => void
+  handleDrop: (ev: React.DragEvent<HTMLDivElement>) => void
   onContextMenu: () => void
 }
 
-const Category = (props: CategoryProps): JSX.Element => {
-  const { id, isSelected, name, handleClick, onContextMenu } = props
-  if (isSelected) {
-    console.log('selected')
-  }
+const Category = forwardRef<HTMLElement, CategoryProps>((props, ref): JSX.Element => {
+  const {
+    id,
+    isSelected,
+    name,
+    handleClick,
+    handleDragStart,
+    handleDragEnd,
+    handleDragOver,
+    handleDragEnter,
+    handleDragLeave,
+    handleDrop,
+    onContextMenu,
+    setElement
+  } = props
 
   /**
    * コンテキストメニュー表示イベント
@@ -22,25 +40,29 @@ const Category = (props: CategoryProps): JSX.Element => {
     onContextMenu()
   }
 
+  const styles = isSelected ? 'cursor-auto font-bold underline' : 'cursor-pointer font-normal'
+  const localRef = useRef<HTMLDivElement>(null)
 
-
-  const styles = isSelected
-    ? 'cursor-auto font-bold underline'
-    : 'cursor-pointer font-normal'
-
-  // const styleList: string[] = ['text-gray-500', 'text-[14pt]', 'p-1', styles ?? '']
-  // return (
-  //   <>
-  //     <button type="button" onClick={onClick} className={styleList.join(' ').trim()}>
-  // const styles = [
-  //   isSelected ? 'font-bold' : ''
-  // ]
-
+  useEffect(() => {
+    setElement(localRef.current)
+  })
   return (
-    <div className="category-list-category" onClick={() => handleClick(id)} onContextMenu={handleContextmenu}>
+    <div
+      ref={localRef}
+      draggable={true}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDragEnter={handleDragEnter}
+      onDrop={handleDrop}
+      className="category-list-category"
+      onClick={() => handleClick(id)}
+      onContextMenu={handleContextmenu}
+    >
       <span className={styles}>{name}</span>
     </div>
   )
-}
-
+})
+Category.displayName = 'Category'
 export default Category
