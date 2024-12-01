@@ -48,6 +48,7 @@ const registerEvent = async (): Promise<void> => {
   ipcMain.on(ED.CategoryList.ContextMenu.Show, (_: IpcMainEvent, category: TCategory | null) => {
     CL.showContextMenu(category, categoryContextMenuCallback)
   })
+  ipcMain.handle(ED.CategoryList.UpdateOrder, (_, categoryList: TCategory[]) => handleCategoryUpdateOrder(categoryList))
 
   // Item List
   ipcMain.on(ED.ItemList.ContextMenu.Show, (_: IpcMainEvent, categoryId: number, item: TItem | null) => {
@@ -60,7 +61,6 @@ const registerEvent = async (): Promise<void> => {
   // Category Edit
   ipcMain.handle(ED.CategoryEdit.Create, (_, category: TCategory) => handleCategoryCreate(category))
   ipcMain.handle(ED.CategoryEdit.Update, (_, category: TCategory) => handleCategoryUpdate(category))
-  ipcMain.handle(ED.CategoryEdit.UpdateOrder, (_, categoryList:TCategory[]) => handleCategoryUpdateOrder(categoryList))
   ipcMain.on(ED.CategoryEdit.Cancel, closeCategoryEditWindow)
 
   // Item Edit
@@ -86,6 +86,18 @@ const registerEvent = async (): Promise<void> => {
   })
 }
 
+// ------------------------------------------------------------------
+// カテゴリリスト
+// ------------------------------------------------------------------
+/*
+ * カテゴリのソートキーを更新
+ * @params category カテゴリ情報
+ */
+const handleCategoryUpdateOrder = async (categoryList: TCategory[]): void => {
+  devLog(`handleCategoryUpdateOrder`)
+  await categoryTable.updateOrder(categoryList)
+  await sendRefreshCategoryList()
+}
 /**
  * コンテキストメニュー コールバック
  */
@@ -156,15 +168,6 @@ const handleCategoryCreate = (category: TCategory): void => {
 const handleCategoryUpdate = (category: TCategory): void => {
   devLog(`handleCategoryUpdate`)
   categoryUpdate(category, false)
-}
-
-/*
- * カテゴリのソートキーを更新
- * @params category カテゴリ情報
- */
-const handleCategoryUpdateOrder = (categoryList: TCategory[]): void => {
-  devLog(`handleCategoryUpdateOrder`)
-  // categoryUpdate(category, false)
 }
 
 /**

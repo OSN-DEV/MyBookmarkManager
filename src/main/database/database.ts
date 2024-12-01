@@ -104,7 +104,7 @@ export const beginTrans = async (): Promise<void> => {
  */
 export const commitTrans = async (): Promise<void> => {
   return new Promise<void>((resolve, reject) => {
-    db.run('BEGIN', function (err) {
+    db.run('COMMIT', function (err) {
       if (err) {
         reject(err)
       } else {

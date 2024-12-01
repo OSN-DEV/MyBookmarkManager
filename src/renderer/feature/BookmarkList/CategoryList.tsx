@@ -55,8 +55,8 @@ const CategoryList = (props: CategoryListProps): JSX.Element => {
       setDropTargetIndex(index)
 
       ev.dataTransfer.setData('text/plain', JSON.stringify(categoryList[index]))
-      ev.dataTransfer.dropEffect = 'move'     // copy, move, link, none,
-      ev.dataTransfer.effectAllowed = 'move'  // none, copy, copyLink, copyMove, link, linkMove, all
+      ev.dataTransfer.dropEffect = 'move' // copy, move, link, none,
+      ev.dataTransfer.effectAllowed = 'move' // none, copy, copyLink, copyMove, link, linkMove, all
     }
 
   const handleDragOver =
@@ -65,12 +65,9 @@ const CategoryList = (props: CategoryListProps): JSX.Element => {
       // devLog(`handleDragOver: targetIndex=${targetIndex}`)
       ev.preventDefault()
 
-      
-      
       const elm = dragItemRef.current.get(targetIndex)
       if (!elm) {
-  
-        devLog(`no element: ${JSON.stringify(dragItemRef.current)}`);
+        devLog(`no element: ${JSON.stringify(dragItemRef.current)}`)
         return
       }
 
@@ -79,29 +76,29 @@ const CategoryList = (props: CategoryListProps): JSX.Element => {
       // ev.clientYはrectの範囲内にあるのでposYは必ず正の数になるはず
       const posY = ev.clientY - rect.top
       // マウスの位置が対象となっているエレメントの何％の位置にあるのかを算出。Math.minを設けているのは念の為、なんだと思われる。。
-      const rationY = Math.min(1, Math.max(0, posY / rect.height)) 
+      const rationY = Math.min(1, Math.max(0, posY / rect.height))
       // Math.roundで四捨五入しているので、ターゲットの半分より上であれば0、そうでなければ1して、ドロップした際のターゲットをどちらにするのかを決めるイメージ
       // (半分より上であればターゲットアイテムの上、そうでなければ下)
       setDropTargetIndex(targetIndex + Math.round(rationY))
     }
 
-  const handleDragEnd = 
-  (dragIndex: number) =>
-  (ev: React.DragEvent<HTMLDivElement>): void => {
-    devLog(`handleDragEnd dragIndex=${dragIndex}`)
-    // const currentIndex = categoryList.findIndex((category) => {
-    //   return category.id === dragIndex
-    // })
-    // if (currentIndex  >= 0 &&  dropTargetIndex >= 0) {
-    if (0 <= dropTargetIndex) {
-      devLog(`dragIndex=${dragIndex}, dropTargetIndex=${dropTargetIndex}`)
-      const newItem = moveItem(categoryList, dragIndex, dropTargetIndex)
-      devLog(`newItem: ${JSON.stringify(newItem)}`)
-      // カテゴリリストを更新
-      window.categoryApi.updateOrder(newItem)
+  const handleDragEnd =
+    (dragIndex: number) =>
+    (ev: React.DragEvent<HTMLDivElement>): void => {
+      devLog(`handleDragEnd dragIndex=${dragIndex}`)
+      // const currentIndex = categoryList.findIndex((category) => {
+      //   return category.id === dragIndex
+      // })
+      // if (currentIndex  >= 0 &&  dropTargetIndex >= 0) {
+      if (0 <= dropTargetIndex) {
+        devLog(`dragIndex=${dragIndex}, dropTargetIndex=${dropTargetIndex}`)
+        const newItem = moveItem(categoryList, dragIndex, dropTargetIndex)
+        devLog(`newItem: ${JSON.stringify(newItem)}`)
+        // カテゴリリストを更新
+        window.mainApi.updateOrder(newItem)
+      }
+      setDropTargetIndex(-1)
     }
-    setDropTargetIndex(-1)
-  }
 
   function moveItem<T = any>(arr: T[], currentIndex: number, targetIndex: number) {
     const targetItem = arr[currentIndex]
@@ -115,10 +112,25 @@ const CategoryList = (props: CategoryListProps): JSX.Element => {
     (ev: React.DragEvent<HTMLDivElement>): void => {
       // devLog(`handleDragEnter index:${index}`)
       ev.preventDefault()
+
+      const elm = dragItemRef.current.get(index)
+      if (!elm) {
+        return
+      }
+      elm.style.border="solid 2px red"
+
     }
-  const handleDragLeave = (ev: React.DragEvent<HTMLDivElement>): void => {
+  const handleDragLeave = 
+  (index: number) =>
+  (ev: React.DragEvent<HTMLDivElement>): void => {
     // devLog(`handleDragLeave`)
     ev.preventDefault()
+
+    const elm = dragItemRef.current.get(index)
+    if (!elm) {
+      return
+    }
+    elm.style.border="solid 1px gray"
   }
 
   const handleDrop = (ev: React.DragEvent<HTMLDivElement>): void => {
@@ -147,7 +159,7 @@ const CategoryList = (props: CategoryListProps): JSX.Element => {
             handleDragStart={handleDragStart(index, category.id)}
             handleDragEnd={handleDragEnd(index)}
             handleDragOver={handleDragOver(index)}
-            handleDragLeave={handleDragLeave}
+            handleDragLeave={handleDragLeave(index)}
             handleDrop={handleDrop}
             handleDragEnter={() => handleDragEnter(index)}
             handleClick={handleClick}

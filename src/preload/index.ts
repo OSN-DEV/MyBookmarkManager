@@ -62,7 +62,12 @@ contextBridge.exposeInMainWorld('mainApi', {
     }
   },
 
-
+  /**
+   * カテゴリのオーダーを更新
+   * @param categoryList カテゴリリスト
+   * @returns
+   */
+  updateOrder: (categoryList: TCategory[]) => ipcRenderer.invoke(ED.CategoryList.UpdateOrder, categoryList),
 
   /**
    * Show context menu for item list
@@ -137,13 +142,6 @@ contextBridge.exposeInMainWorld('categoryApi', {
    * @param category カテゴリ情報
    */
   update: (category: TCategory) => ipcRenderer.invoke(ED.CategoryEdit.Update, category),
-
-  /**
-   * カテゴリのオーダーを更新
-   * @param categoryList カテゴリリスト
-   * @returns 
-   */
-  updateOrder: (categoryList: TCategory[]) => ipcRenderer.invoke(ED.CategoryEdit.UpdateOrder, categoryList),
 
   /**
    * キャンセル

@@ -48,6 +48,7 @@ const Category = forwardRef<HTMLElement, CategoryProps>((props, ref): JSX.Elemen
   })
   return (
     <div
+      style={{border:'solid 1px gray'}}
       ref={localRef}
       draggable={true}
       onDragStart={handleDragStart}

@@ -104,3 +104,29 @@ export const selectAll = async (): Promise<TCategory[]> => {
     return []
   }
 }
+
+/**
+ * カテゴリのソートキーを更新
+ * @param カテゴリ情報
+ * @returns データ更新後のカテゴリ情報
+ */
+export const updateOrder = async (categoryList: TCategory[]): Promise<TCategory[] | undefined> => {
+  devLog(`categoryTable.updateOrder:${JSON.stringify(categoryList)}`)
+  try {
+    await beginTrans()
+    const sql = `
+      update category set sort = ?
+      where id = ?
+    `
+    for (let i = 0; i < categoryList.length; i++) {
+      categoryList[i].sort = i
+      await modify(sql, [i, categoryList[i].id])
+    }
+    await commitTrans()
+    return categoryList
+  } catch (error) {
+    console.error('Error query database:', error)
+    await rollbackTrans()
+    return undefined
+  }
+}
