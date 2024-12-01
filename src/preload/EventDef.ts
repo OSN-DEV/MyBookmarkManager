@@ -1,58 +1,50 @@
 const Prefix = {
+  CategoryList: 'ed.category-list',
+  CategoryListContextMenu: `ed.category-list.context-menu`,
   CategoriEdit: 'ed.category-edit',
+  ItemList: 'ed.item-list',
+  ItemListContextMenu: 'ed.item-list.context-menu',
   ItemEdit: 'ed.item-edit'
 }
 
+/** イベント定義(Event Definition) */
 export const ED = {
   /** カテゴリリスト */
   CategoryList: {
     /** カテゴリリストロード */
-    Load: 'ed.category-list.load',
+    Load: `${Prefix.CategoryList}.load`,
     /** カテゴリ削除 */
-    Delete: 'ed.category-list.delete',
+    Delete: `${Prefix.CategoryList}.delete`,
+    /** ソート順更新 */
+    UpdateOrder: `${Prefix.CategoryList}.update-order`,
     /** コンテキストメニュー */
     ContextMenu: {
-      /**
-       * メニュー表示
-       */
-      Show: 'ed.category-list.context-menu.show',
-
-      /**
-       * メニュー選択
-       */
-      MenuSelected: 'ed.category-list.context-menu.menu-selected',
-
-      /**
-       * カテゴリコンテキストメニュー選択
-       */
-      CreateRequest: 'ed.category-list.context-menu.create-request',
-      EditRequest: 'ed.category-list.context-menu.edit-request',
-      DeleteRequest: 'ed.category-list.context-menu.edit-request',
-      CreateResponse: 'ed.category-list.context-menu.create-response',
-      EditResponset: 'ed.category-list.context-menu.edit-response',
-      DeleteResponse: 'ed.category-list.context-menu.edit-response'
+      /** メニュー表示 */
+      Show: `${Prefix.CategoryListContextMenu}.show`,
+      /** メニュー選択 */
+      MenuSelected: `${Prefix.CategoryListContextMenu}.menu-selected`,
+      /** カテゴリコンテキストメニュー項目選択 */
+      CreateRequest: `${Prefix.CategoryListContextMenu}.create-request`,
+      EditRequest: `${Prefix.CategoryListContextMenu}.edit-request`,
+      DeleteRequest: `${Prefix.CategoryListContextMenu}.edit-request`,
+      CreateResponse: `${Prefix.CategoryListContextMenu}.create-response`
     }
   },
 
   /** アイテムリスト */
   ItemList: {
     /** アイテムリストロード */
-    Load: 'ed.item-list.load',
+    Load: `${Prefix.ItemList}.load`,
     /** アイテムリスト取得要求 */
-    Request: 'ed.item-list.request',
+    Request: `${Prefix.ItemList}.request`,
     /** アイテム起動 */
-    LaunchItem: 'ed.item-list.launch-item',
+    LaunchItem: `${Prefix.ItemList}.launch-item`,
     /** コンテキストメニュー */
     ContextMenu: {
-      /**
-       * メニュー表示
-       */
-      Show: 'ed.item-list.context-menu.show',
-
-      /**
-       * メニュー選択
-       */
-      MenuSelected: 'ed.item-list.context-menu.menu-selected',
+      /** メニュー表示 */
+      Show: `${Prefix.ItemListContextMenu}.show`,
+      /** メニュー選択 */
+      MenuSelected: `${Prefix.ItemListContextMenu}.menu-selected`
     }
   },
 

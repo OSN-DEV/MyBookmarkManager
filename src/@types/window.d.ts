@@ -60,6 +60,13 @@ export interface IMainApi {
   removeCategoryDeleteListener: (callback: TCategoryDelete) => void
 
   /**
+   * カテゴリのオーダーを更新
+   * @param category カテゴリ情報
+   * @return カテゴリ情報(IDを設定)
+   */
+  updateOrder: (categoryList: TCategory[]) => Promise<TCategory[]>
+
+  /**
    * アイテム コンテキストメニュー表示
    * @param categoryId カテゴリID
    * @param item アイテム情報

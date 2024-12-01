@@ -9,7 +9,7 @@ type ItemProps = {
 const Item = (props: ItemProps): JSX.Element => {
   const { item, handleContextMenu } = props
 
-  devLog(`Item : ${item == null ? '' :  JSON.stringify(item)}}`)
+  devLog(`Item : ${item == null ? '' : JSON.stringify(item)}}`)
   const onContextMenu = (e: React.MouseEvent<HTMLSpanElement>, item: TItem | null, v: string): void => {
     devLog(`Item.handleClickItem: ${v}`)
     e.stopPropagation()
@@ -24,7 +24,9 @@ const Item = (props: ItemProps): JSX.Element => {
   return (
     <div className="item-list-item" onContextMenu={(e) => onContextMenu(e, null, 'outer div')}>
       <div>
-        <span onContextMenu={(e) => onContextMenu(e, item, 'item')} onDoubleClick={() => onDoubleClick(item.url)} >■ {item.title}</span>
+        <span onContextMenu={(e) => onContextMenu(e, item, 'item')} onDoubleClick={() => onDoubleClick(item.url)}>
+          ■ {item.title}
+        </span>
       </div>
       <div>
         {/*
